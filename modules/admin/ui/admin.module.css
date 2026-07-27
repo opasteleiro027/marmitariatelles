@@ -1,0 +1,323 @@
+.adminShell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 245px 1fr;
+  background: #f7f4ee;
+}
+
+.sidebar {
+  min-height: 100vh;
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  background: var(--brown-950);
+  color: white;
+}
+
+.brand {
+  padding: 0 10px 30px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: white;
+  text-decoration: none;
+}
+
+.brand span {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--orange-600);
+  font-family: var(--font-fraunces), serif;
+  font-size: 13px;
+}
+
+.sidebar nav {
+  display: grid;
+  gap: 5px;
+}
+
+.sidebar nav a,
+.signOut {
+  min-height: 46px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  border-radius: 11px;
+  color: #d9ccc3;
+  text-decoration: none;
+  font-weight: 750;
+}
+
+.sidebar nav a:hover,
+.sidebar nav .activeNav {
+  background: rgb(255 255 255 / 9%);
+  color: white;
+}
+
+.sidebar nav span {
+  width: 19px;
+  text-align: center;
+}
+
+.signOut {
+  margin-top: auto;
+}
+
+.adminContent {
+  padding: 36px clamp(22px, 5vw, 68px) 60px;
+}
+
+.adminHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.adminHeader p,
+.operationBanner p,
+.metricGrid p {
+  margin: 0 0 5px;
+  color: #7c6b60;
+  font-size: 14px;
+}
+
+.adminHeader h1 {
+  margin: 0;
+  font-family: var(--font-fraunces), serif;
+  font-size: 38px;
+}
+
+.adminHeader a {
+  min-height: 44px;
+  padding: 0 17px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #d9cdbd;
+  border-radius: 12px;
+  color: var(--brown-950);
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.operationBanner {
+  margin: 34px 0 22px;
+  padding: 24px 26px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr auto;
+  align-items: center;
+  gap: 28px;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 10px 35px rgb(62 42 28 / 7%);
+}
+
+.operationBanner > div:first-child {
+  position: relative;
+  padding-left: 18px;
+}
+
+.liveDot {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #4b9258;
+}
+
+.operationBanner button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid #c96f4b;
+  border-radius: 12px;
+  background: #fff8f4;
+  color: #a33d17;
+  font: inherit;
+  font-weight: 850;
+}
+
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metricGrid article {
+  min-height: 156px;
+  padding: 22px;
+  border: 1px solid #e5dbcf;
+  border-radius: 18px;
+  background: #fbfaf7;
+}
+
+.metricGrid strong {
+  display: block;
+  margin: 16px 0 4px;
+  font-family: var(--font-fraunces), serif;
+  font-size: 30px;
+}
+
+.metricGrid small {
+  color: #89766b;
+}
+
+.foundationPanel {
+  margin-top: 22px;
+  padding: clamp(27px, 5vw, 48px);
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 55px;
+  border-radius: 22px;
+  background: #eadac5;
+}
+
+.eyebrow {
+  color: var(--orange-700);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.foundationPanel h2,
+.centeredState h1 {
+  margin: 9px 0 13px;
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(30px, 4vw, 44px);
+}
+
+.foundationPanel > div > p:last-child,
+.centeredState p {
+  color: var(--brown-700);
+  line-height: 1.7;
+}
+
+.foundationPanel ul {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  align-content: center;
+  gap: 13px;
+  list-style: none;
+}
+
+.foundationPanel li {
+  display: flex;
+  gap: 10px;
+  font-weight: 800;
+}
+
+.foundationPanel li span {
+  color: var(--green-700);
+}
+
+.centeredState {
+  min-height: 100vh;
+  padding: 25px;
+  display: grid;
+  place-items: center;
+  background: var(--cream-100);
+}
+
+.centeredState > div {
+  max-width: 650px;
+  padding: clamp(28px, 7vw, 60px);
+  border-radius: 24px;
+  background: white;
+  box-shadow: var(--shadow);
+}
+
+.centeredState > div > span {
+  font-size: 34px;
+}
+
+.centeredState a {
+  min-height: 48px;
+  margin-top: 10px;
+  padding: 0 18px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 12px;
+  background: var(--brown-950);
+  color: white;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+@media (max-width: 1000px) {
+  .metricGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .adminShell {
+    display: block;
+  }
+
+  .sidebar {
+    min-height: auto;
+    padding: 13px 16px;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .brand {
+    padding: 0;
+  }
+
+  .brand strong {
+    display: none;
+  }
+
+  .sidebar nav {
+    margin-left: auto;
+    display: flex;
+  }
+
+  .sidebar nav a {
+    min-height: 42px;
+    padding: 0 11px;
+  }
+
+  .sidebar nav a:not(.activeNav) {
+    display: none;
+  }
+
+  .signOut {
+    margin: 0 0 0 4px;
+  }
+
+  .adminContent {
+    padding: 28px 18px 50px;
+  }
+
+  .adminHeader {
+    align-items: flex-start;
+  }
+
+  .adminHeader h1 {
+    font-size: 30px;
+  }
+
+  .operationBanner,
+  .foundationPanel {
+    grid-template-columns: 1fr;
+  }
+
+  .metricGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+}
