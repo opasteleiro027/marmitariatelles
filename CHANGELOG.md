@@ -1,5 +1,26 @@
 # Changelog
 
+## 0.7.0 - 2026-07-28
+
+### Adicionado
+
+- Cadastro administrativo específico para tamanhos de marmita, com preço,
+  descrição, limite de proteínas e limite de acompanhamentos.
+- Gestão separada de bases, feijões, proteínas, acompanhamentos e adicionais,
+  incluindo acréscimo de preço, disponibilidade e estado de esgotado.
+- Montador de marmita baseado no projeto do Google Stitch, com sete etapas,
+  resumo em tempo real e observação individual de até 150 caracteres.
+- Snapshots imutáveis de cada escolha da marmita no pedido.
+- Detalhamento das escolhas de cada marmita na lista administrativa de pedidos.
+
+### Alterado
+
+- O total do pedido passa a incluir os acréscimos das opções selecionadas.
+- O servidor valida novamente pertencimento, disponibilidade e limites de todas
+  as escolhas antes de confirmar o pedido.
+- Marmitas configuradas de formas diferentes permanecem como linhas separadas
+  no carrinho e no pedido.
+
 ## 0.6.0 - 2026-07-28
 
 ### Adicionado

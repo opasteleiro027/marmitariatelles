@@ -55,6 +55,33 @@ export function AdminOrderList({
                 <span className={styles.status}>
                   {ORDER_STATUS_LABELS[order.status]}
                 </span>
+                <details className={styles.orderItems}>
+                  <summary>Ver marmitas e escolhas</summary>
+                  <div>
+                    {order.items.map((item) => (
+                      <section key={item.id}>
+                        <header>
+                          <strong>{item.quantity}× {item.name}</strong>
+                          <b>{formatMoney(item.lineTotalInCents)}</b>
+                        </header>
+                        {item.addons.length ? (
+                          <ul>
+                            {item.addons.map((addon, index) => (
+                              <li key={`${addon.groupName}-${addon.name}-${index}`}>
+                                <span>{addon.groupName}</span>
+                                <strong>
+                                  {addon.quantity > 1 ? `${addon.quantity}× ` : ""}
+                                  {addon.name}
+                                </strong>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : null}
+                        {item.notes ? <p>Obs.: {item.notes}</p> : null}
+                      </section>
+                    ))}
+                  </div>
+                </details>
                 {nextStatuses.length ? (
                   <form action={updateOrderStatusAction}>
                     <input type="hidden" name="orderId" value={order.id} />

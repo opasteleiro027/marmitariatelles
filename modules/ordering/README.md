@@ -11,8 +11,10 @@ from the confirmed address.
 Home delivery receives the first available operational slot automatically.
 Pickup keeps the slot as an explicit customer choice.
 
-Customer observations are limited to 500 characters and stored on the first
-order-item snapshot.
+General customer observations are limited to 500 characters. A configured
+marmita also carries its own observation of up to 150 characters. Every
+selected base, bean, protein, side and extra is validated against its product
+group and copied to an immutable order-item addon snapshot.
 
 The protected admin pulse exposes only a change marker, total count and latest
 order identifier. The admin interface polls it every five seconds, refreshes

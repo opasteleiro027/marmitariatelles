@@ -107,8 +107,8 @@ test("public navigation uses independent customer routes", async () => {
   assert.doesNotMatch(navigation, /href:\s*["']#/);
 });
 
-test("ships the Stitch menu hero and keeps the builder category-driven", async () => {
-  const [hero, builder] = await Promise.all([
+test("ships the Stitch menu hero and the seven-step marmita builder", async () => {
+  const [hero, builder, configurator, configuratorParts] = await Promise.all([
     readFile(
       new URL("../public/images/menu-builder-hero.png", import.meta.url),
     ),
@@ -119,10 +119,27 @@ test("ships the Stitch menu hero and keeps the builder category-driven", async (
       ),
       "utf8",
     ),
+    readFile(
+      new URL(
+        "../modules/storefront/ui/marmita-configurator/MarmitaConfigurator.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/storefront/ui/marmita-configurator/MarmitaConfiguratorParts.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
   ]);
   assert.ok(hero.length > 1_000_000);
   assert.match(builder, /categories\.map/);
-  assert.match(builder, /marmitaria-telles-order-notes/);
+  assert.match(builder, /MarmitaConfigurator/);
+  assert.match(configurator, /Escolha o tamanho/);
+  assert.match(configurator, /Alguma observação/);
+  assert.match(configuratorParts, /Complete sua marmita/);
 });
 
 test("uses only the site switch to release or block orders", () => {
@@ -356,9 +373,49 @@ test("normalizes checkout input and combines repeated products", () => {
     ],
   });
   assert.equal(request.customer.phone, "27999999999");
-  assert.deepEqual(request.items, [{ productId: "marmita", quantity: 3 }]);
+  assert.deepEqual(request.items, [
+    {
+      productId: "marmita",
+      quantity: 3,
+      notes: null,
+      selections: [],
+    },
+  ]);
   assert.equal(request.changeForInCents, 5000);
   assert.equal(request.notes, "Sem cebola, por favor.");
+});
+
+test("keeps differently configured marmitas as separate order lines", () => {
+  const request = parseOrderRequest({
+    idempotencyKey: "tentativa-montagem",
+    customer: { name: "Cliente", phone: "27999999999" },
+    fulfillment: "pickup",
+    deliverySlotId: "slot-1",
+    paymentMethodId: "cash",
+    items: [
+      {
+        productId: "marmita-media",
+        quantity: 1,
+        notes: "Sem cebola",
+        selections: [
+          { optionId: "base-arroz-branco", quantity: 1 },
+          { optionId: "protein-frango", quantity: 1 },
+        ],
+      },
+      {
+        productId: "marmita-media",
+        quantity: 1,
+        notes: "",
+        selections: [
+          { optionId: "base-arroz-integral", quantity: 1 },
+          { optionId: "protein-bife", quantity: 1 },
+        ],
+      },
+    ],
+  });
+  assert.equal(request.items.length, 2);
+  assert.equal(request.items[0].notes, "Sem cebola");
+  assert.equal(request.items[1].selections[1].optionId, "protein-bife");
 });
 
 test("limits the customer order observation to 500 characters", () => {

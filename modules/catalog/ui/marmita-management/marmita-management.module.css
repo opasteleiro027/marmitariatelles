@@ -1,0 +1,226 @@
+.section {
+  margin-top: 24px;
+  padding: clamp(22px, 4vw, 40px);
+  border: 1px solid #e5dbcf;
+  border-radius: 22px;
+  background: white;
+}
+
+.heading,
+.stepTitle,
+.card summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.heading {
+  align-items: end;
+}
+
+.heading p {
+  margin: 0 0 6px;
+  color: var(--orange-700);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.heading h2,
+.stepTitle h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+}
+
+.heading h2 {
+  font-size: 30px;
+}
+
+.heading span,
+.stepTitle p {
+  display: block;
+  margin-top: 6px;
+  color: #745f54;
+  font-size: 13px;
+}
+
+.heading b {
+  padding: 8px 11px;
+  border-radius: 999px;
+  background: #ffede7;
+  color: #9e3d00;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.step {
+  margin-top: 30px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.stepTitle {
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.stepTitle > span {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  flex: 0 0 32px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--orange-700);
+  color: white;
+  font-weight: 900;
+}
+
+.stepTitle h3 {
+  font-size: 20px;
+}
+
+.stepTitle p {
+  margin: 3px 0 0;
+}
+
+.createPanel,
+.card,
+.optionRow {
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fffdf8;
+}
+
+.createPanel summary,
+.card summary {
+  min-height: 56px;
+  padding: 0 16px;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 850;
+}
+
+.card summary span {
+  display: grid;
+  gap: 2px;
+}
+
+.card summary small {
+  color: #806d63;
+  font-weight: 600;
+}
+
+.card summary b {
+  color: var(--orange-700);
+  font-size: 13px;
+}
+
+.cards,
+.optionList {
+  display: grid;
+  gap: 10px;
+}
+
+.form,
+.optionForm,
+.optionRow {
+  display: grid;
+  align-items: end;
+  gap: 12px;
+}
+
+.form {
+  padding: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+}
+
+.optionForm {
+  padding: 16px;
+  grid-template-columns: minmax(180px, 2fr) minmax(120px, 1fr) 130px;
+  border-top: 1px solid var(--line);
+}
+
+.optionList {
+  margin-top: 12px;
+}
+
+.optionRow {
+  margin: 0;
+  padding: 12px;
+  grid-template-columns: minmax(180px, 2fr) 130px auto auto 90px;
+}
+
+.form label,
+.optionForm label,
+.optionRow label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.form input,
+.optionForm input,
+.optionRow input {
+  width: 100%;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid #d9cbbd;
+  border-radius: 9px;
+  background: white;
+  color: inherit;
+  font: inherit;
+}
+
+.form .wide {
+  grid-column: 1 / -1;
+}
+
+.form .check,
+.optionRow .check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.form .check input,
+.optionRow .check input {
+  width: 17px;
+  min-height: 17px;
+}
+
+.form button,
+.optionForm button,
+.optionRow button {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--brown-950);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+@media (max-width: 800px) {
+  .heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .form,
+  .optionForm,
+  .optionRow {
+    grid-template-columns: 1fr;
+  }
+
+  .form .wide {
+    grid-column: auto;
+  }
+}

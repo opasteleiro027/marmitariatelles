@@ -2,39 +2,61 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { OrderingDrawer } from "@/modules/ordering/ui/ordering-drawer/OrderingDrawer";
-import type { CartItem } from "@/modules/ordering/ui/ordering-drawer/ordering.types";
+import {
+  cartItemUnitPrice,
+  type CartItem,
+} from "@/modules/ordering/ui/ordering-drawer/ordering.types";
 import type {
   StorefrontProduct,
   StorefrontSnapshot,
 } from "../../domain/storefront.types";
 import { formatMoney } from "../../domain/format-money";
+import { MarmitaConfigurator } from "../marmita-configurator/MarmitaConfigurator";
 import { MenuCategory } from "../menu-category/MenuCategory";
 import { MenuOrderSummary } from "../menu-order-summary/MenuOrderSummary";
 import { SiteHeader } from "../site-header/SiteHeader";
 import styles from "./menu-builder.module.css";
 
-const CART_KEY = "marmitaria-telles-cart";
-const NOTES_KEY = "marmitaria-telles-order-notes";
+const CART_KEY = "marmitaria-telles-cart-v2";
+
+type StoredCartItem = {
+  lineId: string;
+  productId: string;
+  quantity: number;
+  notes?: string;
+  selections?: Array<{ optionId: string; quantity: number }>;
+};
 
 export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
   const [items, setItems] = useState<CartItem[]>([]);
-  const [notes, setNotes] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [cartLoaded, setCartLoaded] = useState(false);
+  const sizeIds = useMemo(
+    () => new Set(snapshot.marmitaBuilder.sizes.map((size) => size.id)),
+    [snapshot.marmitaBuilder.sizes],
+  );
+  const regularProducts = useMemo(
+    () => snapshot.products.filter((product) => !sizeIds.has(product.id)),
+    [sizeIds, snapshot.products],
+  );
   const categories = useMemo(
-    () => Array.from(new Set(snapshot.products.map((product) => product.category))),
-    [snapshot.products],
+    () => Array.from(new Set(regularProducts.map((product) => product.category))),
+    [regularProducts],
   );
   const quantities = useMemo(
-    () => new Map(items.map((item) => [item.product.id, item.quantity])),
+    () =>
+      new Map(
+        items
+          .filter((item) => !item.selections.length)
+          .map((item) => [item.product.id, item.quantity]),
+      ),
     [items],
   );
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
-  const subtotal = items.reduce((total, item) => {
-    const price =
-      item.product.promotionalPriceInCents ?? item.product.priceInCents;
-    return total + price * item.quantity;
-  }, 0);
+  const subtotal = items.reduce(
+    (total, item) => total + cartItemUnitPrice(item) * item.quantity,
+    0,
+  );
   const canCheckout =
     snapshot.ordersOpen &&
     itemCount > 0 &&
@@ -45,28 +67,16 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
       try {
         const stored = JSON.parse(
           window.localStorage.getItem(CART_KEY) ?? "[]",
-        ) as Array<{ productId: string; quantity: number }>;
-        setItems(
-          stored.flatMap((entry) => {
-            const product = snapshot.products.find(
-              (candidate) =>
-                candidate.id === entry.productId && candidate.available,
-            );
-            return product && Number.isInteger(entry.quantity) && entry.quantity > 0
-              ? [{ product, quantity: Math.min(entry.quantity, 99) }]
-              : [];
-          }),
-        );
-        setNotes(window.localStorage.getItem(NOTES_KEY) ?? "");
+        ) as StoredCartItem[];
+        setItems(restoreCart(stored, snapshot));
       } catch {
         window.localStorage.removeItem(CART_KEY);
-        window.localStorage.removeItem(NOTES_KEY);
       } finally {
         setCartLoaded(true);
       }
     }, 0);
     return () => window.clearTimeout(hydration);
-  }, [snapshot.products]);
+  }, [snapshot]);
 
   useEffect(() => {
     if (!cartLoaded) return;
@@ -74,33 +84,53 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
       CART_KEY,
       JSON.stringify(
         items.map((item) => ({
+          lineId: item.lineId,
           productId: item.product.id,
           quantity: item.quantity,
+          notes: item.notes,
+          selections: item.selections.map((selection) => ({
+            optionId: selection.optionId,
+            quantity: selection.quantity,
+          })),
         })),
       ),
     );
-    window.localStorage.setItem(NOTES_KEY, notes);
-  }, [cartLoaded, items, notes]);
+  }, [cartLoaded, items]);
 
-  function changeQuantity(product: StorefrontProduct, quantity: number) {
+  function changeRegularQuantity(product: StorefrontProduct, quantity: number) {
     setItems((current) => {
+      const lineId = `product:${product.id}`;
       if (quantity < 1) {
-        return current.filter((item) => item.product.id !== product.id);
+        return current.filter((item) => item.lineId !== lineId);
       }
-      const existing = current.some((item) => item.product.id === product.id);
+      const existing = current.some((item) => item.lineId === lineId);
       return existing
         ? current.map((item) =>
-            item.product.id === product.id
+            item.lineId === lineId
               ? { ...item, quantity: Math.min(quantity, 99) }
               : item,
           )
-        : [...current, { product, quantity: 1 }];
+        : [
+            ...current,
+            { lineId, product, quantity: 1, selections: [], notes: "" },
+          ];
     });
+  }
+
+  function changeLineQuantity(lineId: string, quantity: number) {
+    setItems((current) =>
+      quantity < 1
+        ? current.filter((item) => item.lineId !== lineId)
+        : current.map((item) =>
+            item.lineId === lineId
+              ? { ...item, quantity: Math.min(quantity, 99) }
+              : item,
+          ),
+    );
   }
 
   function finishOrder() {
     setItems([]);
-    setNotes("");
   }
 
   return (
@@ -118,10 +148,10 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
         <div className={styles.heroShade} />
         <div className={styles.heroCopy}>
           <span>Cardápio de domingo</span>
-          <h1>Monte seu pedido do seu jeito</h1>
+          <h1>Monte sua marmita do seu jeito</h1>
           <p>
-            Escolha cada item com carinho e confira o valor em tempo real.
-            Comida fresca, caseira e feita no dia.
+            Escolha cada ingrediente com carinho para o seu almoço de domingo.
+            Ingredientes frescos e tempero caseiro.
           </p>
           <div>
             <small>{snapshot.deliveryWindowLabel}</small>
@@ -137,44 +167,45 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
         </div>
       ) : null}
 
-      <div className={styles.layout}>
-        <div className={styles.builder}>
-          {categories.map((category, index) => (
-            <MenuCategory
-              index={index + 1}
-              key={category}
-              name={category}
-              onQuantityChange={changeQuantity}
-              orderingEnabled={snapshot.ordersOpen}
-              products={snapshot.products.filter(
-                (product) => product.category === category,
-              )}
-              quantities={quantities}
-            />
-          ))}
-
-          <section className={styles.notes} aria-labelledby="order-notes-title">
-            <div>
-              <span aria-hidden="true">{categories.length + 1}</span>
-              <h2 id="order-notes-title">Alguma observação?</h2>
-            </div>
-            <textarea
-              maxLength={500}
-              onChange={(event) => setNotes(event.target.value)}
-              placeholder="Ex.: retirar cebola, caprichar na farofa..."
-              value={notes}
-            />
-            <small>{notes.length}/500</small>
-          </section>
-        </div>
-
-        <MenuOrderSummary
-          items={items}
-          minimumOrderInCents={snapshot.minimumOrderInCents}
-          onCheckout={() => setDrawerOpen(true)}
+      <section className={styles.builderArea}>
+        <MarmitaConfigurator
+          builder={snapshot.marmitaBuilder}
+          onAdd={(item) => setItems((current) => [...current, item])}
           orderingEnabled={snapshot.ordersOpen}
         />
-      </div>
+      </section>
+
+      {categories.length ? (
+        <section className={styles.otherProducts}>
+          <div className={styles.otherHeading}>
+            <span>Também disponíveis</span>
+            <h2>Bebidas e acompanhamentos extras</h2>
+          </div>
+          <div className={styles.otherLayout}>
+            <div>
+              {categories.map((category, index) => (
+                <MenuCategory
+                  index={snapshot.marmitaBuilder.groups.length + index + 3}
+                  key={category}
+                  name={category}
+                  onQuantityChange={changeRegularQuantity}
+                  orderingEnabled={snapshot.ordersOpen}
+                  products={regularProducts.filter(
+                    (product) => product.category === category,
+                  )}
+                  quantities={quantities}
+                />
+              ))}
+            </div>
+            <MenuOrderSummary
+              items={items}
+              minimumOrderInCents={snapshot.minimumOrderInCents}
+              onCheckout={() => setDrawerOpen(true)}
+              orderingEnabled={snapshot.ordersOpen}
+            />
+          </div>
+        </section>
+      ) : null}
 
       <footer className={styles.footer}>
         <strong>{snapshot.businessName}</strong>
@@ -205,16 +236,56 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
           items={items}
           onClose={() => setDrawerOpen(false)}
           onOrderComplete={finishOrder}
-          onQuantityChange={(productId, quantity) => {
-            const product = snapshot.products.find(
-              (candidate) => candidate.id === productId,
-            );
-            if (product) changeQuantity(product, quantity);
-          }}
-          orderNotes={notes}
+          onQuantityChange={changeLineQuantity}
           snapshot={snapshot}
         />
       ) : null}
     </main>
   );
+}
+
+function restoreCart(
+  stored: StoredCartItem[],
+  snapshot: StorefrontSnapshot,
+): CartItem[] {
+  return stored.flatMap((entry) => {
+    const product = snapshot.products.find(
+      (candidate) => candidate.id === entry.productId && candidate.available,
+    );
+    if (!product || !Number.isInteger(entry.quantity) || entry.quantity < 1) {
+      return [];
+    }
+    const selections = (entry.selections ?? []).flatMap((storedSelection) => {
+      const group = snapshot.marmitaBuilder.groups.find((candidate) =>
+        candidate.options.some(
+          (option) =>
+            option.id === storedSelection.optionId && option.available,
+        ),
+      );
+      const option = group?.options.find(
+        (candidate) => candidate.id === storedSelection.optionId,
+      );
+      return group && option && storedSelection.quantity > 0
+        ? [
+            {
+              groupId: group.id,
+              groupName: group.name,
+              optionId: option.id,
+              optionName: option.name,
+              additionalPriceInCents: option.additionalPriceInCents,
+              quantity: Math.min(storedSelection.quantity, 10),
+            },
+          ]
+        : [];
+    });
+    return [
+      {
+        lineId: entry.lineId || crypto.randomUUID(),
+        product,
+        quantity: Math.min(entry.quantity, 99),
+        selections,
+        notes: String(entry.notes ?? "").slice(0, 150),
+      },
+    ];
+  });
 }

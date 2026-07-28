@@ -30,7 +30,7 @@ limites de responsabilidade.
 | --- | --- | --- |
 | `/admin` | `admin-overview` | métricas, produtos ativos e estado do site |
 | `/admin/pedidos` | `admin-order-list` | pedidos e métricas |
-| `/admin/cardapio` | `catalog-management` | categorias e produtos |
+| `/admin/cardapio` | `marmita-management`, `catalog-management` | tamanhos, etapas, opções e outros produtos |
 | `/admin/areas-entrega` | `delivery-area-management` | bairros e taxas |
 | `/admin/configuracoes` | `business-settings-management` | dados do estabelecimento |
 
@@ -44,7 +44,7 @@ uma das telas.
 | Rota | Peça principal | Responsabilidade |
 | --- | --- | --- |
 | `/` | `StorefrontPage` | apresentação e entrada da experiência |
-| `/cardapio` | `menu-builder` | montagem dinâmica, rascunho e abertura do checkout |
+| `/cardapio` | `menu-builder`, `marmita-configurator` | montagem por etapas, rascunho e abertura do checkout |
 | `/como-funciona` | `public-content-page` | explicação do fluxo do pedido |
 | `/contato` | `public-content-page` | WhatsApp, endereço e atendimento |
 | `/pedido/[token]` | tracking | acompanhamento privado do pedido |
@@ -55,6 +55,7 @@ uma das telas.
 | --- | --- | --- |
 | `modules/storefront/ui/site-header/` | navegação entre telas públicas | Next Link |
 | `modules/storefront/ui/menu-builder/` | estado e composição do montador | category, summary, ordering |
+| `modules/storefront/ui/marmita-configurator/` | tamanho, ingredientes, limites, observação e total ao vivo | snapshot, cart items |
 | `modules/storefront/ui/menu-category/` | etapa e controles de produtos | snapshot, moeda |
 | `modules/storefront/ui/menu-order-summary/` | resumo fixo e pedido mínimo | cart items, moeda |
 | `modules/storefront/ui/public-content-page/` | shell das telas informativas | site-header |

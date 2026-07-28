@@ -1,6 +1,9 @@
 "use client";
 
-import type { CartItem } from "@/modules/ordering/ui/ordering-drawer/ordering.types";
+import {
+  cartItemUnitPrice,
+  type CartItem,
+} from "@/modules/ordering/ui/ordering-drawer/ordering.types";
 import { formatMoney } from "../../domain/format-money";
 import styles from "./menu-order-summary.module.css";
 
@@ -16,9 +19,7 @@ export function MenuOrderSummary({
   onCheckout: () => void;
 }) {
   const subtotal = items.reduce((total, item) => {
-    const price =
-      item.product.promotionalPriceInCents ?? item.product.priceInCents;
-    return total + price * item.quantity;
+    return total + cartItemUnitPrice(item) * item.quantity;
   }, 0);
   const missingMinimum = Math.max(0, minimumOrderInCents - subtotal);
 
@@ -35,14 +36,18 @@ export function MenuOrderSummary({
       {items.length ? (
         <div className={styles.items}>
           {items.map((item) => (
-            <div key={item.product.id}>
+            <div key={item.lineId}>
               <span>{item.quantity}× {item.product.name}</span>
               <strong>
-                {formatMoney(
-                  (item.product.promotionalPriceInCents ??
-                    item.product.priceInCents) * item.quantity,
-                )}
+                {formatMoney(cartItemUnitPrice(item) * item.quantity)}
               </strong>
+              {item.selections.length ? (
+                <small>
+                  {item.selections
+                    .map((selection) => selection.optionName)
+                    .join(", ")}
+                </small>
+              ) : null}
             </div>
           ))}
         </div>

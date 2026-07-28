@@ -37,7 +37,13 @@ export function StorefrontCatalog({
               candidate.id === entry.productId && candidate.available,
           );
           return product && Number.isInteger(entry.quantity) && entry.quantity > 0
-            ? [{ product, quantity: Math.min(entry.quantity, 99) }]
+            ? [{
+                lineId: `product:${product.id}`,
+                product,
+                quantity: Math.min(entry.quantity, 99),
+                selections: [],
+                notes: "",
+              }]
             : [];
         }),
       );
@@ -73,17 +79,26 @@ export function StorefrontCatalog({
             : item,
         );
       }
-      return [...current, { product, quantity: 1 }];
+      return [
+        ...current,
+        {
+          lineId: `product:${product.id}`,
+          product,
+          quantity: 1,
+          selections: [],
+          notes: "",
+        },
+      ];
     });
     setDrawerOpen(true);
   }
 
-  function changeQuantity(productId: string, quantity: number) {
+  function changeQuantity(lineId: string, quantity: number) {
     setItems((current) =>
       quantity < 1
-        ? current.filter((item) => item.product.id !== productId)
+        ? current.filter((item) => item.lineId !== lineId)
         : current.map((item) =>
-            item.product.id === productId ? { ...item, quantity } : item,
+            item.lineId === lineId ? { ...item, quantity } : item,
           ),
     );
   }

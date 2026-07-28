@@ -86,74 +86,40 @@
   font-size: 12px;
 }
 
-.layout {
+.builderArea,
+.otherProducts {
   width: min(1200px, calc(100% - 40px));
   margin: 38px auto 90px;
+}
+
+.otherProducts {
+  padding-top: 35px;
+  border-top: 1px solid #f0ddd6;
+}
+
+.otherHeading {
+  margin-bottom: 24px;
+}
+
+.otherHeading span {
+  color: #9e3d00;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.otherHeading h2 {
+  margin: 7px 0 0;
+  font-family: var(--font-heading);
+  font-size: 26px;
+}
+
+.otherLayout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 350px;
   gap: 30px;
   align-items: start;
-}
-
-.builder {
-  min-width: 0;
-}
-
-.notes {
-  position: relative;
-  margin-top: 42px;
-}
-
-.notes > div {
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.notes > div span {
-  width: 25px;
-  height: 25px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: #9e3d00;
-  color: white;
-  font-size: 12px;
-  font-weight: 900;
-}
-
-.notes h2 {
-  margin: 0;
-  font-family: var(--font-heading);
-  font-size: 22px;
-}
-
-.notes textarea {
-  width: 100%;
-  min-height: 115px;
-  padding: 16px;
-  resize: vertical;
-  border: 1px solid #e0c0b2;
-  border-radius: 13px;
-  background: white;
-  color: #2b1613;
-  font: inherit;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.notes textarea:focus {
-  border-color: #c64f00;
-  outline: 2px solid rgb(198 79 0 / 14%);
-}
-
-.notes > small {
-  position: absolute;
-  right: 10px;
-  bottom: 9px;
-  color: #8c7166;
-  font-size: 9px;
 }
 
 .footer {
@@ -177,7 +143,7 @@
 }
 
 @media (max-width: 940px) {
-  .layout {
+  .otherLayout {
     grid-template-columns: 1fr;
   }
 
@@ -263,7 +229,8 @@
   }
 
   .closedNotice,
-  .layout {
+  .builderArea,
+  .otherProducts {
     width: min(100% - 32px, 1200px);
   }
 
@@ -272,12 +239,9 @@
     flex-direction: column;
   }
 
-  .layout {
+  .builderArea,
+  .otherProducts {
     margin-top: 30px;
-  }
-
-  .notes h2 {
-    font-size: 18px;
   }
 
   .footer {

@@ -130,6 +130,61 @@ async function seedFoundation(database) {
       `;
     }
 
+    for (const group of seedData.marmitaBuilder.groups) {
+      await transaction`
+        INSERT INTO addon_groups
+          (id, name, builder_role, required, minimum_selections,
+            maximum_selections, selection_type, active)
+        VALUES
+          (${group.id}, ${group.name}, ${group.role}, ${group.required},
+            ${group.minimumSelections}, ${group.maximumSelections},
+            ${group.selectionType}, TRUE)
+        ON CONFLICT (id) DO UPDATE SET
+          name = EXCLUDED.name,
+          builder_role = EXCLUDED.builder_role,
+          required = EXCLUDED.required,
+          minimum_selections = EXCLUDED.minimum_selections,
+          maximum_selections = EXCLUDED.maximum_selections,
+          selection_type = EXCLUDED.selection_type,
+          active = TRUE
+      `;
+
+      for (const option of group.options) {
+        await transaction`
+          INSERT INTO addon_options
+            (id, group_id, name, additional_price_cents, active, sold_out,
+              display_order)
+          VALUES
+            (${option.id}, ${group.id}, ${option.name},
+              ${option.additionalPriceCents}, TRUE, FALSE,
+              ${option.displayOrder})
+          ON CONFLICT (id) DO NOTHING
+        `;
+      }
+    }
+
+    for (const [productId, limits] of Object.entries(
+      seedData.marmitaBuilder.sizeLimits,
+    )) {
+      for (const group of seedData.marmitaBuilder.groups) {
+        const maximumSelections =
+          group.role === "protein"
+            ? limits.protein
+            : group.role === "side"
+              ? limits.side
+              : group.maximumSelections;
+        await transaction`
+          INSERT INTO product_addon_groups
+            (product_id, group_id, minimum_selections, maximum_selections,
+              display_order)
+          VALUES
+            (${productId}, ${group.id}, ${group.minimumSelections},
+              ${maximumSelections}, ${group.displayOrder})
+          ON CONFLICT (product_id, group_id) DO NOTHING
+        `;
+      }
+    }
+
     const [operationalMenu] = await transaction`
       SELECT id, sales_date
       FROM sales_menus

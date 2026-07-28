@@ -21,7 +21,12 @@ export type ConfirmOrderRequest = {
     state: string;
     referencePoint: string | null;
   } | null;
-  items: Array<{ productId: string; quantity: number }>;
+  items: Array<{
+    productId: string;
+    quantity: number;
+    notes: string | null;
+    selections: Array<{ optionId: string; quantity: number }>;
+  }>;
 };
 
 export class OrderRequestError extends Error {
@@ -65,7 +70,10 @@ export function parseOrderRequest(input: unknown): ConfirmOrderRequest {
   if (!rawItems.length || rawItems.length > 40) {
     throw new OrderRequestError("Escolha pelo menos um produto.");
   }
-  const quantities = new Map<string, number>();
+  const parsedItems = new Map<
+    string,
+    ConfirmOrderRequest["items"][number]
+  >();
   for (const rawItem of rawItems) {
     const item = asObject(rawItem, "Há um item inválido no pedido.");
     const productId = requiredText(
@@ -77,13 +85,58 @@ export function parseOrderRequest(input: unknown): ConfirmOrderRequest {
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
       throw new OrderRequestError("A quantidade de um produto é inválida.");
     }
-    quantities.set(productId, (quantities.get(productId) ?? 0) + quantity);
+    const notes = optionalText(item.notes, 150);
+    const rawSelections = Array.isArray(item.selections) ? item.selections : [];
+    if (rawSelections.length > 40) {
+      throw new OrderRequestError("Há opções demais em uma marmita.");
+    }
+    const selectedQuantities = new Map<string, number>();
+    for (const rawSelection of rawSelections) {
+      const selection = asObject(
+        rawSelection,
+        "Há uma opção inválida na marmita.",
+      );
+      const optionId = requiredText(
+        selection.optionId,
+        "Há uma opção inválida na marmita.",
+        120,
+      );
+      const selectedQuantity = Number(selection.quantity);
+      if (
+        !Number.isInteger(selectedQuantity) ||
+        selectedQuantity < 1 ||
+        selectedQuantity > 10
+      ) {
+        throw new OrderRequestError("A quantidade de uma opção é inválida.");
+      }
+      selectedQuantities.set(
+        optionId,
+        (selectedQuantities.get(optionId) ?? 0) + selectedQuantity,
+      );
+    }
+    const selections = Array.from(
+      selectedQuantities,
+      ([optionId, selectedQuantity]) => {
+        if (selectedQuantity > 10) {
+          throw new OrderRequestError("A quantidade de uma opção é inválida.");
+        }
+        return { optionId, quantity: selectedQuantity };
+      },
+    ).sort((left, right) => left.optionId.localeCompare(right.optionId));
+    const signature = JSON.stringify({ productId, notes, selections });
+    const existing = parsedItems.get(signature);
+    parsedItems.set(signature, {
+      productId,
+      quantity: (existing?.quantity ?? 0) + quantity,
+      notes,
+      selections,
+    });
   }
-  const items = Array.from(quantities, ([productId, quantity]) => {
-    if (quantity > 99) {
+  const items = Array.from(parsedItems.values()).map((item) => {
+    if (item.quantity > 99) {
       throw new OrderRequestError("A quantidade de um produto é inválida.");
     }
-    return { productId, quantity };
+    return item;
   });
 
   const deliveryAreaId = optionalText(root.deliveryAreaId, 120);

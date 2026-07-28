@@ -89,6 +89,95 @@
       "displayOrder": 1
     }
   ],
+  "marmitaBuilder": {
+    "groups": [
+      {
+        "id": "builder-base",
+        "role": "base",
+        "name": "Escolha sua base",
+        "required": true,
+        "minimumSelections": 1,
+        "maximumSelections": 1,
+        "selectionType": "single",
+        "displayOrder": 1,
+        "options": [
+          { "id": "base-arroz-branco", "name": "Arroz branco", "additionalPriceCents": 0, "displayOrder": 1 },
+          { "id": "base-arroz-integral", "name": "Arroz integral", "additionalPriceCents": 0, "displayOrder": 2 },
+          { "id": "base-sem-arroz", "name": "Sem arroz", "additionalPriceCents": 0, "displayOrder": 3 }
+        ]
+      },
+      {
+        "id": "builder-beans",
+        "role": "beans",
+        "name": "Escolha seu feijão",
+        "required": true,
+        "minimumSelections": 1,
+        "maximumSelections": 1,
+        "selectionType": "single",
+        "displayOrder": 2,
+        "options": [
+          { "id": "beans-carioca", "name": "Feijão carioca", "additionalPriceCents": 0, "displayOrder": 1 },
+          { "id": "beans-preto", "name": "Feijão preto", "additionalPriceCents": 0, "displayOrder": 2 },
+          { "id": "beans-tropeiro", "name": "Feijão tropeiro", "additionalPriceCents": 200, "displayOrder": 3 },
+          { "id": "beans-sem-feijao", "name": "Sem feijão", "additionalPriceCents": 0, "displayOrder": 4 }
+        ]
+      },
+      {
+        "id": "builder-protein",
+        "role": "protein",
+        "name": "Agora escolha a proteína",
+        "required": true,
+        "minimumSelections": 1,
+        "maximumSelections": 2,
+        "selectionType": "multiple",
+        "displayOrder": 3,
+        "options": [
+          { "id": "protein-frango", "name": "Frango grelhado", "additionalPriceCents": 0, "displayOrder": 1 },
+          { "id": "protein-bife", "name": "Bife acebolado", "additionalPriceCents": 450, "displayOrder": 2 },
+          { "id": "protein-pernil", "name": "Pernil assado", "additionalPriceCents": 300, "displayOrder": 3 },
+          { "id": "protein-ovo", "name": "Ovo frito", "additionalPriceCents": 0, "displayOrder": 4 }
+        ]
+      },
+      {
+        "id": "builder-side",
+        "role": "side",
+        "name": "Acompanhamentos",
+        "required": true,
+        "minimumSelections": 1,
+        "maximumSelections": 4,
+        "selectionType": "multiple",
+        "displayOrder": 4,
+        "options": [
+          { "id": "side-macarrao", "name": "Macarrão", "additionalPriceCents": 0, "displayOrder": 1 },
+          { "id": "side-pure", "name": "Purê de batata", "additionalPriceCents": 0, "displayOrder": 2 },
+          { "id": "side-farofa", "name": "Farofa", "additionalPriceCents": 0, "displayOrder": 3 },
+          { "id": "side-batata", "name": "Batata frita", "additionalPriceCents": 0, "displayOrder": 4 },
+          { "id": "side-legumes", "name": "Legumes", "additionalPriceCents": 0, "displayOrder": 5 },
+          { "id": "side-couve", "name": "Couve refogada", "additionalPriceCents": 0, "displayOrder": 6 },
+          { "id": "side-salada", "name": "Salada", "additionalPriceCents": 0, "displayOrder": 7 }
+        ]
+      },
+      {
+        "id": "builder-extra",
+        "role": "extra",
+        "name": "Adicionais opcionais",
+        "required": false,
+        "minimumSelections": 0,
+        "maximumSelections": 10,
+        "selectionType": "multiple",
+        "displayOrder": 5,
+        "options": [
+          { "id": "extra-ovo", "name": "Ovo frito", "additionalPriceCents": 300, "displayOrder": 1 },
+          { "id": "extra-bacon", "name": "Bacon", "additionalPriceCents": 400, "displayOrder": 2 }
+        ]
+      }
+    ],
+    "sizeLimits": {
+      "marmita-pequena": { "protein": 1, "side": 2 },
+      "marmita-media": { "protein": 1, "side": 3 },
+      "marmita-grande": { "protein": 2, "side": 4 }
+    }
+  },
   "paymentMethods": [
     {
       "id": "payment-cash",

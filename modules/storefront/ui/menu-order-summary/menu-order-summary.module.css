@@ -55,6 +55,13 @@
   border-bottom: 1px solid #f2e4df;
   color: #594238;
   font-size: 11px;
+  flex-wrap: wrap;
+}
+
+.items small {
+  flex-basis: 100%;
+  color: #806d63;
+  line-height: 1.4;
 }
 
 .items strong {

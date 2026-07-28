@@ -5,7 +5,11 @@ import { AddressLocationFields } from "@/modules/address-location/ui/address-loc
 import { selectAutomaticDeliverySlot } from "@/modules/ordering/domain/select-automatic-delivery-slot";
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type { StorefrontSnapshot } from "@/modules/storefront/domain/storefront.types";
-import type { CartItem, OrderSuccess } from "./ordering.types";
+import {
+  cartItemUnitPrice,
+  type CartItem,
+  type OrderSuccess,
+} from "./ordering.types";
 import styles from "./ordering-drawer.module.css";
 
 export function OrderingDrawer({
@@ -18,7 +22,7 @@ export function OrderingDrawer({
 }: {
   snapshot: StorefrontSnapshot;
   items: CartItem[];
-  onQuantityChange: (productId: string, quantity: number) => void;
+  onQuantityChange: (lineId: string, quantity: number) => void;
   onClose: () => void;
   onOrderComplete: () => void;
   orderNotes?: string;
@@ -38,9 +42,7 @@ export function OrderingDrawer({
   const subtotal = useMemo(
     () =>
       items.reduce((total, item) => {
-        const price =
-          item.product.promotionalPriceInCents ?? item.product.priceInCents;
-        return total + price * item.quantity;
+        return total + cartItemUnitPrice(item) * item.quantity;
       }, 0),
     [items],
   );
@@ -103,6 +105,11 @@ export function OrderingDrawer({
           items: items.map((item) => ({
             productId: item.product.id,
             quantity: item.quantity,
+            notes: item.notes,
+            selections: item.selections.map((selection) => ({
+              optionId: selection.optionId,
+              quantity: selection.quantity,
+            })),
           })),
         }),
       });
@@ -187,21 +194,27 @@ export function OrderingDrawer({
           <form onSubmit={submitOrder}>
             <div className={styles.items}>
               {items.map((item) => {
-                const price =
-                  item.product.promotionalPriceInCents ??
-                  item.product.priceInCents;
+                const price = cartItemUnitPrice(item);
                 return (
-                  <article key={item.product.id}>
+                  <article key={item.lineId}>
                     <div>
                       <strong>{item.product.name}</strong>
                       <small>{formatMoney(price)} cada</small>
+                      {item.selections.length ? (
+                        <small>
+                          {item.selections
+                            .map((selection) => selection.optionName)
+                            .join(", ")}
+                        </small>
+                      ) : null}
+                      {item.notes ? <small>Obs.: {item.notes}</small> : null}
                     </div>
                     <div className={styles.quantity}>
                       <button
                         type="button"
                         aria-label={`Diminuir ${item.product.name}`}
                         onClick={() =>
-                          onQuantityChange(item.product.id, item.quantity - 1)
+                          onQuantityChange(item.lineId, item.quantity - 1)
                         }
                       >
                         −
@@ -211,7 +224,7 @@ export function OrderingDrawer({
                         type="button"
                         aria-label={`Aumentar ${item.product.name}`}
                         onClick={() =>
-                          onQuantityChange(item.product.id, item.quantity + 1)
+                          onQuantityChange(item.lineId, item.quantity + 1)
                         }
                       >
                         +

@@ -18,6 +18,18 @@ export type AdminOrder = {
   createdAt: string;
   itemCount: number;
   paymentLabel: string;
+  items: Array<{
+    id: string;
+    name: string;
+    quantity: number;
+    notes: string | null;
+    lineTotalInCents: number;
+    addons: Array<{
+      groupName: string;
+      name: string;
+      quantity: number;
+    }>;
+  }>;
 };
 
 export type AdminOrderSnapshot = {
@@ -96,6 +108,43 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
     ),
     getAdminOrderMetrics(),
   ]);
+  const itemRows = orders.length
+    ? await sql.unsafe<
+        Array<{
+          id: string;
+          order_id: string;
+          product_name_snapshot: string;
+          quantity: number;
+          notes: string | null;
+          line_total_cents: number;
+          addons: Array<{
+            groupName: string;
+            name: string;
+            quantity: number;
+          }>;
+        }>
+      >(
+        `SELECT oi.id, oi.order_id, oi.product_name_snapshot, oi.quantity,
+                oi.notes, oi.line_total_cents,
+                COALESCE(
+                  JSON_AGG(
+                    JSON_BUILD_OBJECT(
+                      'groupName', oia.group_name_snapshot,
+                      'name', oia.addon_name_snapshot,
+                      'quantity', oia.quantity
+                    )
+                    ORDER BY oia.group_name_snapshot, oia.addon_name_snapshot
+                  ) FILTER (WHERE oia.id IS NOT NULL),
+                  '[]'::JSON
+                ) AS addons
+         FROM order_items oi
+         LEFT JOIN order_item_addons oia ON oia.order_item_id = oi.id
+         WHERE oi.order_id = ANY($1::TEXT[])
+         GROUP BY oi.id
+         ORDER BY oi.order_id, oi.id`,
+        [orders.map((order) => order.id)],
+      )
+    : [];
   return {
     orders: orders.map((order) => ({
       id: order.id,
@@ -108,6 +157,16 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
       createdAt: order.created_at,
       itemCount: order.item_count,
       paymentLabel: order.payment_label,
+      items: itemRows
+        .filter((item) => item.order_id === order.id)
+        .map((item) => ({
+          id: item.id,
+          name: item.product_name_snapshot,
+          quantity: item.quantity,
+          notes: item.notes,
+          lineTotalInCents: item.line_total_cents,
+          addons: item.addons,
+        })),
     })),
     metrics,
   };

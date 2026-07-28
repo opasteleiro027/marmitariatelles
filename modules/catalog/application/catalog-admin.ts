@@ -16,6 +16,7 @@ export type AdminCatalogProduct = {
   active: boolean;
   soldOut: boolean;
   featured: boolean;
+  builderEnabled: boolean;
 };
 
 export async function getAdminCatalog() {
@@ -38,7 +39,13 @@ export async function getAdminCatalog() {
         p.promotional_price_cents AS "promotionalPriceInCents",
         p.active,
         p.sold_out AS "soldOut",
-        p.featured
+        p.featured,
+        EXISTS (
+          SELECT 1
+          FROM product_addon_groups pag
+          JOIN addon_groups ag ON ag.id = pag.group_id
+          WHERE pag.product_id = p.id AND ag.builder_role IS NOT NULL
+        ) AS "builderEnabled"
       FROM products p
       JOIN categories c ON c.id = p.category_id
       WHERE p.deleted_at IS NULL

@@ -107,6 +107,7 @@ export const orderItemAddons = pgTable(
       .notNull()
       .references(() => orderItems.id),
     addonOptionId: text("addon_option_id"),
+    groupNameSnapshot: text("group_name_snapshot").notNull().default("Opção"),
     addonNameSnapshot: text("addon_name_snapshot").notNull(),
     unitPriceCentsSnapshot: integer("unit_price_cents_snapshot")
       .notNull()

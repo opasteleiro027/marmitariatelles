@@ -9,6 +9,25 @@ export type StorefrontProduct = {
   available: boolean;
 };
 
+export type StorefrontMarmitaOption = {
+  id: string;
+  name: string;
+  additionalPriceInCents: number;
+  available: boolean;
+};
+
+export type StorefrontMarmitaGroup = {
+  id: string;
+  role: "base" | "beans" | "protein" | "side" | "extra";
+  name: string;
+  selectionType: "single" | "multiple";
+  options: StorefrontMarmitaOption[];
+};
+
+export type StorefrontMarmitaSize = StorefrontProduct & {
+  limits: Record<string, { minimum: number; maximum: number }>;
+};
+
 export type StorefrontSnapshot = {
   businessName: string;
   welcomeMessage: string;
@@ -20,6 +39,10 @@ export type StorefrontSnapshot = {
   phone: string;
   address: string;
   products: StorefrontProduct[];
+  marmitaBuilder: {
+    sizes: StorefrontMarmitaSize[];
+    groups: StorefrontMarmitaGroup[];
+  };
   deliveryAreas: Array<{
     id: string;
     label: string;

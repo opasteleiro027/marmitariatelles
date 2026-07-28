@@ -60,6 +60,9 @@ export const productImages = pgTable(
 export const addonGroups = pgTable("addon_groups", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
+  builderRole: text("builder_role", {
+    enum: ["base", "beans", "protein", "side", "extra"],
+  }),
   required: boolean("required").notNull().default(false),
   minimumSelections: integer("minimum_selections").notNull().default(0),
   maximumSelections: integer("maximum_selections").notNull().default(1),
@@ -79,6 +82,7 @@ export const addonOptions = pgTable(
     name: text("name").notNull(),
     additionalPriceCents: integer("additional_price_cents").notNull().default(0),
     active: boolean("active").notNull().default(true),
+    soldOut: boolean("sold_out").notNull().default(false),
     displayOrder: integer("display_order").notNull().default(0),
   },
   (table) => [index("addon_options_group_idx").on(table.groupId)],
@@ -93,6 +97,8 @@ export const productAddonGroups = pgTable(
     groupId: text("group_id")
       .notNull()
       .references(() => addonGroups.id),
+    minimumSelections: integer("minimum_selections"),
+    maximumSelections: integer("maximum_selections"),
     displayOrder: integer("display_order").notNull().default(0),
   },
   (table) => [

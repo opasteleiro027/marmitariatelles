@@ -10,21 +10,14 @@ import {
   OrderRequestError,
   type ConfirmOrderRequest,
 } from "../domain/order-request";
+import {
+  priceOrderItems,
+  type OrderProductRow,
+} from "./price-order-items";
 
 type MenuRow = {
   id: string;
   sales_date: string;
-};
-
-type ProductRow = {
-  product_id: string;
-  name: string;
-  price_cents: number;
-  promotional_price_cents: number | null;
-  stock_quantity: number | null;
-  order_limit: number | null;
-  product_active: boolean;
-  sold_out: boolean;
 };
 
 export type ConfirmedOrder = {
@@ -112,8 +105,10 @@ export async function confirmOrder(
       );
     }
 
-    const productIds = request.items.map((item) => item.productId);
-    const productRows = await sql.unsafe<ProductRow[]>(
+    const productIds = Array.from(
+      new Set(request.items.map((item) => item.productId)),
+    );
+    const productRows = await sql.unsafe<OrderProductRow[]>(
       `SELECT p.id AS product_id, p.name,
               p.price_cents, p.promotional_price_cents,
               p.stock_quantity, p.order_limit,
@@ -130,36 +125,7 @@ export async function confirmOrder(
       );
     }
 
-    const requestedByProduct = new Map(
-      request.items.map((item) => [item.productId, item.quantity]),
-    );
-    const pricedItems = productRows.map((product) => {
-      const quantity = requestedByProduct.get(product.product_id) ?? 0;
-      if (!product.product_active || product.sold_out) {
-        throw new OrderRequestError(
-          `${product.name} está indisponível no momento.`,
-          409,
-        );
-      }
-      if (product.order_limit !== null && quantity > product.order_limit) {
-        throw new OrderRequestError(
-          `O limite de ${product.name} é ${product.order_limit} por pedido.`,
-          409,
-        );
-      }
-      if (product.stock_quantity !== null && quantity > product.stock_quantity) {
-        throw new OrderRequestError(
-          `Não há quantidade suficiente de ${product.name}.`,
-          409,
-        );
-      }
-      return {
-        ...product,
-        quantity,
-        unitPriceInCents:
-          product.promotional_price_cents ?? product.price_cents,
-      };
-    });
+    const pricedItems = await priceOrderItems(sql, request.items, productRows);
 
     const delivery = await validateFulfillment(sql, request, menu.sales_date);
     const paymentRows = await sql.unsafe<
@@ -182,6 +148,7 @@ export async function confirmOrder(
       pricedItems.map((item) => ({
         unitPriceInCents: item.unitPriceInCents,
         quantity: item.quantity,
+        addonTotalInCents: item.addonTotalInCents,
       })),
       delivery.feeInCents,
     );
@@ -247,22 +214,40 @@ export async function confirmOrder(
     );
 
     for (const [itemIndex, item] of pricedItems.entries()) {
+      const orderItemId = randomUUID();
       await sql.unsafe(
         `INSERT INTO order_items
           (id, order_id, product_id, product_name_snapshot,
            unit_price_cents_snapshot, quantity, notes, line_total_cents)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
         [
-          randomUUID(),
+          orderItemId,
           orderId,
           item.product_id,
           item.name,
           item.unitPriceInCents,
           item.quantity,
-          itemIndex === 0 ? request.notes : null,
-          item.unitPriceInCents * item.quantity,
+          item.notes ?? (itemIndex === 0 ? request.notes : null),
+          (item.unitPriceInCents + item.addonTotalInCents) * item.quantity,
         ],
       );
+      for (const addon of item.addons) {
+        await sql.unsafe(
+          `INSERT INTO order_item_addons
+            (id, order_item_id, addon_option_id, group_name_snapshot,
+             addon_name_snapshot, unit_price_cents_snapshot, quantity)
+           VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+          [
+            randomUUID(),
+            orderItemId,
+            addon.optionId,
+            addon.groupName,
+            addon.name,
+            addon.unitPriceInCents,
+            addon.quantity,
+          ],
+        );
+      }
       await sql.unsafe(
         `UPDATE products
          SET stock_quantity = stock_quantity - $1, updated_at = $2

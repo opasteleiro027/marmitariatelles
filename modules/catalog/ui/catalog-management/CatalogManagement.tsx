@@ -17,14 +17,19 @@ export function CatalogManagement({
   categories: AdminCategory[];
   products: AdminCatalogProduct[];
 }) {
+  const regularProducts = products.filter((product) => !product.builderEnabled);
+  const regularCategories = categories.filter(
+    (category) => category.name.toLocaleLowerCase("pt-BR") !== "marmitas",
+  );
+
   return (
     <section className={styles.section}>
       <div className={styles.heading}>
         <div>
           <p>Cardápio</p>
-          <h2>Produtos do cardápio</h2>
+          <h2>Bebidas, sobremesas e outros</h2>
         </div>
-        <span>{products.length} produtos cadastrados</span>
+        <span>{regularProducts.length} produtos cadastrados</span>
       </div>
 
       <details className={styles.createPanel}>
@@ -37,7 +42,7 @@ export function CatalogManagement({
           <label>
             Categoria
             <select name="categoryId" required>
-              {categories.map((category) => (
+              {regularCategories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
                 </option>
@@ -57,7 +62,7 @@ export function CatalogManagement({
       </details>
 
       <div className={styles.productList}>
-        {products.map((product) => (
+        {regularProducts.map((product) => (
           <details className={styles.productRow} key={product.id}>
             <summary>
               <span>
@@ -77,7 +82,7 @@ export function CatalogManagement({
               <label>
                 Categoria
                 <select name="categoryId" defaultValue={product.categoryId}>
-                  {categories.map((category) => (
+                  {regularCategories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
                     </option>

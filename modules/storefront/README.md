@@ -9,10 +9,11 @@ menu and begin an order while the site is enabled.
 
 - Read a server-authoritative storefront snapshot.
 - Present independent Home, Cardápio, Como funciona and Contato screens.
-- Build numbered menu steps from active administrator categories.
+- Build the numbered marmita flow from the administrator's sizes and option
+  groups: size, base, beans, protein, sides, extras and observation.
 - Present the enabled/disabled status, delivery information and products.
 - Disable ordering controls while the administrator has the site turned off.
-- Persist only an untrusted cart draft and customer observation in the browser.
+- Persist only an untrusted configured-cart draft in the browser.
 - Keep presentation independent from persistence details.
 
 ## Inputs and outputs
@@ -22,5 +23,6 @@ menu and begin an order while the site is enabled.
 
 ## Related modules
 
-O checkout envia apenas identificadores, quantidades e uma observação opcional;
-preços vindos do navegador nunca são aceitos como definitivos.
+O checkout envia apenas identificadores, quantidades e observações opcionais.
+Preços, disponibilidade e limites vindos do navegador nunca são aceitos como
+definitivos.
