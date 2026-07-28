@@ -2,13 +2,14 @@
 
 ## Purpose
 
-Public, mobile-first surface used by customers to discover the active Sunday
-menu and begin an order.
+Public, mobile-first surface used by customers to discover the selected
+published sales menu and begin an order.
 
 ## Responsibilities
 
 - Read a server-authoritative storefront snapshot.
 - Present opening status, delivery information and available products.
+- Display the configured sales date and slots instead of assuming Sunday.
 - Keep presentation independent from persistence details.
 
 ## Inputs and outputs

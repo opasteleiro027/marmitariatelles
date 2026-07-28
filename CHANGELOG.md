@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.3.1 - 2026-07-28
+
+### Corrigido
+
+- Painel prioriza a agenda de hoje ou a próxima data futura, permitindo editar
+  uma agenda de teste já existente.
+- Conflito de data duplicada aparece dentro do formulário sem derrubar a página.
+- Storefront exibe a data realmente configurada e abre pedidos somente dentro
+  da janela publicada dessa agenda.
+- Faixas de horário exibidas agora pertencem somente à agenda selecionada.
+
 ## 0.3.0 - 2026-07-28
 
 ### Adicionado

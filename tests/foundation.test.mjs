@@ -22,6 +22,11 @@ import {
   normalizePostalCode,
 } from "../modules/address-location/domain/normalize-location-name.ts";
 import { validateCoordinates } from "../modules/address-location/domain/validate-coordinates.ts";
+import {
+  dateKeyInSaoPaulo,
+  formatSalesDateLabel,
+} from "../modules/sales-calendar/domain/operational-date.ts";
+import { assertSalesDateAvailable } from "../modules/sales-calendar/domain/sales-calendar-error.ts";
 
 test("formats monetary values stored as integer cents", () => {
   assert.match(formatMoney(2850), /28,50/);
@@ -37,6 +42,28 @@ test("keeps the Sunday date stable around the UTC boundary", () => {
   const label = nextSundayLabel(new Date("2026-07-28T00:30:00.000Z"));
   assert.match(label, /domingo/i);
   assert.match(label, /2 de agosto/i);
+});
+
+test("formats the configured sales date instead of assuming Sunday", () => {
+  assert.match(formatSalesDateLabel("2026-07-28"), /terça-feira, 28 de julho/i);
+  assert.equal(
+    dateKeyInSaoPaulo(new Date("2026-07-28T02:30:00.000Z")),
+    "2026-07-27",
+  );
+});
+
+test("rejects changing a menu to a date owned by another menu", () => {
+  assert.doesNotThrow(() =>
+    assertSalesDateAvailable("menu-a", [{ id: "menu-a" }]),
+  );
+  assert.throws(
+    () =>
+      assertSalesDateAvailable("menu-a", [
+        { id: "menu-a" },
+        { id: "menu-b" },
+      ]),
+    /Já existe uma agenda/,
+  );
 });
 
 test("normalizes Brazilian location names and postal codes", () => {

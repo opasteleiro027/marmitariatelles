@@ -1,4 +1,9 @@
 import { getPostgresClient, withTransaction } from "@/db";
+import { dateKeyInSaoPaulo } from "../domain/operational-date";
+import {
+  assertSalesDateAvailable,
+  SalesCalendarConflictError,
+} from "../domain/sales-calendar-error";
 
 export type AdminSalesCalendar = {
   menu: {
@@ -22,6 +27,7 @@ export type AdminSalesCalendar = {
 
 export async function getAdminSalesCalendar(): Promise<AdminSalesCalendar> {
   const sql = getPostgresClient();
+  const today = dateKeyInSaoPaulo();
   const menuRows = await sql.unsafe<
     Array<{
       id: string;
@@ -36,8 +42,12 @@ export async function getAdminSalesCalendar(): Promise<AdminSalesCalendar> {
     `SELECT id, sales_date, ordering_opens_at, ordering_closes_at,
             total_capacity, published, closed_manually
      FROM sales_menus
-     ORDER BY sales_date DESC
+     ORDER BY
+       CASE WHEN sales_date >= $1 THEN 0 ELSE 1 END,
+       CASE WHEN sales_date >= $1 THEN sales_date END ASC,
+       CASE WHEN sales_date < $1 THEN sales_date END DESC
      LIMIT 1`,
+    [today],
   );
   const menu = menuRows[0];
   if (!menu) throw new Error("Cardápio de vendas não configurado.");
@@ -91,32 +101,47 @@ export async function saveSalesCalendar(input: {
     throw new Error("A abertura precisa acontecer antes do encerramento.");
   }
   await withTransaction(async (sql) => {
-    const currentRows = await sql.unsafe<Array<{ sales_date: string }>>(
-      "SELECT sales_date FROM sales_menus WHERE id = $1 FOR UPDATE",
-      [input.id],
+    const relatedRows = await sql.unsafe<
+      Array<{ id: string; sales_date: string }>
+    >(
+      `SELECT id, sales_date
+       FROM sales_menus
+       WHERE id = $1 OR sales_date = $2
+       ORDER BY id
+       FOR UPDATE`,
+      [input.id, input.salesDate],
     );
-    if (!currentRows[0]) throw new Error("Cardápio de vendas não encontrado.");
-    await sql.unsafe(
-      `UPDATE sales_menus
-       SET sales_date = $1, ordering_opens_at = $2, ordering_closes_at = $3,
-           total_capacity = $4, published = $5, closed_manually = $6,
-           updated_at = $7
-       WHERE id = $8`,
-      [
-        input.salesDate,
-        input.orderingOpensAt,
-        input.orderingClosesAt,
-        input.totalCapacity,
-        input.published,
-        input.closedManually,
-        new Date().toISOString(),
-        input.id,
-      ],
-    );
-    if (currentRows[0].sales_date !== input.salesDate) {
+    const current = relatedRows.find((row) => row.id === input.id);
+    if (!current) throw new Error("Cardápio de vendas não encontrado.");
+    assertSalesDateAvailable(input.id, relatedRows);
+    try {
+      await sql.unsafe(
+        `UPDATE sales_menus
+         SET sales_date = $1, ordering_opens_at = $2, ordering_closes_at = $3,
+             total_capacity = $4, published = $5, closed_manually = $6,
+             updated_at = $7
+         WHERE id = $8`,
+        [
+          input.salesDate,
+          input.orderingOpensAt,
+          input.orderingClosesAt,
+          input.totalCapacity,
+          input.published,
+          input.closedManually,
+          new Date().toISOString(),
+          input.id,
+        ],
+      );
+    } catch (reason) {
+      if (isSalesDateUniqueConflict(reason)) {
+        throw new SalesCalendarConflictError();
+      }
+      throw reason;
+    }
+    if (current.sales_date !== input.salesDate) {
       await sql.unsafe(
         "UPDATE delivery_slots SET sales_date = $1 WHERE sales_date = $2",
-        [input.salesDate, currentRows[0].sales_date],
+        [input.salesDate, current.sales_date],
       );
     }
   });
@@ -144,5 +169,16 @@ export async function saveDeliverySlot(input: {
       input.active,
       input.id,
     ],
+  );
+}
+
+function isSalesDateUniqueConflict(reason: unknown) {
+  return (
+    typeof reason === "object" &&
+    reason !== null &&
+    "code" in reason &&
+    reason.code === "23505" &&
+    "constraint_name" in reason &&
+    reason.constraint_name === "sales_menus_date_unique"
   );
 }

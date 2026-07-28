@@ -13,6 +13,7 @@
 | `modules/identity/` | administradores, clientes e endereços | PostgreSQL |
 | `modules/ordering/` | checkout, totais, pedidos, status e tracking | demais domínios |
 | `modules/sales-calendar/` | domingo, janela e faixas de atendimento | catálogo, estabelecimento |
+| `modules/sales-calendar/ui/sales-calendar-form/` | formulário com feedback de sucesso, validação e conflito | ação autenticada da agenda |
 | `modules/storefront/` | snapshot e experiência pública | catálogo, ordering |
 | `modules/operational-monitoring/` | saúde da aplicação e banco | PostgreSQL |
 | `tests/` | testes automatizados de domínio e segurança | módulos de domínio |

@@ -1,8 +1,6 @@
 import type { AdminSalesCalendar } from "../../application/admin-sales-calendar";
-import {
-  saveDeliverySlotAction,
-  saveSalesCalendarAction,
-} from "../../server/sales-calendar-actions";
+import { saveDeliverySlotAction } from "../../server/sales-calendar-actions";
+import { SalesCalendarForm } from "../sales-calendar-form/SalesCalendarForm";
 import styles from "./sales-calendar-management.module.css";
 
 export function SalesCalendarManagement({
@@ -19,16 +17,7 @@ export function SalesCalendarManagement({
         </div>
         <span>{snapshot.menu.published ? "Publicado" : "Oculto"}</span>
       </div>
-      <form action={saveSalesCalendarAction} className={styles.menuForm}>
-        <input type="hidden" name="id" value={snapshot.menu.id} />
-        <label>Data da venda<input name="salesDate" type="date" defaultValue={snapshot.menu.salesDate} required /></label>
-        <label>Abertura<input name="orderingOpensAt" type="datetime-local" defaultValue={localInput(snapshot.menu.orderingOpensAt)} required /></label>
-        <label>Encerramento<input name="orderingClosesAt" type="datetime-local" defaultValue={localInput(snapshot.menu.orderingClosesAt)} required /></label>
-        <label>Limite total<input name="totalCapacity" type="number" min="1" defaultValue={snapshot.menu.totalCapacity ?? ""} /></label>
-        <label className={styles.check}><input name="published" type="checkbox" defaultChecked={snapshot.menu.published} />Cardápio publicado</label>
-        <label className={styles.check}><input name="closedManually" type="checkbox" defaultChecked={snapshot.menu.closedManually} />Encerrar vendas manualmente</label>
-        <button type="submit">Salvar agenda</button>
-      </form>
+      <SalesCalendarForm menu={snapshot.menu} />
       <div className={styles.slots}>
         {snapshot.slots.map((slot) => (
           <form action={saveDeliverySlotAction} key={slot.id}>
@@ -44,18 +33,4 @@ export function SalesCalendarManagement({
       </div>
     </section>
   );
-}
-
-function localInput(value: string) {
-  return new Intl.DateTimeFormat("sv-SE", {
-    timeZone: "America/Sao_Paulo",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  })
-    .format(new Date(value))
-    .replace(" ", "T");
 }

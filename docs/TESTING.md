@@ -9,6 +9,8 @@ de CEP e correspondência de área.
 
 Repositórios PostgreSQL, migrations, confirmação atômica, idempotência, estoque,
 capacidade e nova execução do seed após edição da data do menu.
+Também validar conflito entre duas agendas da mesma data e seleção prioritária
+da agenda de hoje.
 
 ## Fluxo
 

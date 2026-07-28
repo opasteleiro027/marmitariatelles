@@ -6,20 +6,43 @@ import {
   saveDeliverySlot,
   saveSalesCalendar,
 } from "../application/admin-sales-calendar";
+import { SalesCalendarConflictError } from "../domain/sales-calendar-error";
 
-export async function saveSalesCalendarAction(formData: FormData) {
+export type SalesCalendarActionState = {
+  status: "idle" | "success" | "error";
+  message: string;
+};
+
+export async function saveSalesCalendarAction(
+  _previousState: SalesCalendarActionState,
+  formData: FormData,
+): Promise<SalesCalendarActionState> {
   await requireAdmin();
-  const capacity = integer(formData, "totalCapacity");
-  await saveSalesCalendar({
-    id: required(formData, "id"),
-    salesDate: required(formData, "salesDate"),
-    orderingOpensAt: localDateTime(required(formData, "orderingOpensAt")),
-    orderingClosesAt: localDateTime(required(formData, "orderingClosesAt")),
-    totalCapacity: capacity,
-    published: formData.get("published") === "on",
-    closedManually: formData.get("closedManually") === "on",
-  });
-  refresh();
+  try {
+    const capacity = integer(formData, "totalCapacity");
+    await saveSalesCalendar({
+      id: required(formData, "id"),
+      salesDate: required(formData, "salesDate"),
+      orderingOpensAt: localDateTime(required(formData, "orderingOpensAt")),
+      orderingClosesAt: localDateTime(required(formData, "orderingClosesAt")),
+      totalCapacity: capacity,
+      published: formData.get("published") === "on",
+      closedManually: formData.get("closedManually") === "on",
+    });
+    refresh();
+    return { status: "success", message: "Agenda salva com sucesso." };
+  } catch (reason) {
+    if (reason instanceof SalesCalendarConflictError) refresh();
+    return {
+      status: "error",
+      message:
+        reason instanceof SalesCalendarConflictError
+          ? reason.message
+          : reason instanceof Error
+            ? reason.message
+            : "Não foi possível salvar a agenda.",
+    };
+  }
 }
 
 export async function saveDeliverySlotAction(formData: FormData) {
