@@ -111,6 +111,8 @@ test("ships an 80 mm browser-printable administrative order slip", async () => {
   assert.match(printButton, /Imprimir comanda/);
   assert.match(printButton, /Troco para/);
   assert.match(printButton, /<section[\s\S]*data-receipt/);
+  assert.doesNotMatch(printButton, /\{addon\.groupName\}:/);
+  assert.match(printButton, /\{addon\.name\}/);
   assert.match(adminOrders, /address_snapshot/);
   assert.match(adminOrders, /change_for_cents/);
 });

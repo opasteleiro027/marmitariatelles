@@ -199,7 +199,7 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
                 </div>
                 {item.addons.map((addon, index) => (
                   <p key={`${addon.groupName}-${addon.name}-${index}`}>
-                    {addon.groupName}:{" "}
+                    <span aria-hidden="true">• </span>
                     {addon.quantity > 1 ? `${addon.quantity}× ` : ""}
                     {addon.name}
                   </p>
