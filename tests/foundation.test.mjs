@@ -15,6 +15,7 @@ import {
   parseOrderRequest,
 } from "../modules/ordering/domain/order-request.ts";
 import { selectAutomaticDeliverySlot } from "../modules/ordering/domain/select-automatic-delivery-slot.ts";
+import { classifyOrderPulse } from "../modules/ordering/domain/order-pulse.ts";
 import { formatMoney } from "../modules/storefront/domain/format-money.ts";
 import { siteAcceptsOrders } from "../modules/establishment/domain/site-availability.ts";
 import { mapNominatimAddress } from "../modules/address-location/domain/map-nominatim-address.ts";
@@ -28,6 +29,30 @@ import { validateCoordinates } from "../modules/address-location/domain/validate
 
 test("formats monetary values stored as integer cents", () => {
   assert.match(formatMoney(2850), /28,50/);
+});
+
+test("detects a new order separately from other panel changes", () => {
+  const previous = {
+    totalOrders: 4,
+    latestOrderId: "order-4",
+    version: "4:2026-07-28T12:00:00.000Z",
+  };
+  assert.equal(
+    classifyOrderPulse(previous, {
+      totalOrders: 5,
+      latestOrderId: "order-5",
+      version: "5:2026-07-28T12:01:00.000Z",
+    }),
+    "new-order",
+  );
+  assert.equal(
+    classifyOrderPulse(previous, {
+      ...previous,
+      version: "4:2026-07-28T12:02:00.000Z",
+    }),
+    "changed",
+  );
+  assert.equal(classifyOrderPulse(previous, previous), "unchanged");
 });
 
 test("uses only the site switch to release or block orders", () => {

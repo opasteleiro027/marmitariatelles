@@ -18,6 +18,8 @@ domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
 - acompanhamento privado por token seguro;
 - login administrativo com sessão assinada;
 - dashboard com pedidos e faturamento;
+- atualização automática do painel a cada cinco segundos e alerta sonoro
+  opcional para novos pedidos;
 - mudança de status com histórico e devolução de estoque no cancelamento;
 - criação e edição de produtos, esgotado, bairros, taxas, pedido mínimo e
   dados públicos do negócio;
@@ -80,6 +82,10 @@ O GPS exige HTTPS e permissão explícita do cliente. A geocodificação reversa
 o endpoint configurado em `REVERSE_GEOCODING_BASE_URL`; o padrão público do
 Nominatim deve ser usado apenas em volume moderado, com atribuição e limite de
 uma requisição por segundo. O preenchimento manual sempre permanece disponível.
+
+O alerta de novos pedidos exige um clique em **Ativar som** depois que o painel
+administrativo é aberto. Essa ativação é exigida pelos navegadores; enquanto a
+aba permanecer aberta, novos pedidos atualizam a lista e emitem o sinal.
 
 ## Banco e dados iniciais
 

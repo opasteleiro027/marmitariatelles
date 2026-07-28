@@ -30,7 +30,8 @@
 - [x] Métricas, listagem e mudança segura de status.
 - [x] Cancelamento com devolução de estoque.
 - [x] Áreas, taxas, dados públicos e botão de ligar/desligar o site.
-- [ ] Busca, filtros, detalhes, nota interna e atualização automática.
+- [x] Atualização automática e alerta sonoro opcional para novos pedidos.
+- [ ] Busca, filtros, detalhes e nota interna.
 - [ ] Comanda, relatórios, gestão de pagamento e aparência.
 
 ## Qualidade — em andamento

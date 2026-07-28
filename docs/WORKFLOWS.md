@@ -33,6 +33,17 @@ conclusão.
 
 Cada mudança grava status anterior, novo status, horário e administrador.
 
+### Novos pedidos no painel
+
+Enquanto o painel está aberto e visível, uma consulta protegida verifica
+alterações a cada cinco segundos. Um novo pedido atualiza lista e métricas; uma
+mudança de status também atualiza os dados, mas não dispara o alerta de novo
+pedido.
+
+O som é opcional e precisa ser liberado pelo botão **Ativar som** em cada
+abertura do painel, conforme a política de reprodução automática dos
+navegadores. Ao ativar, o administrador ouve um sinal de teste.
+
 ### Ligar ou desligar o site
 
 O administrador usa um único botão. **Ligar site** libera imediatamente novos

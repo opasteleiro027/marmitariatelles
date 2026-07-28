@@ -5,6 +5,7 @@ import {
   isOrderStatus,
   type OrderStatus,
 } from "./order-status";
+import type { OrderPulse } from "../domain/order-pulse";
 
 export type AdminOrder = {
   id: string;
@@ -21,6 +22,7 @@ export type AdminOrder = {
 
 export type AdminOrderSnapshot = {
   orders: AdminOrder[];
+  pulse: OrderPulse;
   metrics: {
     received: number;
     active: number;
@@ -29,9 +31,41 @@ export type AdminOrderSnapshot = {
   };
 };
 
+export async function getAdminOrderPulse(): Promise<OrderPulse> {
+  const sql = getPostgresClient();
+  const rows = await sql.unsafe<
+    Array<{
+      total_orders: number;
+      latest_order_id: string | null;
+      latest_updated_at: string;
+    }>
+  >(
+    `SELECT
+       COUNT(*)::INT AS total_orders,
+       (
+         SELECT id
+         FROM orders
+         ORDER BY created_at DESC, id DESC
+         LIMIT 1
+       ) AS latest_order_id,
+       COALESCE(MAX(updated_at), '') AS latest_updated_at
+     FROM orders`,
+  );
+  const pulse = rows[0] ?? {
+    total_orders: 0,
+    latest_order_id: null,
+    latest_updated_at: "",
+  };
+  return {
+    totalOrders: pulse.total_orders,
+    latestOrderId: pulse.latest_order_id,
+    version: `${pulse.total_orders}:${pulse.latest_updated_at}`,
+  };
+}
+
 export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
   const sql = getPostgresClient();
-  const [orders, metrics] = await Promise.all([
+  const [orders, metrics, pulse] = await Promise.all([
     sql.unsafe<
       Array<{
         id: string;
@@ -77,6 +111,7 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
            AS projected_revenue_cents
        FROM orders`,
     ),
+    getAdminOrderPulse(),
   ]);
   const totals = metrics[0] ?? {
     received: 0,
@@ -97,6 +132,7 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
       itemCount: order.item_count,
       paymentLabel: order.payment_label,
     })),
+    pulse,
     metrics: {
       received: totals.received,
       active: totals.active,

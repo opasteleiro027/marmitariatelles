@@ -32,9 +32,73 @@
   font-size: clamp(27px, 4vw, 38px);
 }
 
-.heading > span {
+.headingActions {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.headingActions > span {
   color: #76685d;
   font-size: 13px;
+}
+
+.liveControls {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.liveStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #526158;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.liveStatus > span:first-child {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2f9d62;
+  box-shadow: 0 0 0 4px #e4f4eb;
+}
+
+.liveControls button {
+  min-height: 38px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d8cbbc;
+  border-radius: 10px;
+  background: #fffaf4;
+  color: var(--brown-950);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.liveControls button.soundEnabled {
+  border-color: #a7d8bb;
+  background: #eaf7ef;
+  color: #17623b;
+}
+
+.liveAnnouncement {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  width: max-content;
+  max-width: 260px;
+  margin: 0;
+  color: #526158;
+  font-size: 11px;
+  text-align: right;
 }
 
 .empty {
@@ -142,7 +206,26 @@
 
 @media (max-width: 680px) {
   .heading {
+    display: grid;
     align-items: flex-start;
+  }
+
+  .headingActions {
+    width: 100%;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .liveControls {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .liveStatus {
+    order: 2;
+    width: 100%;
+    justify-content: flex-end;
   }
 
   .list article {

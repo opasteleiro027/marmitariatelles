@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.1 - 2026-07-28
+
+### Adicionado
+
+- O painel administrativo verifica novos pedidos automaticamente a cada cinco
+  segundos e atualiza os dados sem exigir recarregamento manual da página.
+- Um endpoint leve, sem dados pessoais e protegido pela sessão administrativa,
+  informa quando a lista ou o status dos pedidos mudou.
+- O administrador pode ativar ou desativar um alerta sonoro para novos pedidos.
+- A ativação reproduz um som de teste para confirmar que o navegador liberou o
+  áudio; mudanças de status atualizam o painel sem tocar o alerta.
+
 ## 0.4.0 - 2026-07-28
 
 ### Alterado
