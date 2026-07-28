@@ -29,7 +29,7 @@ limites de responsabilidade.
 | Rota | Peça principal | Dados consultados |
 | --- | --- | --- |
 | `/admin` | `admin-overview` | métricas, produtos ativos e estado do site |
-| `/admin/pedidos` | `admin-order-list` | pedidos e métricas |
+| `/admin/pedidos` | `admin-order-list`, `order-history-reset` | pedidos, métricas e limpeza protegida de testes |
 | `/admin/cardapio` | `marmita-management`, `catalog-management` | tamanhos, etapas, opções e outros produtos |
 | `/admin/areas-entrega` | `delivery-area-management` | bairros e taxas |
 | `/admin/configuracoes` | `business-settings-management` | dados do estabelecimento |
@@ -38,6 +38,9 @@ limites de responsabilidade.
 `admin-navigation` é responsável somente pelos destinos e pelo estado ativo.
 `admin-order-monitor` permanece no layout e acompanha novos pedidos em qualquer
 uma das telas.
+
+`modules/ordering/application/test-order-history-reset/` concentra a transação
+de restauração de estoque e exclusão dos dados transacionais de teste.
 
 ## Telas públicas
 

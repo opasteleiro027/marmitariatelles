@@ -1,5 +1,24 @@
 # Changelog
 
+## 0.8.1 - 2026-07-28
+
+### Adicionado
+
+- Controle protegido no painel de pedidos para zerar todo o histórico de testes.
+- Confirmação textual obrigatória antes da exclusão.
+
+### Corrigido
+
+- A limpeza restaura o estoque consumido pelos pedidos de teste não cancelados
+  e evita restaurar novamente os pedidos que já tinham sido cancelados.
+- Pedidos, itens, adicionais, pagamentos, históricos, chaves de idempotência,
+  clientes e endereços de teste são removidos na mesma transação.
+
+### Preservado
+
+- Cardápio, áreas de entrega, configurações, formas de pagamento e
+  administradores não participam da limpeza.
+
 ## 0.8.0 - 2026-07-28
 
 ### Adicionado

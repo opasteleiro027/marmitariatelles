@@ -34,6 +34,36 @@ import {
   lookupPostalCode,
   PostalCodeLookupError,
 } from "../modules/address-location/infrastructure/via-cep-client.ts";
+import {
+  assertTestOrderResetConfirmation,
+  TEST_ORDER_RESET_CONFIRMATION,
+} from "../modules/ordering/application/test-order-history-reset/reset-test-order-history.ts";
+
+test("protects the complete test-order history reset", async () => {
+  assert.doesNotThrow(() =>
+    assertTestOrderResetConfirmation(TEST_ORDER_RESET_CONFIRMATION),
+  );
+  assert.throws(
+    () => assertTestOrderResetConfirmation("apagar"),
+    /confirmação exatamente/,
+  );
+
+  const resetSource = await readFile(
+    new URL(
+      "../modules/ordering/application/test-order-history-reset/reset-test-order-history.ts",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  assert.match(resetSource, /o\.status <> 'cancelled'/);
+  assert.match(resetSource, /DELETE FROM order_item_addons/);
+  assert.match(resetSource, /DELETE FROM orders RETURNING id/);
+  assert.match(resetSource, /DELETE FROM customers RETURNING id/);
+  assert.doesNotMatch(
+    resetSource,
+    /DELETE FROM (products|business_settings|admin_users)/,
+  );
+});
 
 test("formats monetary values stored as integer cents", () => {
   assert.match(formatMoney(2850), /28,50/);

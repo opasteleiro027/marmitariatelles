@@ -18,3 +18,7 @@
 - Excludes cancelled orders from commercial report totals and rankings.
 - Aggregates customer frequency, tickets, neighborhoods, products and payment
   preferences for the administrative overview.
+- Requires the exact destructive-action phrase before clearing test history.
+- Restores stock from non-cancelled test orders without duplicating cancelled
+  order restoration.
+- Removes transactional dependencies while preserving catalog and admin data.

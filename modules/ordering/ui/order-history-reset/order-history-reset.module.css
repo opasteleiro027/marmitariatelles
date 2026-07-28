@@ -1,0 +1,93 @@
+.panel {
+  margin-top: 22px;
+  padding: clamp(20px, 4vw, 30px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, .8fr);
+  align-items: end;
+  gap: 28px;
+  border: 1px solid #efc9c1;
+  border-radius: 22px;
+  background: #fff8f6;
+}
+
+.panel p,
+.panel h2,
+.panel span {
+  margin: 0;
+}
+
+.panel p {
+  color: #a83b2a;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.panel h2 {
+  margin-top: 7px;
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(24px, 4vw, 32px);
+}
+
+.panel span {
+  margin-top: 9px;
+  display: block;
+  color: #765d57;
+  line-height: 1.55;
+}
+
+.panel form {
+  display: grid;
+  gap: 9px;
+}
+
+.panel label {
+  color: #614a45;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.panel form > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.panel input,
+.panel button {
+  min-height: 44px;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.panel input {
+  min-width: 0;
+  border: 1px solid #d7b4ac;
+  padding: 0 12px;
+  background: white;
+}
+
+.panel button {
+  border: 0;
+  padding: 0 16px;
+  background: #a62f23;
+  color: white;
+  font-weight: 850;
+  cursor: pointer;
+}
+
+.empty {
+  color: #52754a;
+}
+
+@media (max-width: 760px) {
+  .panel {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .panel form > div {
+    grid-template-columns: 1fr;
+  }
+}
