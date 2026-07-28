@@ -18,6 +18,11 @@
 - Repositório publicado no GitHub e ambiente de produção ativo no Railway com
   PostgreSQL persistente.
 
+### Corrigido
+
+- Data do próximo domingo estabilizada no fuso de São Paulo.
+- Texto da página inicial atualizado para refletir o checkout já disponível.
+
 ### Pendente
 
 - Fotos, complementos, cupons, filtros detalhados, comanda e relatórios.

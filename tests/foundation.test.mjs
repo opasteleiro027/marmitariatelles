@@ -26,6 +26,12 @@ test("finds the next Sunday in the sales calendar", () => {
   assert.match(label, /2 de agosto/i);
 });
 
+test("keeps the Sunday date stable around the UTC boundary", () => {
+  const label = nextSundayLabel(new Date("2026-07-28T00:30:00.000Z"));
+  assert.match(label, /domingo/i);
+  assert.match(label, /2 de agosto/i);
+});
+
 test("recalculates subtotal, delivery fee, discount and total", () => {
   const total = calculateOrderTotal(
     [

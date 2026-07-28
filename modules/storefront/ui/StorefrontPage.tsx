@@ -62,9 +62,9 @@ export function StorefrontPage({ snapshot }: { snapshot: StorefrontSnapshot }) {
         <p className={styles.eyebrow}>Do pedido à mesa</p>
         <h2>Simples para pedir. Caprichado para comer.</h2>
         <p>
-          A primeira versão da base já separa cardápio, operação e dados do
-          estabelecimento. O carrinho e o checkout serão conectados nas
-          próximas etapas do MVP.
+          Escolha os itens, informe entrega ou retirada e confirme o pedido.
+          Acompanhe tudo pelo seu link exclusivo e fale conosco pelo WhatsApp
+          quando precisar.
         </p>
       </section>
 
