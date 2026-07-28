@@ -10,13 +10,17 @@ domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
 
 ## O que já funciona
 
-- loja pública responsiva, cardápio e carrinho persistente no dispositivo;
+- loja pública com telas próprias para início, cardápio, funcionamento e
+  contato;
+- montador de cardápio responsivo, etapas dinâmicas por categoria, resumo em
+  tempo real e carrinho persistente no dispositivo;
 - checkout para retirada ou entrega, horário, pagamento e troco;
 - endereço por GPS opcional, busca automática de CEP e conferência de área;
 - consulta de CEP com dois provedores e preenchimento manual como alternativa;
 - confirmação transacional com preço recalculado no servidor, estoque,
   idempotência e número amigável;
 - acompanhamento privado por token seguro;
+- observação geral persistida e anexada ao snapshot do pedido;
 - login administrativo com sessão assinada;
 - painel com páginas individuais para visão geral, pedidos, cardápio, áreas de
   entrega e configurações;

@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.6.0 - 2026-07-28
+
+### Adicionado
+
+- Novo cardápio responsivo inspirado nas telas mobile e desktop fornecidas pelo
+  Google Stitch, com hero gastronômico, etapas numeradas e resumo em tempo real.
+- Rotas públicas independentes para `/cardapio`, `/como-funciona` e `/contato`.
+- Resumo fixo no desktop e barra de continuação fixa no celular.
+- Observação geral de até 500 caracteres, persistida no rascunho e gravada no
+  snapshot imutável do pedido.
+- Imagem gastronômica exportada do projeto Stitch e servida localmente.
+
+### Alterado
+
+- As etapas do montador são geradas automaticamente a partir das categorias
+  ativas cadastradas pelo administrador.
+- A página inicial agora direciona ao cardápio dedicado e não depende de
+  rolagem por âncoras.
+- A identidade visual pública usa a paleta Sunday Harvest: laranja queimado,
+  verde oliva, branco quente e marrom.
+- A ausência de PostgreSQL no desenvolvimento usa preview seguro sem abrir o
+  painel de erro do Next.js.
+
 ## 0.5.0 - 2026-07-28
 
 ### Alterado

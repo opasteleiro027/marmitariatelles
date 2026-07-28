@@ -1,0 +1,148 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid rgb(140 113 102 / 16%);
+  background: rgb(255 248 246 / 94%);
+  box-shadow: 0 2px 16px rgb(62 39 35 / 5%);
+  backdrop-filter: blur(16px);
+}
+
+.inner {
+  width: min(1200px, calc(100% - 40px));
+  min-height: 64px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #2b1613;
+  text-decoration: none;
+}
+
+.brand span {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: #9e3d00;
+  color: white;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.brand strong {
+  font-family: var(--font-heading);
+  font-size: 16px;
+}
+
+.inner nav {
+  display: flex;
+  align-self: stretch;
+}
+
+.inner nav a {
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  border-bottom: 2px solid transparent;
+  color: #594238;
+  font-size: 13px;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.inner nav a[aria-current="page"] {
+  border-bottom-color: #9e3d00;
+  color: #7c2e00;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.open,
+.closed {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #d2eca2;
+  color: #394d14;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.closed {
+  background: #ffdad6;
+  color: #93000a;
+}
+
+.cart {
+  min-width: 66px;
+  min-height: 38px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid #e0c0b2;
+  border-radius: 999px;
+  background: white;
+  color: #7c2e00;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+}
+
+.cart strong {
+  min-width: 19px;
+  height: 19px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #9e3d00;
+  color: white;
+  font-size: 10px;
+}
+
+@media (max-width: 780px) {
+  .inner {
+    width: min(100% - 24px, 1200px);
+    min-height: 96px;
+    padding-top: 8px;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .brand strong,
+  .actions > span {
+    display: none;
+  }
+
+  .actions:empty {
+    display: none;
+  }
+
+  .inner nav {
+    width: 100%;
+    height: 42px;
+    order: 3;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .inner nav a {
+    padding: 0 4px;
+    justify-content: center;
+    font-size: 10px;
+    text-align: center;
+  }
+}

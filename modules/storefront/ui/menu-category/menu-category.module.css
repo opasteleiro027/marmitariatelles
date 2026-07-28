@@ -1,0 +1,262 @@
+.section {
+  scroll-margin-top: 90px;
+}
+
+.section + .section {
+  margin-top: 42px;
+}
+
+.heading {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.heading > span {
+  width: 25px;
+  height: 25px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #9e3d00;
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.heading h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  line-height: 1.15;
+}
+
+.heading p {
+  margin: 4px 0 0;
+  color: #785f54;
+  font-size: 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.grid[data-kind="meal"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.card,
+.selectedCard {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: white;
+  box-shadow: 0 5px 22px rgb(62 39 35 / 6%);
+  transition: border-color 160ms ease, transform 160ms ease;
+}
+
+.selectedCard {
+  border-color: #c64f00;
+}
+
+.card:hover,
+.selectedCard:hover {
+  transform: translateY(-2px);
+}
+
+.visual {
+  position: relative;
+  height: 112px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #ffe2dd;
+}
+
+.visual[data-kind="drink"] {
+  background: #dfe9cc;
+  color: #394d14;
+}
+
+.visual[data-kind="dessert"] {
+  background: #f5d7b7;
+  color: #7c2e00;
+}
+
+.visual small {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #d2eca2;
+  color: #394d14;
+  font-size: 9px;
+  font-weight: 900;
+}
+
+.photo {
+  position: absolute;
+  inset: 0;
+  background: url("/images/menu-builder-hero.png") center 46% / cover;
+  transition: transform 220ms ease;
+}
+
+.card:hover .photo,
+.selectedCard:hover .photo {
+  transform: scale(1.03);
+}
+
+.initial {
+  font-family: var(--font-heading);
+  font-size: 42px;
+  font-weight: 800;
+  opacity: 0.72;
+}
+
+.content {
+  padding: 14px;
+}
+
+.content h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 14px;
+}
+
+.content > p {
+  min-height: 36px;
+  margin: 6px 0 14px;
+  color: #785f54;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.footer {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.footer > div:first-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer small {
+  color: #8c7166;
+  font-size: 9px;
+  text-decoration: line-through;
+}
+
+.footer strong {
+  color: #8e3500;
+  font-size: 13px;
+}
+
+.add,
+.unavailable {
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid #c64f00;
+  border-radius: 9px;
+  background: transparent;
+  color: #8e3500;
+  cursor: pointer;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 850;
+}
+
+.unavailable {
+  border-color: #e0c0b2;
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.quantity {
+  height: 34px;
+  display: grid;
+  grid-template-columns: 30px 25px 30px;
+  align-items: center;
+  border: 1px solid #e0c0b2;
+  border-radius: 999px;
+}
+
+.quantity button {
+  width: 27px;
+  height: 27px;
+  margin: auto;
+  border: 0;
+  border-radius: 50%;
+  background: #9e3d00;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+}
+
+.quantity span {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+@media (max-width: 720px) {
+  .section + .section {
+    margin-top: 34px;
+  }
+
+  .heading h2 {
+    font-size: 18px;
+  }
+
+  .heading p {
+    display: none;
+  }
+
+  .grid,
+  .grid[data-kind="meal"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .grid[data-kind="meal"] .card,
+  .grid[data-kind="meal"] .selectedCard {
+    grid-column: auto;
+  }
+
+  .visual {
+    height: 96px;
+  }
+
+  .content {
+    padding: 11px;
+  }
+
+  .content > p {
+    min-height: 48px;
+    margin-bottom: 10px;
+  }
+
+  .footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .add,
+  .unavailable,
+  .quantity {
+    width: 100%;
+  }
+
+  .quantity {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}

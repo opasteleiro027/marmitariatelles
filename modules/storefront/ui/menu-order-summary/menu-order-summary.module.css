@@ -1,0 +1,150 @@
+.summary {
+  position: sticky;
+  top: 94px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 10px 34px rgb(62 39 35 / 8%);
+}
+
+.summary header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #9e3d00;
+  color: white;
+}
+
+.summary h2 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 18px;
+}
+
+.summary header p {
+  margin: 3px 0 0;
+  color: #ffdbcd;
+  font-size: 10px;
+}
+
+.summary header > span {
+  min-width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: white;
+  color: #8e3500;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.items {
+  max-height: 280px;
+  padding: 14px 20px;
+  overflow: auto;
+}
+
+.items div {
+  padding: 9px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  border-bottom: 1px solid #f2e4df;
+  color: #594238;
+  font-size: 11px;
+}
+
+.items strong {
+  color: #2b1613;
+  white-space: nowrap;
+}
+
+.empty {
+  min-height: 150px;
+  padding: 26px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  color: #785f54;
+  text-align: center;
+}
+
+.empty > span {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px dashed #cda99b;
+  border-radius: 50%;
+  color: #9e3d00;
+  font-size: 20px;
+}
+
+.empty p {
+  max-width: 190px;
+  margin: 10px 0 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.total {
+  margin: 0 20px;
+  padding: 17px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #e0c0b2;
+}
+
+.total span {
+  font-size: 13px;
+}
+
+.total strong {
+  color: #8e3500;
+  font-family: var(--font-heading);
+  font-size: 20px;
+}
+
+.minimum {
+  margin: -5px 20px 13px;
+  color: #93000a;
+  font-size: 10px;
+}
+
+.summary > button {
+  width: calc(100% - 40px);
+  min-height: 48px;
+  margin: 0 20px;
+  border: 0;
+  border-radius: 12px;
+  background: #9e3d00;
+  box-shadow: 0 7px 18px rgb(158 61 0 / 20%);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.summary > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.summary > small {
+  padding: 10px 20px 18px;
+  display: block;
+  color: #8c7166;
+  font-size: 9px;
+  text-align: center;
+}
+
+@media (max-width: 940px) {
+  .summary {
+    display: none;
+  }
+}

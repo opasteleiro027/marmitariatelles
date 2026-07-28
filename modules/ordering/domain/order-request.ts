@@ -10,6 +10,7 @@ export type ConfirmOrderRequest = {
   deliverySlotId: string;
   paymentMethodId: string;
   changeForInCents: number | null;
+  notes: string | null;
   address: {
     postalCode: string;
     street: string;
@@ -96,6 +97,7 @@ export function parseOrderRequest(input: unknown): ConfirmOrderRequest {
     "Escolha uma forma de pagamento.",
     120,
   );
+  const notes = optionalText(root.notes, 500);
 
   let address: ConfirmOrderRequest["address"] = null;
   if (fulfillment === "delivery") {
@@ -127,6 +129,7 @@ export function parseOrderRequest(input: unknown): ConfirmOrderRequest {
     deliverySlotId,
     paymentMethodId,
     changeForInCents: parseMoney(root.changeFor),
+    notes,
     address,
     items,
   };

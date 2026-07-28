@@ -11,3 +11,6 @@ Entrega não apresenta seletor de horário; uma faixa disponível é atribuída
 internamente. Retirada apresenta o campo “Horário de retirada”.
 A entrega só pode ser confirmada quando o endereço corresponde a uma área
 cadastrada.
+
+O checkout também aceita uma observação opcional de até 500 caracteres
+preparada no montador de cardápio. Ela é validada novamente pelo servidor.

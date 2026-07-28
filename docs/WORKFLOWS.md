@@ -5,6 +5,17 @@
 Cardápio → produto → carrinho → identificação → entrega/retirada → horário →
 pagamento → revisão → confirmação → sucesso → acompanhamento.
 
+### Cardápio público
+
+1. A rota `/cardapio` lê um snapshot autoritativo do PostgreSQL.
+2. `menu-builder` transforma cada categoria ativa em uma etapa numerada.
+3. Quantidades e a observação geral formam um rascunho não confiável no
+   `localStorage`.
+4. O resumo exibe apenas uma estimativa; o checkout envia identificadores,
+   quantidades e observação.
+5. O servidor recarrega produtos, disponibilidade e preços dentro da transação.
+6. A observação validada é gravada no primeiro item do snapshot histórico.
+
 Na confirmação, o servidor reconsulta produto, menu, área e
 pagamento, recalcula valores e grava tudo de forma atômica.
 

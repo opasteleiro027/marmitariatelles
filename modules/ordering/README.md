@@ -11,6 +11,9 @@ from the confirmed address.
 Home delivery receives the first available operational slot automatically.
 Pickup keeps the slot as an explicit customer choice.
 
+Customer observations are limited to 500 characters and stored on the first
+order-item snapshot.
+
 The protected admin pulse exposes only a change marker, total count and latest
 order identifier. The admin interface polls it every five seconds, refreshes
 changed data and can play an opt-in sound only when a new order is detected.

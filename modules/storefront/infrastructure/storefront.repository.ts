@@ -189,7 +189,7 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
       source: "database",
     };
   } catch (reason) {
-    console.error(
+    console.warn(
       "Falha ao carregar o storefront; usando o preview seguro.",
       reason,
     );

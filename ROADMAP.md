@@ -18,11 +18,13 @@
 ## Pedido do cliente — essencial concluído
 
 - [x] Carrinho persistente, identificação, retirada/entrega e pagamento.
+- [x] Cardápio em tela própria, etapas dinâmicas e resumo responsivo.
 - [x] Taxa, pedido mínimo, horário e troco.
 - [x] Confirmação transacional, estoque e idempotência.
 - [x] Sucesso, WhatsApp e acompanhamento por token seguro.
 - [x] GPS opcional, busca de CEP e validação do bairro atendido.
-- [ ] Observações por item e tela intermediária de revisão detalhada.
+- [x] Observação geral do pedido com limite e snapshot histórico.
+- [ ] Observações separadas por item e tela intermediária de revisão detalhada.
 - [ ] Consentimento explícito para salvar dados pessoais localmente.
 
 ## Operação administrativa — essencial concluído

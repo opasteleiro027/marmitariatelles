@@ -1,5 +1,7 @@
 # Test scenarios
 
+- Normalizes an optional customer observation with a 500-character limit.
+
 - Recalculates totals from persisted prices.
 - Rejects unavailable items, closed windows and unsupported neighborhoods.
 - Rejects an address whose city or neighborhood differs from the selected area.

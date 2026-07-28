@@ -14,12 +14,14 @@ export function OrderingDrawer({
   onQuantityChange,
   onClose,
   onOrderComplete,
+  orderNotes = "",
 }: {
   snapshot: StorefrontSnapshot;
   items: CartItem[];
   onQuantityChange: (productId: string, quantity: number) => void;
   onClose: () => void;
   onOrderComplete: () => void;
+  orderNotes?: string;
 }) {
   const [fulfillment, setFulfillment] = useState<"pickup" | "delivery">(
     "pickup",
@@ -84,6 +86,7 @@ export function OrderingDrawer({
           deliverySlotId: String(form.get("deliverySlotId") ?? "") || null,
           paymentMethodId,
           changeFor: String(form.get("changeFor") ?? "") || null,
+          notes: orderNotes,
           address:
             fulfillment === "delivery"
               ? {

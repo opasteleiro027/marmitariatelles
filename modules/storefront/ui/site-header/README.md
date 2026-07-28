@@ -1,0 +1,16 @@
+# Site header
+
+## Purpose
+
+Shared public navigation for the independent customer pages.
+
+## Responsibilities
+
+- Link to Home, Cardápio, Como funciona and Contato.
+- Expose the operational status.
+- Optionally open the cart from the menu page.
+
+## Inputs and outputs
+
+Receives the business name, active route, operational state and optional cart
+callback. Renders accessible navigation without reading persistence.

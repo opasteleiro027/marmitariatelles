@@ -81,6 +81,7 @@ export default async function TrackingPage({
                 <li key={item.id}>
                   <span>
                     {item.quantity}× {item.name}
+                    {item.notes ? <small>Observação: {item.notes}</small> : null}
                   </span>
                   <strong>{formatMoney(item.lineTotalInCents)}</strong>
                 </li>

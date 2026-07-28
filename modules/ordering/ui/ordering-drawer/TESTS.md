@@ -8,3 +8,5 @@
 - Bloqueia entrega sem correspondência entre endereço e área cadastrada.
 - Oculta horário na entrega e mantém a escolha na retirada.
 - Exibe número, total, acompanhamento e WhatsApp após sucesso.
+- Envia a observação opcional sem aceitar preços do navegador como
+  autoritativos.

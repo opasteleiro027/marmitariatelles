@@ -18,6 +18,7 @@ export type TrackedOrder = {
     name: string;
     unitPriceInCents: number;
     quantity: number;
+    notes: string | null;
     lineTotalInCents: number;
   }>;
   history: Array<{ status: OrderStatus; createdAt: string }>;
@@ -65,11 +66,12 @@ export async function getTrackedOrder(
         product_name_snapshot: string;
         unit_price_cents_snapshot: number;
         quantity: number;
+        notes: string | null;
         line_total_cents: number;
       }>
     >(
       `SELECT id, product_name_snapshot, unit_price_cents_snapshot,
-              quantity, line_total_cents
+              quantity, notes, line_total_cents
        FROM order_items
        WHERE order_id = $1
        ORDER BY id`,
@@ -100,6 +102,7 @@ export async function getTrackedOrder(
       name: item.product_name_snapshot,
       unitPriceInCents: item.unit_price_cents_snapshot,
       quantity: item.quantity,
+      notes: item.notes,
       lineTotalInCents: item.line_total_cents,
     })),
     history: history.map((entry) => ({

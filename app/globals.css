@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --font-nunito: "Segoe UI", "Trebuchet MS", Arial, sans-serif;
+  --font-nunito: Inter, "Segoe UI", Arial, sans-serif;
+  --font-heading: Montserrat, "Segoe UI", Arial, sans-serif;
   --font-fraunces: Georgia, "Times New Roman", serif;
-  --cream-50: #fffdf7;
-  --cream-100: #fbf4e7;
-  --brown-950: #2b1d16;
-  --brown-700: #6f4835;
-  --orange-600: #d85b27;
-  --orange-700: #b94418;
-  --green-700: #416346;
-  --green-100: #e5eee3;
-  --line: #eadfce;
+  --cream-50: #fff8f6;
+  --cream-100: #fff0ee;
+  --brown-950: #2b1613;
+  --brown-700: #594238;
+  --orange-600: #c64f00;
+  --orange-700: #9e3d00;
+  --green-700: #50652a;
+  --green-100: #d2eca2;
+  --line: #e0c0b2;
   --shadow: 0 18px 55px rgb(68 40 23 / 10%);
 }
 

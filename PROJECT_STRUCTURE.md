@@ -18,6 +18,7 @@
 | `docs/` | arquitetura, dados, fluxos e testes | projeto completo |
 | `build/` | empacotamento/start standalone | Next.js |
 | `railway.json` | contrato de implantação | Railway |
+| `public/images/menu-builder-hero.png` | hero gastronômico do cardápio | export do projeto Stitch |
 
 Peças significativas de interface possuem `README.md`, `DEPENDENCIES.md` e
 `TESTS.md` na própria pasta. Os READMEs dos módulos registram entradas, saídas e
@@ -37,3 +38,23 @@ limites de responsabilidade.
 `admin-navigation` é responsável somente pelos destinos e pelo estado ativo.
 `admin-order-monitor` permanece no layout e acompanha novos pedidos em qualquer
 uma das telas.
+
+## Telas públicas
+
+| Rota | Peça principal | Responsabilidade |
+| --- | --- | --- |
+| `/` | `StorefrontPage` | apresentação e entrada da experiência |
+| `/cardapio` | `menu-builder` | montagem dinâmica, rascunho e abertura do checkout |
+| `/como-funciona` | `public-content-page` | explicação do fluxo do pedido |
+| `/contato` | `public-content-page` | WhatsApp, endereço e atendimento |
+| `/pedido/[token]` | tracking | acompanhamento privado do pedido |
+
+## Peças públicas significativas
+
+| Pasta | Responsabilidade | Dependências diretas |
+| --- | --- | --- |
+| `modules/storefront/ui/site-header/` | navegação entre telas públicas | Next Link |
+| `modules/storefront/ui/menu-builder/` | estado e composição do montador | category, summary, ordering |
+| `modules/storefront/ui/menu-category/` | etapa e controles de produtos | snapshot, moeda |
+| `modules/storefront/ui/menu-order-summary/` | resumo fixo e pedido mínimo | cart items, moeda |
+| `modules/storefront/ui/public-content-page/` | shell das telas informativas | site-header |

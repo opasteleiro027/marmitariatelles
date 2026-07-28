@@ -246,12 +246,12 @@ export async function confirmOrder(
       ],
     );
 
-    for (const item of pricedItems) {
+    for (const [itemIndex, item] of pricedItems.entries()) {
       await sql.unsafe(
         `INSERT INTO order_items
           (id, order_id, product_id, product_name_snapshot,
-           unit_price_cents_snapshot, quantity, line_total_cents)
-         VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+           unit_price_cents_snapshot, quantity, notes, line_total_cents)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
         [
           randomUUID(),
           orderId,
@@ -259,6 +259,7 @@ export async function confirmOrder(
           item.name,
           item.unitPriceInCents,
           item.quantity,
+          itemIndex === 0 ? request.notes : null,
           item.unitPriceInCents * item.quantity,
         ],
       );

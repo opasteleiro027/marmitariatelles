@@ -88,6 +88,43 @@ test("admin navigation uses dedicated routes instead of page anchors", async () 
   assert.doesNotMatch(navigation, /href:\s*["']#/);
 });
 
+test("public navigation uses independent customer routes", async () => {
+  const navigation = await readFile(
+    new URL(
+      "../modules/storefront/ui/site-header/SiteHeader.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  for (const route of [
+    'href: "/"',
+    'href: "/cardapio"',
+    'href: "/como-funciona"',
+    'href: "/contato"',
+  ]) {
+    assert.match(navigation, new RegExp(route.replaceAll("/", "\\/")));
+  }
+  assert.doesNotMatch(navigation, /href:\s*["']#/);
+});
+
+test("ships the Stitch menu hero and keeps the builder category-driven", async () => {
+  const [hero, builder] = await Promise.all([
+    readFile(
+      new URL("../public/images/menu-builder-hero.png", import.meta.url),
+    ),
+    readFile(
+      new URL(
+        "../modules/storefront/ui/menu-builder/MenuBuilder.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+  assert.ok(hero.length > 1_000_000);
+  assert.match(builder, /categories\.map/);
+  assert.match(builder, /marmitaria-telles-order-notes/);
+});
+
 test("uses only the site switch to release or block orders", () => {
   assert.equal(
     siteAcceptsOrders({
@@ -312,6 +349,7 @@ test("normalizes checkout input and combines repeated products", () => {
     deliverySlotId: "slot-1",
     paymentMethodId: "cash",
     changeFor: "50,00",
+    notes: "Sem cebola, por favor.",
     items: [
       { productId: "marmita", quantity: 1 },
       { productId: "marmita", quantity: 2 },
@@ -320,6 +358,23 @@ test("normalizes checkout input and combines repeated products", () => {
   assert.equal(request.customer.phone, "27999999999");
   assert.deepEqual(request.items, [{ productId: "marmita", quantity: 3 }]);
   assert.equal(request.changeForInCents, 5000);
+  assert.equal(request.notes, "Sem cebola, por favor.");
+});
+
+test("limits the customer order observation to 500 characters", () => {
+  assert.throws(
+    () =>
+      parseOrderRequest({
+        idempotencyKey: "tentativa-observacao",
+        customer: { name: "Cliente", phone: "27999999999" },
+        fulfillment: "pickup",
+        deliverySlotId: "slot-1",
+        paymentMethodId: "cash",
+        notes: "x".repeat(501),
+        items: [{ productId: "marmita", quantity: 1 }],
+      }),
+    OrderRequestError,
+  );
 });
 
 test("requires a delivery address for delivery orders", () => {
