@@ -15,11 +15,12 @@
 - Pedidos e métricas reais no painel, histórico de status e cancelamento.
 - Gestão de áreas, taxas, dados do estabelecimento e agenda do domingo.
 - Migration, seed, health check e empacotamento standalone para Railway.
+- Repositório publicado no GitHub e ambiente de produção ativo no Railway com
+  PostgreSQL persistente.
 
 ### Pendente
 
 - Fotos, complementos, cupons, filtros detalhados, comanda e relatórios.
-- Conexão do repositório GitHub e criação do serviço Railway.
 
 ## 0.1.0 - 2026-07-27
 

@@ -3,6 +3,11 @@
 Aplicação web mobile-first para receber e administrar pedidos de marmitas aos
 domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
 
+## Produção
+
+- Aplicação: https://marmitariatelles-production.up.railway.app
+- Código-fonte: https://github.com/opasteleiro027/marmitariatelles
+
 ## O que já funciona
 
 - loja pública responsiva, cardápio e carrinho persistente no dispositivo;
@@ -93,13 +98,9 @@ npm run build
 
 ## Publicação no Railway
 
-1. Crie/conecte um repositório GitHub para este projeto.
-2. No Railway, crie um projeto a partir do repositório.
-3. Adicione um serviço PostgreSQL.
-4. Configure as variáveis acima; use a `DATABASE_URL` fornecida pelo Railway.
-5. O arquivo `railway.json` executa build, migration antes do deploy, start do
-   standalone e health check.
-6. Depois do primeiro domínio público, atualize `APP_URL`.
+O ambiente de produção está conectado à branch `main` no GitHub e usa
+PostgreSQL persistente no Railway. O arquivo `railway.json` executa build,
+migration antes do deploy, start do standalone e health check.
 
 ## Estrutura e decisões
 
