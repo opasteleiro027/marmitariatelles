@@ -1,0 +1,22 @@
+.live {
+  width: fit-content;
+  margin-top: 14px;
+  padding: 7px 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 8%);
+  color: #f5e8df;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.live i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b9e56b;
+  box-shadow: 0 0 0 4px rgb(185 229 107 / 14%);
+}

@@ -19,3 +19,10 @@ group and copied to an immutable order-item addon snapshot.
 The protected admin pulse exposes only a change marker, total count and latest
 order identifier. The admin interface polls it every five seconds, refreshes
 changed data and can play an opt-in sound only when a new order is detected.
+
+The private customer tracking screen also refreshes its server data every five
+seconds while the order is active, and stops after delivery or cancellation.
+
+The administrative order list can open a dedicated 80 mm browser print view
+with customer, fulfillment, item customization, totals, payment and change
+details.

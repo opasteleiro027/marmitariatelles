@@ -11,3 +11,6 @@
 - Reuses an idempotency result for a repeated confirmation request.
 - Preserves historical names and prices after catalog edits.
 - Distinguishes a new order from status-only changes in the admin pulse.
+- Refreshes the customer tracking screen every five seconds while an order is
+  active.
+- Prints a complete 80 mm thermal order slip from the administrative list.

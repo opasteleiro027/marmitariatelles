@@ -5,6 +5,7 @@ import {
   ORDER_STATUS_TRANSITIONS,
 } from "../../application/order-status";
 import { updateOrderStatusAction } from "../../server/admin-order-actions";
+import { OrderPrintButton } from "../order-print-button/OrderPrintButton";
 import styles from "./admin-order-list.module.css";
 
 export function AdminOrderList({
@@ -82,25 +83,28 @@ export function AdminOrderList({
                     ))}
                   </div>
                 </details>
-                {nextStatuses.length ? (
-                  <form action={updateOrderStatusAction}>
-                    <input type="hidden" name="orderId" value={order.id} />
-                    <select
-                      aria-label={`Atualizar pedido ${order.orderNumber}`}
-                      name="status"
-                      defaultValue={nextStatuses[0]}
-                    >
-                      {nextStatuses.map((status) => (
-                        <option key={status} value={status}>
-                          {ORDER_STATUS_LABELS[status]}
-                        </option>
-                      ))}
-                    </select>
-                    <button type="submit">Atualizar</button>
-                  </form>
-                ) : (
-                  <small className={styles.finished}>Fluxo encerrado</small>
-                )}
+                <div className={styles.orderActions}>
+                  <OrderPrintButton order={order} />
+                  {nextStatuses.length ? (
+                    <form action={updateOrderStatusAction}>
+                      <input type="hidden" name="orderId" value={order.id} />
+                      <select
+                        aria-label={`Atualizar pedido ${order.orderNumber}`}
+                        name="status"
+                        defaultValue={nextStatuses[0]}
+                      >
+                        {nextStatuses.map((status) => (
+                          <option key={status} value={status}>
+                            {ORDER_STATUS_LABELS[status]}
+                          </option>
+                        ))}
+                      </select>
+                      <button type="submit">Atualizar</button>
+                    </form>
+                  ) : (
+                    <small className={styles.finished}>Fluxo encerrado</small>
+                  )}
+                </div>
               </article>
             );
           })}

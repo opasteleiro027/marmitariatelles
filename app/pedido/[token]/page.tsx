@@ -6,6 +6,7 @@ import {
   ORDER_STATUS_LABELS,
   type OrderStatus,
 } from "@/modules/ordering/application/order-status";
+import { OrderTrackingRefresh } from "@/modules/ordering/ui/order-tracking-refresh/OrderTrackingRefresh";
 import styles from "./tracking.module.css";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +35,8 @@ export default async function TrackingPage({
       )
     : activeSteps;
   const currentIndex = steps.indexOf(order.status);
+  const refreshEnabled =
+    order.status !== "delivered" && order.status !== "cancelled";
 
   return (
     <main className={styles.page}>
@@ -53,6 +56,7 @@ export default async function TrackingPage({
               timeZone: "America/Sao_Paulo",
             }).format(new Date(order.createdAt))}
           </span>
+          <OrderTrackingRefresh enabled={refreshEnabled} />
         </header>
 
         {order.status === "cancelled" ? (

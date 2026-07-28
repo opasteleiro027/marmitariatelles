@@ -59,6 +59,61 @@ test("detects a new order separately from other panel changes", () => {
   assert.equal(classifyOrderPulse(previous, previous), "unchanged");
 });
 
+test("refreshes active customer order tracking every five seconds", async () => {
+  const [trackingPage, trackingRefresh] = await Promise.all([
+    readFile(
+      new URL("../app/pedido/[token]/page.tsx", import.meta.url),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/ui/order-tracking-refresh/OrderTrackingRefresh.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+  assert.match(trackingPage, /OrderTrackingRefresh/);
+  assert.match(trackingPage, /status !== "delivered"/);
+  assert.match(trackingPage, /status !== "cancelled"/);
+  assert.match(trackingRefresh, /POLLING_INTERVAL_MS = 5_000/);
+  assert.match(trackingRefresh, /router\.refresh\(\)/);
+  assert.match(trackingRefresh, /visibilitychange/);
+});
+
+test("ships an 80 mm browser-printable administrative order slip", async () => {
+  const [orderList, printButton, adminOrders] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/ordering/ui/admin-order-list/AdminOrderList.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/ui/order-print-button/OrderPrintButton.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/application/admin-orders.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+  assert.match(orderList, /OrderPrintButton/);
+  assert.match(printButton, /size: 80mm auto/);
+  assert.match(printButton, /printWindow\.print\(\)/);
+  assert.match(printButton, /Imprimir comanda/);
+  assert.match(printButton, /Troco para/);
+  assert.match(adminOrders, /address_snapshot/);
+  assert.match(adminOrders, /change_for_cents/);
+});
+
 test("ships the selected MP3 used by the new-order alert", async () => {
   const audio = await readFile(
     new URL("../public/audio/new-order.mp3", import.meta.url),

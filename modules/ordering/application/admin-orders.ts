@@ -14,10 +14,15 @@ export type AdminOrder = {
   customerName: string;
   customerPhone: string;
   fulfillment: "pickup" | "delivery";
+  address: string | null;
+  subtotalInCents: number;
+  deliveryFeeInCents: number;
+  discountInCents: number;
   totalInCents: number;
   createdAt: string;
   itemCount: number;
   paymentLabel: string;
+  changeForInCents: number | null;
   items: Array<{
     id: string;
     name: string;
@@ -87,22 +92,29 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
         customer_name_snapshot: string;
         customer_phone_snapshot: string;
         fulfillment_type: "pickup" | "delivery";
+        address_snapshot: string | null;
+        subtotal_cents: number;
+        delivery_fee_cents: number;
+        discount_cents: number;
         total_cents: number;
         created_at: string;
         item_count: number;
         payment_label: string;
+        change_for_cents: number | null;
       }>
     >(
       `SELECT o.id, o.friendly_number, o.status,
               o.customer_name_snapshot, o.customer_phone_snapshot,
-              o.fulfillment_type, o.total_cents, o.created_at,
+              o.fulfillment_type, o.address_snapshot, o.subtotal_cents,
+              o.delivery_fee_cents, o.discount_cents, o.total_cents,
+              o.created_at,
               COALESCE(SUM(oi.quantity), 0)::INT AS item_count,
-              pm.label AS payment_label
+              pm.label AS payment_label, py.change_for_cents
        FROM orders o
        JOIN order_items oi ON oi.order_id = o.id
        JOIN payments py ON py.order_id = o.id
        JOIN payment_methods pm ON pm.id = py.payment_method_id
-       GROUP BY o.id, pm.label
+       GROUP BY o.id, pm.label, py.change_for_cents
        ORDER BY o.created_at DESC
        LIMIT 100`,
     ),
@@ -153,10 +165,15 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
       customerName: order.customer_name_snapshot,
       customerPhone: order.customer_phone_snapshot,
       fulfillment: order.fulfillment_type,
+      address: order.address_snapshot,
+      subtotalInCents: order.subtotal_cents,
+      deliveryFeeInCents: order.delivery_fee_cents,
+      discountInCents: order.discount_cents,
       totalInCents: order.total_cents,
       createdAt: order.created_at,
       itemCount: order.item_count,
       paymentLabel: order.payment_label,
+      changeForInCents: order.change_for_cents,
       items: itemRows
         .filter((item) => item.order_id === order.id)
         .map((item) => ({

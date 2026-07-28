@@ -102,6 +102,11 @@
   gap: 7px;
 }
 
+.orderActions {
+  display: grid !important;
+  gap: 7px !important;
+}
+
 .list select,
 .list button {
   min-height: 38px;
@@ -197,7 +202,7 @@
     grid-template-columns: 75px 1fr 1fr;
   }
 
-  .list form,
+  .orderActions,
   .finished {
     grid-column: 2 / -1;
   }
@@ -214,7 +219,7 @@
 
   .list article > div:nth-child(3),
   .status,
-  .list form,
+  .orderActions,
   .finished {
     grid-column: 1 / -1;
   }
