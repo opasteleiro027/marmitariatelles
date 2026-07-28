@@ -15,6 +15,11 @@
 - Coordenadas não são persistidas no pedido.
 - GPS só é solicitado após clique e o endereço sugerido permanece editável.
 
+### Corrigido
+
+- Seed de calendário agora reutiliza o menu da data e continua idempotente mesmo
+  quando uma data criada anteriormente foi editada pelo administrador.
+
 ## 0.2.0 - 2026-07-27
 
 ### Adicionado

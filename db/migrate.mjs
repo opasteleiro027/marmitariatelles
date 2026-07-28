@@ -60,7 +60,7 @@ async function seedFoundation(database) {
   );
   const timestamp = new Date().toISOString();
   const salesDate = nextSundayDateKey();
-  const menuId = `menu-${salesDate}`;
+  let menuId = `seed-menu-${salesDate}`;
 
   await database.begin(async (transaction) => {
     const admin = seedData.administrator;
@@ -130,6 +130,14 @@ async function seedFoundation(database) {
       `;
     }
 
+    const [existingMenu] = await transaction`
+      SELECT id
+      FROM sales_menus
+      WHERE sales_date = ${salesDate}
+      LIMIT 1
+    `;
+    if (existingMenu) menuId = existingMenu.id;
+
     await transaction`
       INSERT INTO sales_menus
         (id, sales_date, ordering_opens_at, ordering_closes_at, total_capacity,
@@ -138,7 +146,7 @@ async function seedFoundation(database) {
         (${menuId}, ${salesDate}, ${timestamp},
           ${new Date(`${salesDate}T10:30:00-03:00`).toISOString()},
           60, TRUE, FALSE, ${timestamp}, ${timestamp})
-      ON CONFLICT (sales_date) DO UPDATE SET
+      ON CONFLICT (id) DO UPDATE SET
         published = TRUE,
         updated_at = EXCLUDED.updated_at
     `;

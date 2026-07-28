@@ -7,8 +7,8 @@ de CEP e correspondência de área.
 
 ## Integração
 
-Repositórios PostgreSQL, migrations, confirmação atômica, idempotência, estoque e
-capacidade.
+Repositórios PostgreSQL, migrations, confirmação atômica, idempotência, estoque,
+capacidade e nova execução do seed após edição da data do menu.
 
 ## Fluxo
 
