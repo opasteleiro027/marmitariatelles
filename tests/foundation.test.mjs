@@ -13,6 +13,7 @@ import {
   OrderRequestError,
   parseOrderRequest,
 } from "../modules/ordering/domain/order-request.ts";
+import { selectAutomaticDeliverySlot } from "../modules/ordering/domain/select-automatic-delivery-slot.ts";
 import { formatMoney } from "../modules/storefront/domain/format-money.ts";
 import { nextSundayLabel } from "../modules/storefront/domain/next-sales-date.ts";
 import { mapNominatimAddress } from "../modules/address-location/domain/map-nominatim-address.ts";
@@ -204,5 +205,20 @@ test("requires a delivery address for delivery orders", () => {
         items: [{ productId: "marmita", quantity: 1 }],
       }),
     OrderRequestError,
+  );
+});
+
+test("assigns the first available operational slot to home delivery", () => {
+  assert.equal(
+    selectAutomaticDeliverySlot([
+      { id: "slot-full", available: false },
+      { id: "slot-first", available: true },
+      { id: "slot-second", available: true },
+    ]),
+    "slot-first",
+  );
+  assert.equal(
+    selectAutomaticDeliverySlot([{ id: "slot-full", available: false }]),
+    "",
   );
 });

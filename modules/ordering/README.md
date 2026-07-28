@@ -7,3 +7,6 @@ All confirmation-time values are recalculated on the server inside one atomic
 operation. Product and addon names and prices are copied to immutable snapshots.
 For delivery, the selected area must match the normalized city and neighborhood
 from the confirmed address.
+
+Home delivery receives the first available operational slot automatically.
+Pickup keeps the slot as an explicit customer choice.

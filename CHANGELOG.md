@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.2 - 2026-07-28
+
+### Alterado
+
+- Entrega em casa não solicita mais uma faixa de horário ao cliente.
+- O sistema atribui internamente a primeira faixa operacional disponível para
+  preservar capacidade e concorrência.
+- Retirada continua permitindo a escolha do horário.
+
 ## 0.3.1 - 2026-07-28
 
 ### Corrigido

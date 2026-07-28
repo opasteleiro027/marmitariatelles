@@ -14,6 +14,10 @@ Entrega → usar GPS ou informar CEP/manual → sugerir endereço → cliente re
 número e bairro → associar área cadastrada → servidor confere cidade e bairro →
 aplicar taxa.
 
+Na entrega, a primeira faixa operacional disponível é atribuída internamente e
+o cliente não precisa escolher horário. Na retirada, o cliente escolhe a faixa
+em que pretende buscar o pedido.
+
 Se a permissão de GPS for negada, a localização falhar ou os provedores externos
 estiverem indisponíveis, o cliente continua preenchendo todos os campos
 manualmente.

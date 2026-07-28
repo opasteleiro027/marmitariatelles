@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import { AddressLocationFields } from "@/modules/address-location/ui/address-location-fields/AddressLocationFields";
+import { selectAutomaticDeliverySlot } from "@/modules/ordering/domain/select-automatic-delivery-slot";
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type { StorefrontSnapshot } from "@/modules/storefront/domain/storefront.types";
 import type { CartItem, OrderSuccess } from "./ordering.types";
@@ -49,6 +50,10 @@ export function OrderingDrawer({
   const deliveryFee =
     fulfillment === "delivery" ? area?.deliveryFeeInCents ?? 0 : 0;
   const total = subtotal + deliveryFee;
+  const automaticDeliverySlotId = useMemo(
+    () => selectAutomaticDeliverySlot(snapshot.deliverySlots),
+    [snapshot.deliverySlots],
+  );
   const addressDeliveryAreas = useMemo(
     () =>
       snapshot.deliveryAreas.map((deliveryArea) => ({
@@ -271,16 +276,29 @@ export function OrderingDrawer({
                   onDeliveryAreaChange={setDeliveryAreaId}
                 />
               )}
-              <label>
-                Horário previsto
-                <select name="deliverySlotId" required>
-                  {snapshot.deliverySlots
-                    .filter((slot) => slot.available)
-                    .map((slot) => (
-                      <option key={slot.id} value={slot.id}>{slot.label}</option>
-                    ))}
-                </select>
-              </label>
+              {fulfillment === "pickup" ? (
+                <label>
+                  Horário de retirada
+                  <select name="deliverySlotId" required>
+                    {snapshot.deliverySlots
+                      .filter((slot) => slot.available)
+                      .map((slot) => (
+                        <option key={slot.id} value={slot.id}>{slot.label}</option>
+                      ))}
+                  </select>
+                </label>
+              ) : (
+                <>
+                  <input
+                    type="hidden"
+                    name="deliverySlotId"
+                    value={automaticDeliverySlotId}
+                  />
+                  <p className={styles.info}>
+                    A previsão da entrega será organizada pela marmitaria.
+                  </p>
+                </>
+              )}
             </fieldset>
 
             <fieldset>
@@ -318,7 +336,11 @@ export function OrderingDrawer({
             <button
               className={styles.submit}
               type="submit"
-              disabled={submitting || !snapshot.ordersOpen}
+              disabled={
+                submitting ||
+                !snapshot.ordersOpen ||
+                !automaticDeliverySlotId
+              }
             >
               {submitting ? "Enviando pedido..." : "Confirmar pedido"}
             </button>
