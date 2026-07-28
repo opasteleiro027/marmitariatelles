@@ -12,9 +12,12 @@ export async function GET(
   } catch (reason) {
     const status = reason instanceof PostalCodeLookupError ? reason.status : 502;
     const message =
-      reason instanceof Error
+      reason instanceof PostalCodeLookupError
         ? reason.message
-        : "Não foi possível consultar o CEP.";
+        : "Não foi possível consultar o CEP agora. Tente novamente.";
+    if (!(reason instanceof PostalCodeLookupError)) {
+      console.error("Falha inesperada ao consultar CEP", reason);
+    }
     return NextResponse.json({ error: message }, { status });
   }
 }

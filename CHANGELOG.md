@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.2 - 2026-07-28
+
+### Corrigido
+
+- A busca por CEP agora usa BrasilAPI e mantém ViaCEP como segundo provedor,
+  evitando indisponibilidade quando o Railway não consegue alcançar um deles.
+- Falhas de rede, tempo limite e respostas inválidas de CEP ou GPS são
+  convertidas em mensagens amigáveis com orientação para preenchimento manual.
+- Detalhes técnicos como `fetch failed` não são mais exibidos ao cliente.
+
 ## 0.4.1 - 2026-07-28
 
 ### Adicionado

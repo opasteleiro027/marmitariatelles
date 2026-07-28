@@ -27,10 +27,25 @@ export async function requestAddressByCoordinates(
 }
 
 async function request(url: string): Promise<LocatedAddress> {
-  const response = await fetch(url, {
-    headers: { accept: "application/json" },
-  });
-  const result = (await response.json()) as LocatedAddress & ErrorResponse;
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      headers: { accept: "application/json" },
+    });
+  } catch {
+    throw new Error(
+      "Não foi possível conectar ao serviço de endereço. Preencha os campos manualmente ou tente novamente.",
+    );
+  }
+
+  let result: LocatedAddress & ErrorResponse;
+  try {
+    result = (await response.json()) as LocatedAddress & ErrorResponse;
+  } catch {
+    throw new Error(
+      "O serviço de endereço está temporariamente indisponível. Preencha os campos manualmente.",
+    );
+  }
   if (!response.ok) {
     throw new Error(result.error ?? "Não foi possível localizar o endereço.");
   }

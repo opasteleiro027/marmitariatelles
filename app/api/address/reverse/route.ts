@@ -19,9 +19,16 @@ export async function GET(request: Request) {
           ? reason.status
           : 502;
     const message =
-      reason instanceof Error
+      reason instanceof CoordinateError ||
+      reason instanceof ReverseGeocodingError
         ? reason.message
-        : "Não foi possível localizar o endereço.";
+        : "Não foi possível localizar o endereço agora. Tente novamente.";
+    if (
+      !(reason instanceof CoordinateError) &&
+      !(reason instanceof ReverseGeocodingError)
+    ) {
+      console.error("Falha inesperada ao localizar endereço", reason);
+    }
     return NextResponse.json({ error: message }, { status });
   }
 }

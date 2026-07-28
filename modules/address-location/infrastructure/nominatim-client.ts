@@ -71,20 +71,34 @@ async function requestProvider(
   url.searchParams.set("lon", String(longitude));
 
   const appUrl = process.env.APP_URL ?? "https://marmitariatelles-production.up.railway.app";
-  const response = await fetch(url, {
-    headers: {
-      accept: "application/json",
-      "accept-language": "pt-BR",
-      "user-agent": `MarmitariaTelles/0.3 (+${appUrl}; contact: abraaofcjunior@gmail.com)`,
-    },
-    signal: AbortSignal.timeout(10_000),
-  });
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      headers: {
+        accept: "application/json",
+        "accept-language": "pt-BR",
+        "user-agent": `MarmitariaTelles/0.4 (+${appUrl}; contact: abraaofcjunior@gmail.com)`,
+      },
+      signal: AbortSignal.timeout(10_000),
+    });
+  } catch {
+    throw new ReverseGeocodingError(
+      "O serviço de localização está indisponível agora. Preencha o endereço manualmente ou tente novamente.",
+    );
+  }
   if (!response.ok) {
     throw new ReverseGeocodingError(
       "Não foi possível converter a localização em endereço.",
     );
   }
-  const result = (await response.json()) as NominatimResponse;
+  let result: NominatimResponse;
+  try {
+    result = (await response.json()) as NominatimResponse;
+  } catch {
+    throw new ReverseGeocodingError(
+      "O serviço de localização retornou uma resposta inválida. Preencha o endereço manualmente.",
+    );
+  }
   if (!result.address) {
     throw new ReverseGeocodingError(
       "Não encontramos um endereço próximo desta localização.",

@@ -26,6 +26,10 @@ import {
   normalizePostalCode,
 } from "../modules/address-location/domain/normalize-location-name.ts";
 import { validateCoordinates } from "../modules/address-location/domain/validate-coordinates.ts";
+import {
+  lookupPostalCode,
+  PostalCodeLookupError,
+} from "../modules/address-location/infrastructure/via-cep-client.ts";
 
 test("formats monetary values stored as integer cents", () => {
   assert.match(formatMoney(2850), /28,50/);
@@ -94,6 +98,40 @@ test("keeps exactly one internal operational menu", async () => {
 test("normalizes Brazilian location names and postal codes", () => {
   assert.equal(normalizeLocationName("Bairro Setor América"), "america");
   assert.equal(normalizePostalCode("29.160-123"), "29160123");
+});
+
+test("uses a second CEP provider and never exposes a raw fetch error", async () => {
+  const originalFetch = globalThis.fetch;
+  try {
+    globalThis.fetch = async (url) => {
+      if (String(url).includes("brasilapi.com.br")) {
+        throw new TypeError("fetch failed");
+      }
+      return Response.json({
+        cep: "29166-650",
+        logradouro: "Rua dos Rouxinóis",
+        bairro: "Morada de Laranjeiras",
+        localidade: "Serra",
+        uf: "ES",
+      });
+    };
+    const address = await lookupPostalCode("29166-650");
+    assert.equal(address.neighborhood, "Morada de Laranjeiras");
+    assert.equal(address.city, "Serra");
+
+    globalThis.fetch = async () => {
+      throw new TypeError("fetch failed");
+    };
+    await assert.rejects(
+      () => lookupPostalCode("29166-650"),
+      (reason) =>
+        reason instanceof PostalCodeLookupError &&
+        !reason.message.toLowerCase().includes("fetch failed") &&
+        reason.message.includes("Preencha o endereço manualmente"),
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
 });
 
 test("validates geographic coordinate ranges", () => {

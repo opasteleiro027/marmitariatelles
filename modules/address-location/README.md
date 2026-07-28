@@ -6,7 +6,8 @@ obrigatório. Também consulta CEP e identifica a área de entrega correspondent
 ## Responsabilidades
 
 - validar e normalizar CEP, coordenadas, cidade e bairro;
-- consultar ViaCEP para preencher rua, bairro, cidade e estado;
+- consultar BrasilAPI com fallback para ViaCEP para preencher rua, bairro,
+  cidade e estado;
 - identificar automaticamente a área e a taxa a partir de cidade e bairro;
 - consultar geocodificação reversa por um adaptador substituível;
 - limitar, serializar e armazenar em cache as consultas ao Nominatim;

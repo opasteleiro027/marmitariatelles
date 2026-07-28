@@ -13,6 +13,7 @@ domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
 - loja pública responsiva, cardápio e carrinho persistente no dispositivo;
 - checkout para retirada ou entrega, horário, pagamento e troco;
 - endereço por GPS opcional, busca automática de CEP e conferência de área;
+- consulta de CEP com dois provedores e preenchimento manual como alternativa;
 - confirmação transacional com preço recalculado no servidor, estoque,
   idempotência e número amigável;
 - acompanhamento privado por token seguro;

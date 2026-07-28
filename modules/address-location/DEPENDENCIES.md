@@ -1,7 +1,7 @@
 # Dependências
 
 - Geolocation API do navegador, somente após clique e permissão do cliente.
-- ViaCEP para consulta de CEP.
+- BrasilAPI e ViaCEP, em fallback, para consulta de CEP.
 - Nominatim/OpenStreetMap para geocodificação reversa iniciada pelo cliente.
 - `APP_URL` e `REVERSE_GEOCODING_BASE_URL` para identificação e substituição do
   provedor.
