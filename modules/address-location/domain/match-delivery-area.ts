@@ -4,10 +4,10 @@ import type {
 } from "./address-location.types";
 import { normalizeLocationName } from "./normalize-location-name";
 
-export function findMatchingDeliveryArea(
+export function findMatchingDeliveryArea<TArea extends DeliveryAreaReference>(
   address: Pick<LocatedAddress, "neighborhood" | "city">,
-  areas: DeliveryAreaReference[],
-): DeliveryAreaReference | null {
+  areas: TArea[],
+): TArea | null {
   const neighborhood = normalizeLocationName(address.neighborhood);
   const city = normalizeLocationName(address.city);
   if (!neighborhood || !city) return null;

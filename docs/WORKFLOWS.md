@@ -10,9 +10,13 @@ pagamento, recalcula valores e grava tudo de forma atômica.
 
 ### Endereço de entrega
 
-Entrega → usar GPS ou informar CEP/manual → sugerir endereço → cliente revisa
-número e bairro → associar área cadastrada → servidor confere cidade e bairro →
-aplicar taxa.
+Entrega → usar GPS ou informar CEP → preencher bairro → identificar
+automaticamente área e taxa cadastradas → cliente revisa número e endereço →
+servidor confere cidade e bairro → aplicar taxa.
+
+Não há área padrão nem seletor manual de taxa. Se o CEP não retornar bairro, o
+campo continua editável; se cidade e bairro não corresponderem a uma área
+cadastrada, a confirmação permanece indisponível.
 
 Na entrega, a primeira faixa operacional disponível é atribuída internamente e
 o cliente não precisa escolher horário. Na retirada, o cliente escolhe a faixa

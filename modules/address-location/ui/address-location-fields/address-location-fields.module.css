@@ -28,6 +28,23 @@
   line-height: 1.5;
 }
 
+.areaResult {
+  display: grid;
+  gap: 3px;
+  padding: 11px 12px;
+  border: 1px solid #a8d2b7;
+  border-radius: 10px;
+  background: #eaf6ee;
+  color: #1f5d3d;
+  font-size: 13px;
+}
+
+.areaPending {
+  border-color: #e2cfad;
+  background: #fff8e8;
+  color: #72552d;
+}
+
 .addressGrid {
   display: grid;
   grid-template-columns: 1fr 1fr;

@@ -24,9 +24,7 @@ export function OrderingDrawer({
   const [fulfillment, setFulfillment] = useState<"pickup" | "delivery">(
     "pickup",
   );
-  const [deliveryAreaId, setDeliveryAreaId] = useState(
-    snapshot.deliveryAreas[0]?.id ?? "",
-  );
+  const [deliveryAreaId, setDeliveryAreaId] = useState("");
   const [paymentMethodId, setPaymentMethodId] = useState(
     snapshot.paymentMethods[0]?.id ?? "",
   );
@@ -339,7 +337,8 @@ export function OrderingDrawer({
               disabled={
                 submitting ||
                 !snapshot.ordersOpen ||
-                !automaticDeliverySlotId
+                !automaticDeliverySlotId ||
+                (fulfillment === "delivery" && !deliveryAreaId)
               }
             >
               {submitting ? "Enviando pedido..." : "Confirmar pedido"}

@@ -5,6 +5,7 @@ import type {
   DeliveryAreaReference,
   LocatedAddress,
 } from "../../domain/address-location.types";
+import { describeAddressAreaResult, type AddressAreaResult } from "../../domain/describe-address-area-result";
 import { findMatchingDeliveryArea } from "../../domain/match-delivery-area";
 import {
   formatPostalCode,
@@ -56,6 +57,9 @@ export function AddressLocationFields({
   const [messageKind, setMessageKind] = useState<"success" | "error">("success");
   const [showAttribution, setShowAttribution] = useState(false);
   const lastPostalCode = useRef("");
+  const selectedDeliveryArea = deliveryAreas.find(
+    (area) => area.id === deliveryAreaId,
+  );
 
   async function useCurrentLocation() {
     setMessage("");
@@ -70,11 +74,9 @@ export function AddressLocationFields({
         position.coords.latitude,
         position.coords.longitude,
       );
-      applyLocatedAddress(result);
+      const match = applyLocatedAddress(result);
       setShowAttribution(true);
-      showSuccess(
-        "Endereço aproximado encontrado. Confirme principalmente número e bairro.",
-      );
+      showLookupResult(describeAddressAreaResult(result.neighborhood, match, "gps"));
     } catch (reason) {
       showError(locationErrorMessage(reason));
     } finally {
@@ -94,9 +96,11 @@ export function AddressLocationFields({
     try {
       const result = await requestAddressByPostalCode(postalCode);
       lastPostalCode.current = postalCode;
-      applyLocatedAddress(result);
+      const match = applyLocatedAddress(result);
       setShowAttribution(false);
-      showSuccess("CEP encontrado. Complete o número e confirme o bairro.");
+      showLookupResult(
+        describeAddressAreaResult(result.neighborhood, match, "postal-code"),
+      );
     } catch (reason) {
       showError(
         reason instanceof Error
@@ -120,7 +124,8 @@ export function AddressLocationFields({
     };
     setAddress(nextAddress);
     const match = findMatchingDeliveryArea(nextAddress, deliveryAreas);
-    if (match) onDeliveryAreaChange(match.id);
+    onDeliveryAreaChange(match?.id ?? "");
+    return match;
   }
 
   function update(field: keyof AddressFormState, value: string) {
@@ -128,21 +133,26 @@ export function AddressLocationFields({
     setAddress(nextAddress);
     if (field === "neighborhood" || field === "city") {
       const match = findMatchingDeliveryArea(nextAddress, deliveryAreas);
-      if (match && match.id !== deliveryAreaId) {
-        onDeliveryAreaChange(match.id);
+      const nextDeliveryAreaId = match?.id ?? "";
+      if (nextDeliveryAreaId !== deliveryAreaId) {
+        onDeliveryAreaChange(nextDeliveryAreaId);
       }
     }
-    if (field === "postalCode") lastPostalCode.current = "";
-  }
-
-  function showSuccess(value: string) {
-    setMessageKind("success");
-    setMessage(value);
+    if (field === "postalCode") {
+      lastPostalCode.current = "";
+      setMessage("");
+      if (deliveryAreaId) onDeliveryAreaChange("");
+    }
   }
 
   function showError(value: string) {
     setMessageKind("error");
     setMessage(value);
+  }
+
+  function showLookupResult(result: AddressAreaResult) {
+    setMessageKind(result.kind);
+    setMessage(result.message);
   }
 
   return (
@@ -161,20 +171,18 @@ export function AddressLocationFields({
         editável.
       </p>
 
-      <label>
-        Bairro atendido
-        <select
-          value={deliveryAreaId}
-          onChange={(event) => onDeliveryAreaChange(event.target.value)}
-          required
-        >
-          {deliveryAreas.map((deliveryArea) => (
-            <option key={deliveryArea.id} value={deliveryArea.id}>
-              {deliveryArea.label} — {deliveryArea.formattedFee}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div
+        className={`${styles.areaResult} ${
+          selectedDeliveryArea ? "" : styles.areaPending
+        }`}
+      >
+        <strong>Área de entrega</strong>
+        <span>
+          {selectedDeliveryArea
+            ? `${selectedDeliveryArea.label} — ${selectedDeliveryArea.formattedFee}`
+            : "Informe o CEP para identificar o bairro e a taxa automaticamente."}
+        </span>
+      </div>
 
       <div className={styles.addressGrid}>
         <label>

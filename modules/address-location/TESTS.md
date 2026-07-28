@@ -5,5 +5,6 @@
 - converte campos variáveis do OpenStreetMap para o contrato do checkout;
 - rejeita localização fora do Brasil;
 - compara bairro e cidade ignorando caixa, acentos e prefixos;
+- não mantém área ou taxa anterior quando o endereço não tem correspondência;
 - mantém preenchimento manual quando GPS, CEP ou provedor falharem;
-- exige confirmação manual do número e da área de entrega.
+- exige confirmação manual do número, mas identifica a área automaticamente.

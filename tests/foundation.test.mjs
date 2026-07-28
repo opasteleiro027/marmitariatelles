@@ -17,6 +17,7 @@ import { selectAutomaticDeliverySlot } from "../modules/ordering/domain/select-a
 import { formatMoney } from "../modules/storefront/domain/format-money.ts";
 import { nextSundayLabel } from "../modules/storefront/domain/next-sales-date.ts";
 import { mapNominatimAddress } from "../modules/address-location/domain/map-nominatim-address.ts";
+import { describeAddressAreaResult } from "../modules/address-location/domain/describe-address-area-result.ts";
 import { findMatchingDeliveryArea } from "../modules/address-location/domain/match-delivery-area.ts";
 import {
   normalizeLocationName,
@@ -113,6 +114,34 @@ test("matches a located address to an exact configured delivery area", () => {
     ],
   );
   assert.equal(area?.id, "area-1");
+});
+
+test("does not assign a delivery area when the located neighborhood is not served", () => {
+  const area = findMatchingDeliveryArea(
+    { neighborhood: "Sé", city: "São Paulo" },
+    [{ id: "area-1", neighborhood: "América", city: "Serra" }],
+  );
+  assert.equal(area, null);
+  assert.deepEqual(describeAddressAreaResult("Sé", area, "postal-code"), {
+    kind: "error",
+    message:
+      'Bairro "Sé" preenchido, mas ele ainda não está em uma área de entrega cadastrada.',
+  });
+});
+
+test("reports the automatically filled neighborhood and delivery fee", () => {
+  assert.deepEqual(
+    describeAddressAreaResult(
+      "Setor América",
+      { formattedFee: "R$ 2,50" },
+      "postal-code",
+    ),
+    {
+      kind: "success",
+      message:
+        "Bairro preenchido automaticamente: Setor América. Taxa de R$ 2,50.",
+    },
+  );
 });
 
 test("recalculates subtotal, delivery fee, discount and total", () => {

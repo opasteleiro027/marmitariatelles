@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.3.3 - 2026-07-28
+
+### Alterado
+
+- A busca por CEP preenche o bairro do cliente e identifica automaticamente a
+  área e a taxa de entrega correspondentes.
+- O checkout não presume mais a primeira área cadastrada nem oferece seleção
+  manual de uma taxa diferente do endereço.
+- Alterar o CEP ou informar um bairro não atendido limpa a taxa anterior e
+  impede a confirmação até existir correspondência com uma área cadastrada.
+- O campo Bairro continua editável como alternativa quando o ViaCEP não o
+  informar.
+
 ## 0.3.2 - 2026-07-28
 
 ### Alterado
