@@ -88,7 +88,7 @@ test("admin navigation uses dedicated routes instead of page anchors", async () 
   assert.doesNotMatch(navigation, /href:\s*["']#/);
 });
 
-test("public navigation uses independent customer routes", async () => {
+test("public navigation keeps the ordering journey focused", async () => {
   const navigation = await readFile(
     new URL(
       "../modules/storefront/ui/site-header/SiteHeader.tsx",
@@ -96,14 +96,11 @@ test("public navigation uses independent customer routes", async () => {
     ),
     "utf8",
   );
-  for (const route of [
-    'href: "/"',
-    'href: "/cardapio"',
-    'href: "/como-funciona"',
-    'href: "/contato"',
-  ]) {
+  for (const route of ['href: "/"', 'href: "/cardapio"']) {
     assert.match(navigation, new RegExp(route.replaceAll("/", "\\/")));
   }
+  assert.doesNotMatch(navigation, /href: "\/como-funciona"/);
+  assert.doesNotMatch(navigation, /href: "\/contato"/);
   assert.doesNotMatch(navigation, /href:\s*["']#/);
 });
 

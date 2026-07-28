@@ -12,8 +12,6 @@ type SiteHeaderProps = {
 const navigation = [
   { id: "home", href: "/", label: "Início" },
   { id: "menu", href: "/cardapio", label: "Cardápio" },
-  { id: "how", href: "/como-funciona", label: "Como funciona" },
-  { id: "contact", href: "/contato", label: "Contato" },
 ] as const;
 
 export function SiteHeader({

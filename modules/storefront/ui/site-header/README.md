@@ -6,7 +6,7 @@ Shared public navigation for the independent customer pages.
 
 ## Responsibilities
 
-- Link to Home, Cardápio, Como funciona and Contato.
+- Link to Home and Cardápio.
 - Expose the operational status.
 - Optionally open the cart from the menu page.
 
