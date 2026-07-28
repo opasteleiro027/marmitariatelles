@@ -26,3 +26,9 @@ seconds while the order is active, and stops after delivery or cancellation.
 The administrative order list can open a dedicated 80 mm browser print view
 with customer, fulfillment, item customization, totals, payment and change
 details.
+
+The administrative overview also builds daily, weekly and monthly commercial
+reports in the Sao Paulo time zone. Cancelled orders remain visible as an
+operational count but are excluded from revenue, tickets and customer rankings.
+The report aggregates customer frequency and spend, repeat rate, neighborhoods,
+items, fulfillment and payment preferences.

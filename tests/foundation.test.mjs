@@ -16,6 +16,10 @@ import {
 } from "../modules/ordering/domain/order-request.ts";
 import { selectAutomaticDeliverySlot } from "../modules/ordering/domain/select-automatic-delivery-slot.ts";
 import { classifyOrderPulse } from "../modules/ordering/domain/order-pulse.ts";
+import {
+  getOrderReportDateRange,
+  parseOrderReportPeriod,
+} from "../modules/ordering/domain/order-report-period.ts";
 import { formatMoney } from "../modules/storefront/domain/format-money.ts";
 import { siteAcceptsOrders } from "../modules/establishment/domain/site-availability.ts";
 import { mapNominatimAddress } from "../modules/address-location/domain/map-nominatim-address.ts";
@@ -33,6 +37,57 @@ import {
 
 test("formats monetary values stored as integer cents", () => {
   assert.match(formatMoney(2850), /28,50/);
+});
+
+test("builds daily, weekly and monthly report ranges in Sao Paulo time", () => {
+  const now = new Date("2026-07-28T15:00:00.000Z");
+  assert.deepEqual(getOrderReportDateRange("day", now), {
+    startDate: "2026-07-28",
+    endDate: "2026-07-29",
+    label: "Hoje, 28 de julho de 2026",
+  });
+  assert.deepEqual(getOrderReportDateRange("week", now), {
+    startDate: "2026-07-27",
+    endDate: "2026-08-03",
+    label: "Semana de 27/07 a 02/08",
+  });
+  assert.deepEqual(getOrderReportDateRange("month", now), {
+    startDate: "2026-07-01",
+    endDate: "2026-08-01",
+    label: "Julho de 2026",
+  });
+  assert.equal(parseOrderReportPeriod("week"), "week");
+  assert.equal(parseOrderReportPeriod("invalid"), "day");
+});
+
+test("ships detailed customer profile reports in the admin overview", async () => {
+  const [overview, reportQuery, adminPage] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/admin/ui/admin-overview/AdminOverview.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/application/admin-order-report.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(new URL("../app/admin/(panel)/page.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.match(overview, /Fechamento do expediente/);
+  assert.match(overview, /Ticket médio/);
+  assert.match(overview, /Cliente que mais pediu/);
+  assert.match(overview, /Bairros atendidos/);
+  assert.match(overview, /Formas de pagamento/);
+  assert.match(reportQuery, /America\/Sao_Paulo/);
+  assert.match(reportQuery, /customer_addresses/);
+  assert.match(reportQuery, /returning_customers/);
+  assert.match(adminPage, /getAdminOrderReport/);
+  assert.match(adminPage, /periodo/);
 });
 
 test("detects a new order separately from other panel changes", () => {

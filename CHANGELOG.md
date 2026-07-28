@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.8.0 - 2026-07-28
+
+### Adicionado
+
+- Relatório de desempenho na Visão geral com filtros de dia, semana e mês.
+- Indicadores de faturamento, ticket médio, clientes únicos, gasto médio por
+  cliente, taxa de recompra e itens vendidos.
+- Ranking dos clientes que mais pediram, com frequência, total gasto e ticket
+  médio individual.
+- Ranking dos bairros com mais pedidos, clientes atendidos e faturamento.
+- Preferências por item, forma de pagamento, entrega e retirada.
+- Fechamento diário automático respeitando o fuso de São Paulo.
+
+### Alterado
+
+- Pedidos cancelados aparecem como indicador operacional, mas não entram no
+  faturamento, tickets ou rankings comerciais.
+- O bloco informativo da Visão geral foi substituído pela análise detalhada do
+  perfil dos clientes.
+
 ## 0.7.0 - 2026-07-28
 
 ### Adicionado

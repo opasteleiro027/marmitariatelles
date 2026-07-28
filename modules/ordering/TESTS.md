@@ -14,3 +14,7 @@
 - Refreshes the customer tracking screen every five seconds while an order is
   active.
 - Prints a complete 80 mm thermal order slip from the administrative list.
+- Builds daily, weekly and monthly boundaries in the Sao Paulo time zone.
+- Excludes cancelled orders from commercial report totals and rankings.
+- Aggregates customer frequency, tickets, neighborhoods, products and payment
+  preferences for the administrative overview.
