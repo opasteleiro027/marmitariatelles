@@ -164,7 +164,7 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
           {error}
         </small>
       ) : null}
-      <article
+      <section
         aria-hidden="true"
         className={styles.receipt}
         data-receipt
@@ -253,7 +253,7 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
         <footer>
           <strong>Bom preparo!</strong>
         </footer>
-      </article>
+      </section>
     </>
   );
 }
