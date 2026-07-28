@@ -43,7 +43,10 @@ export const orders = pgTable(
     menuId: text("menu_id")
       .notNull()
       .references(() => salesMenus.id),
-    deliveryAreaId: text("delivery_area_id").references(() => deliveryAreas.id),
+    deliveryAreaId: text("delivery_area_id").references(
+      () => deliveryAreas.id,
+      { onDelete: "set null" },
+    ),
     deliverySlotId: text("delivery_slot_id").references(() => deliverySlots.id),
     couponId: text("coupon_id").references(() => coupons.id),
     fulfillmentType: text("fulfillment_type", { enum: ["delivery", "pickup"] })

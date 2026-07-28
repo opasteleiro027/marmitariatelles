@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.3.4 - 2026-07-28
+
+### Adicionado
+
+- Administrador pode excluir um bairro cadastrado após uma confirmação
+  explícita no painel.
+- Exclusão é autorizada e executada no servidor dentro de uma transação.
+
+### Segurança dos dados
+
+- Pedidos históricos preservam endereço e taxa nos snapshots existentes.
+- A referência técnica do pedido para a área usa `ON DELETE SET NULL`, permitindo
+  remover o bairro operacional sem apagar ou alterar o histórico do pedido.
+
 ## 0.3.3 - 2026-07-28
 
 ### Alterado

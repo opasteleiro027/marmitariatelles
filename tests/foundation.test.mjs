@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 import {
   createSessionToken,
@@ -142,6 +143,17 @@ test("reports the automatically filled neighborhood and delivery fee", () => {
         "Bairro preenchido automaticamente: Setor América. Taxa de R$ 2,50.",
     },
   );
+});
+
+test("keeps historical orders when a delivery area is deleted", async () => {
+  const migration = await readFile(
+    new URL(
+      "../drizzle-postgres/0001_delivery_area_delete_set_null.sql",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  assert.match(migration, /ON DELETE SET NULL/i);
 });
 
 test("recalculates subtotal, delivery fee, discount and total", () => {

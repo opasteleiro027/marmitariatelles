@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { getPostgresClient } from "@/db";
+import { getPostgresClient, withTransaction } from "@/db";
 
 export type AdminDeliveryArea = {
   id: string;
@@ -158,4 +158,24 @@ export async function updateDeliveryArea(input: AdminDeliveryArea) {
       input.id,
     ],
   );
+}
+
+export async function deleteDeliveryArea(id: string) {
+  return withTransaction(async (sql) => {
+    const areas = await sql.unsafe<Array<{ id: string }>>(
+      `SELECT id
+       FROM delivery_areas
+       WHERE id = $1
+       FOR UPDATE`,
+      [id],
+    );
+    if (!areas[0]) return false;
+
+    await sql.unsafe(
+      `DELETE FROM delivery_areas
+       WHERE id = $1`,
+      [id],
+    );
+    return true;
+  });
 }

@@ -5,6 +5,7 @@ import { requireAdmin } from "@/modules/admin-auth/server/admin-session";
 import { parsePriceToCents } from "@/modules/catalog/domain/parse-price";
 import {
   createDeliveryArea,
+  deleteDeliveryArea,
   saveBusinessSettings,
   setOrdersPaused,
   updateDeliveryArea,
@@ -59,6 +60,15 @@ export async function updateDeliveryAreaAction(formData: FormData) {
     estimatedMinutes: optionalPositiveInteger(formData, "estimatedMinutes"),
     active: formData.get("active") === "on",
   });
+  refresh();
+}
+
+export async function deleteDeliveryAreaAction(formData: FormData) {
+  await requireAdmin();
+  const deleted = await deleteDeliveryArea(required(formData, "id"));
+  if (!deleted) {
+    throw new Error("O bairro informado não está mais cadastrado.");
+  }
   refresh();
 }
 

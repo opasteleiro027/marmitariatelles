@@ -5,6 +5,7 @@ import {
   saveBusinessSettingsAction,
   updateDeliveryAreaAction,
 } from "../../server/establishment-actions";
+import { DeleteDeliveryAreaControl } from "./DeleteDeliveryAreaControl";
 import styles from "./establishment-management.module.css";
 
 export function EstablishmentManagement({
@@ -101,6 +102,10 @@ export function EstablishmentManagement({
                 <label className={styles.check}><input type="checkbox" name="active" defaultChecked={area.active} />Área ativa</label>
                 <button type="submit">Salvar área</button>
               </form>
+              <DeleteDeliveryAreaControl
+                id={area.id}
+                neighborhood={area.neighborhood}
+              />
             </details>
           ))
         ) : (

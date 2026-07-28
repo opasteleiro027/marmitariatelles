@@ -130,6 +130,54 @@
   margin-top: 17px;
 }
 
+.deleteButton {
+  margin: 0 17px 18px;
+  padding: 10px 15px;
+  border: 1px solid #c54436;
+  border-radius: 10px;
+  background: white;
+  color: #a42d22;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 850;
+}
+
+.deleteConfirmation {
+  margin: 0 17px 18px;
+  padding: 13px;
+  border: 1px solid #efb2aa;
+  border-radius: 10px;
+  background: #fff3f1;
+  color: #7f251d;
+}
+
+.deleteConfirmation p {
+  margin: 0 0 11px;
+}
+
+.deleteConfirmation div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.deleteConfirmation button {
+  min-height: 40px;
+  padding: 0 13px;
+  border: 1px solid #d7c9bf;
+  border-radius: 9px;
+  background: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.deleteConfirmation .confirmDelete {
+  border-color: #a42d22;
+  background: #a42d22;
+  color: white;
+}
+
 .empty {
   padding: 22px;
   border-radius: 12px;
