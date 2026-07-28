@@ -58,7 +58,7 @@ export function MarmitaGroupStep({
                 type="button"
               >
                 <span>{option.name}</span>
-                <b>{optionStatus(option)}</b>
+                <b>{optionStatus(group, option, selected)}</b>
               </button>
             );
           }
@@ -80,7 +80,7 @@ export function MarmitaGroupStep({
             <div className={styles.counterOption} key={option.id}>
               <span>
                 <strong>{option.name}</strong>
-                <small>{optionStatus(option)}</small>
+                <small>{optionStatus(group, option, selected)}</small>
               </span>
               <div>
                 <button
@@ -226,10 +226,16 @@ function SummaryLine({
 }
 
 function optionStatus(
+  group: StorefrontMarmitaGroup,
   option: StorefrontMarmitaGroup["options"][number],
+  selected: boolean,
 ) {
   if (!option.available) return "Esgotado";
-  return option.additionalPriceInCents
-    ? `+ ${formatMoney(option.additionalPriceInCents)}`
-    : "Incluso";
+  if (option.additionalPriceInCents) {
+    return `+ ${formatMoney(option.additionalPriceInCents)}`;
+  }
+  if (group.role === "base" || group.role === "beans") {
+    return selected ? "✓" : "+";
+  }
+  return "Incluso";
 }

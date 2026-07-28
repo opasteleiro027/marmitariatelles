@@ -195,6 +195,9 @@ test("ships the Stitch menu hero and the seven-step marmita builder", async () =
   assert.match(configurator, /Escolha o tamanho/);
   assert.match(configurator, /Alguma observação/);
   assert.match(configuratorParts, /Complete sua marmita/);
+  assert.match(configuratorParts, /group\.role === "base"/);
+  assert.match(configuratorParts, /group\.role === "beans"/);
+  assert.match(configuratorParts, /selected \? "✓" : "\+"/);
 });
 
 test("uses only the site switch to release or block orders", () => {
