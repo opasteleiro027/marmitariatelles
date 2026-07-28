@@ -6,6 +6,7 @@
 | `db/` | conexão PostgreSQL, schema, migration e seed | módulos com tabelas |
 | `drizzle-postgres/` | migration SQL versionada | PostgreSQL |
 | `modules/admin-auth/` | credenciais, token e sessão administrativa | Node crypto, Next cookies |
+| `modules/address-location/` | GPS opcional, CEP, geocodificação e correspondência de área | Geolocation API, ViaCEP, Nominatim |
 | `modules/admin/` | composição visual do painel | módulos administrativos |
 | `modules/catalog/` | categorias, produtos, adicionais e cardápios | PostgreSQL |
 | `modules/establishment/` | loja, áreas e pagamentos | PostgreSQL |

@@ -15,6 +15,13 @@ import {
 } from "../modules/ordering/domain/order-request.ts";
 import { formatMoney } from "../modules/storefront/domain/format-money.ts";
 import { nextSundayLabel } from "../modules/storefront/domain/next-sales-date.ts";
+import { mapNominatimAddress } from "../modules/address-location/domain/map-nominatim-address.ts";
+import { findMatchingDeliveryArea } from "../modules/address-location/domain/match-delivery-area.ts";
+import {
+  normalizeLocationName,
+  normalizePostalCode,
+} from "../modules/address-location/domain/normalize-location-name.ts";
+import { validateCoordinates } from "../modules/address-location/domain/validate-coordinates.ts";
 
 test("formats monetary values stored as integer cents", () => {
   assert.match(formatMoney(2850), /28,50/);
@@ -30,6 +37,54 @@ test("keeps the Sunday date stable around the UTC boundary", () => {
   const label = nextSundayLabel(new Date("2026-07-28T00:30:00.000Z"));
   assert.match(label, /domingo/i);
   assert.match(label, /2 de agosto/i);
+});
+
+test("normalizes Brazilian location names and postal codes", () => {
+  assert.equal(normalizeLocationName("Bairro Setor América"), "america");
+  assert.equal(normalizePostalCode("29.160-123"), "29160123");
+});
+
+test("validates geographic coordinate ranges", () => {
+  assert.deepEqual(validateCoordinates("-20.2", "-40.3"), {
+    latitude: -20.2,
+    longitude: -40.3,
+  });
+  assert.throws(() => validateCoordinates("-91", "-40"), /Coordenadas/);
+});
+
+test("maps an OpenStreetMap response into the checkout address", () => {
+  assert.deepEqual(
+    mapNominatimAddress({
+      house_number: "16",
+      road: "Avenida Bartolomeu de Las Casas",
+      suburb: "Setor América",
+      city: "Serra",
+      state: "Espírito Santo",
+      postcode: "29160-123",
+      country_code: "br",
+    }),
+    {
+      postalCode: "29160123",
+      street: "Avenida Bartolomeu de Las Casas",
+      number: "16",
+      neighborhood: "Setor América",
+      city: "Serra",
+      state: "ES",
+      approximate: true,
+      attribution: "Endereço aproximado por OpenStreetMap",
+    },
+  );
+});
+
+test("matches a located address to an exact configured delivery area", () => {
+  const area = findMatchingDeliveryArea(
+    { neighborhood: "Setor América", city: "Serra" },
+    [
+      { id: "area-1", neighborhood: "América", city: "Serra" },
+      { id: "area-2", neighborhood: "Centro", city: "Vitória" },
+    ],
+  );
+  assert.equal(area?.id, "area-1");
 });
 
 test("recalculates subtotal, delivery fee, discount and total", () => {

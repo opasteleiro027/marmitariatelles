@@ -12,6 +12,7 @@ domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
 
 - loja pública responsiva, cardápio e carrinho persistente no dispositivo;
 - checkout para retirada ou entrega, horário, pagamento e troco;
+- endereço por GPS opcional, busca automática de CEP e conferência de área;
 - confirmação transacional com preço recalculado no servidor, estoque,
   capacidade, idempotência e número amigável;
 - acompanhamento privado por token seguro;
@@ -68,10 +69,16 @@ ADMIN_PASSWORD=defina-uma-senha-forte
 SESSION_SECRET=gere-um-segredo-longo-e-aleatorio
 ORDER_TOKEN_SECRET=opcional-separado-do-segredo-da-sessao
 APP_URL=http://localhost:3000
+REVERSE_GEOCODING_BASE_URL=https://nominatim.openstreetmap.org
 ```
 
 `ORDER_TOKEN_SECRET` é opcional; quando ausente, `SESSION_SECRET` também assina
 os tokens de acompanhamento. Nunca versionar valores reais.
+
+O GPS exige HTTPS e permissão explícita do cliente. A geocodificação reversa usa
+o endpoint configurado em `REVERSE_GEOCODING_BASE_URL`; o padrão público do
+Nominatim deve ser usado apenas em volume moderado, com atribuição e limite de
+uma requisição por segundo. O preenchimento manual sempre permanece disponível.
 
 ## Banco e dados iniciais
 

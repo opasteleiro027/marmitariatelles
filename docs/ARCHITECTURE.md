@@ -15,6 +15,8 @@ negócio, apresentação e persistência.
 - `admin-auth` protege o painel;
 - `admin` compõe as interfaces, sem possuir regras de catálogo ou pedido;
 - `operational-monitoring` fornece o health check.
+- `address-location` isola GPS, CEP, geocodificação reversa e correspondência
+  entre o endereço confirmado e as áreas de entrega.
 
 Dependências circulares e arquivos genéricos de descarte não são permitidos.
 
@@ -38,6 +40,17 @@ estoque, capacidade, taxas, pagamento e status sempre ficam no servidor.
 - acompanhamento usa token não sequencial e armazena apenas seu hash;
 - número amigável não concede acesso ao pedido;
 - cancelamento restaura estoque e reserva uma única vez.
+- GPS só é solicitado após ação explícita, coordenadas não são persistidas e o
+  endereço permanece editável;
+- a área escolhida é conferida no servidor contra cidade e bairro informados.
+
+## Integrações de endereço
+
+O navegador fornece coordenadas somente com permissão e HTTPS. O servidor
+consulta ViaCEP por CEP e usa um adaptador de geocodificação reversa configurável.
+O adaptador padrão do Nominatim serializa chamadas, limita a uma por segundo,
+mantém cache em memória, identifica a aplicação e retorna atribuição visível.
+Falhas externas nunca removem a alternativa de preenchimento manual.
 
 ## Implantação
 

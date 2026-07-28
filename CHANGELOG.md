@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.3.0 - 2026-07-28
+
+### Adicionado
+
+- Botão opcional “Usar minha localização” no checkout.
+- Geocodificação reversa com cache, serialização, identificação e atribuição.
+- Preenchimento automático de endereço por CEP através do ViaCEP.
+- Correspondência automática e validação no servidor da área de entrega.
+- Fallback manual e mensagens específicas para permissão negada ou falha.
+
+### Segurança e privacidade
+
+- Coordenadas não são persistidas no pedido.
+- GPS só é solicitado após clique e o endereço sugerido permanece editável.
+
 ## 0.2.0 - 2026-07-27
 
 ### Adicionado

@@ -25,6 +25,8 @@ export type StorefrontSnapshot = {
   deliveryAreas: Array<{
     id: string;
     label: string;
+    neighborhood: string;
+    city: string;
     deliveryFeeInCents: number;
     minimumOrderInCents: number;
   }>;

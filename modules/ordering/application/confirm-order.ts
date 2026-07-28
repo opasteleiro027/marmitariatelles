@@ -1,6 +1,7 @@
 import { createHash, createHmac, randomUUID } from "node:crypto";
 import type postgres from "postgres";
 import { withTransaction } from "@/db";
+import { addressBelongsToDeliveryArea } from "@/modules/address-location/domain/match-delivery-area";
 import {
   calculateOrderTotal,
   validateChangeAmount,
@@ -386,9 +387,15 @@ async function validateFulfillment(
     return { feeInCents: 0, minimumOrderInCents: 0 };
   }
   const areaRows = await sql.unsafe<
-    Array<{ delivery_fee_cents: number; minimum_order_cents: number }>
+    Array<{
+      id: string;
+      neighborhood: string;
+      city: string;
+      delivery_fee_cents: number;
+      minimum_order_cents: number;
+    }>
   >(
-    `SELECT delivery_fee_cents, minimum_order_cents
+    `SELECT id, neighborhood, city, delivery_fee_cents, minimum_order_cents
      FROM delivery_areas
      WHERE id = $1 AND active = TRUE
      FOR UPDATE`,
@@ -398,6 +405,15 @@ async function validateFulfillment(
   if (!area) {
     throw new OrderRequestError(
       "A área escolhida não está disponível para entrega.",
+      409,
+    );
+  }
+  if (
+    !request.address ||
+    !addressBelongsToDeliveryArea(request.address, area)
+  ) {
+    throw new OrderRequestError(
+      "O bairro informado não corresponde à área de entrega escolhida.",
       409,
     );
   }

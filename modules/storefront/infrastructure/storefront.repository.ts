@@ -164,6 +164,8 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
       deliveryAreas: areas.results.map((area) => ({
         id: area.id,
         label: `${area.neighborhood}, ${area.city}`,
+        neighborhood: area.neighborhood,
+        city: area.city,
         deliveryFeeInCents: area.delivery_fee_cents,
         minimumOrderInCents: area.minimum_order_cents,
       })),

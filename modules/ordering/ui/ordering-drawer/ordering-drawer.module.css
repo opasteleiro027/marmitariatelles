@@ -154,12 +154,6 @@
   min-height: 18px;
 }
 
-.addressGrid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
 .info {
   margin: 0;
   padding: 12px;
@@ -274,7 +268,6 @@
     padding: 18px;
   }
 
-  .addressGrid,
   .radioGroup {
     grid-template-columns: 1fr;
   }

@@ -1,0 +1,85 @@
+.container {
+  display: grid;
+  gap: 12px;
+}
+
+.locationButton {
+  min-height: 48px;
+  border: 1px solid #2d704c;
+  border-radius: 11px;
+  background: #eaf6ee;
+  color: #1f5d3d;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+}
+
+.locationButton:disabled,
+.postalCodeControl button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.privacy {
+  margin: -3px 0 2px;
+  color: #6c5748;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.addressGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.postalCodeControl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px;
+}
+
+.postalCodeControl button {
+  min-height: 47px;
+  padding: 0 13px;
+  border: 1px solid #d9c9b9;
+  border-radius: 10px;
+  background: #fff4e6;
+  color: #7c3c11;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 850;
+}
+
+.success,
+.error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.success {
+  background: #eaf6ee;
+  color: #1f5d3d;
+}
+
+.error {
+  background: #fff0ed;
+  color: #9c291d;
+}
+
+.attribution {
+  width: fit-content;
+  color: #6c5748;
+  font-size: 11px;
+}
+
+@media (max-width: 560px) {
+  .addressGrid {
+    grid-template-columns: 1fr;
+  }
+}

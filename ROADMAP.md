@@ -21,6 +21,7 @@
 - [x] Taxa, pedido mínimo, horário e troco.
 - [x] Confirmação transacional, estoque, capacidade e idempotência.
 - [x] Sucesso, WhatsApp e acompanhamento por token seguro.
+- [x] GPS opcional, busca de CEP e validação do bairro atendido.
 - [ ] Observações por item e tela intermediária de revisão detalhada.
 - [ ] Consentimento explícito para salvar dados pessoais localmente.
 

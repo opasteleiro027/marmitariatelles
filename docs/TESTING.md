@@ -2,7 +2,8 @@
 
 ## Unidade
 
-Regras monetárias, janelas, taxas, troco, autorização, complementos e cupons.
+Regras monetárias, janelas, taxas, troco, autorização, localização, normalização
+de CEP e correspondência de área.
 
 ## Integração
 
@@ -12,7 +13,8 @@ capacidade.
 ## Fluxo
 
 Pedido completo do cliente e operação administrativa, incluindo rotas
-protegidas e acompanhamento por token.
+protegidas, acompanhamento por token, permissão de GPS negada, CEP indisponível
+e confirmação manual do endereço.
 
 ## Verificação por etapa
 

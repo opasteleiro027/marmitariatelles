@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
+import { AddressLocationFields } from "@/modules/address-location/ui/address-location-fields/AddressLocationFields";
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type { StorefrontSnapshot } from "@/modules/storefront/domain/storefront.types";
 import type { CartItem, OrderSuccess } from "./ordering.types";
@@ -48,6 +49,14 @@ export function OrderingDrawer({
   const deliveryFee =
     fulfillment === "delivery" ? area?.deliveryFeeInCents ?? 0 : 0;
   const total = subtotal + deliveryFee;
+  const addressDeliveryAreas = useMemo(
+    () =>
+      snapshot.deliveryAreas.map((deliveryArea) => ({
+        ...deliveryArea,
+        formattedFee: formatMoney(deliveryArea.deliveryFeeInCents),
+      })),
+    [snapshot.deliveryAreas],
+  );
 
   async function submitOrder(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -256,33 +265,11 @@ export function OrderingDrawer({
               {fulfillment === "pickup" ? (
                 <p className={styles.info}>{snapshot.address}</p>
               ) : (
-                <>
-                  <label>
-                    Bairro atendido
-                    <select
-                      value={deliveryAreaId}
-                      onChange={(event) => setDeliveryAreaId(event.target.value)}
-                      required
-                    >
-                      {snapshot.deliveryAreas.map((deliveryArea) => (
-                        <option key={deliveryArea.id} value={deliveryArea.id}>
-                          {deliveryArea.label} —{" "}
-                          {formatMoney(deliveryArea.deliveryFeeInCents)}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <div className={styles.addressGrid}>
-                    <label>CEP<input name="postalCode" required /></label>
-                    <label>Rua<input name="street" required /></label>
-                    <label>Número<input name="number" required /></label>
-                    <label>Complemento<input name="complement" /></label>
-                    <label>Bairro<input name="neighborhood" required /></label>
-                    <label>Cidade<input name="city" defaultValue="Serra" required /></label>
-                    <label>Estado<input name="state" defaultValue="ES" required /></label>
-                    <label>Referência<input name="referencePoint" /></label>
-                  </div>
-                </>
+                <AddressLocationFields
+                  deliveryAreas={addressDeliveryAreas}
+                  deliveryAreaId={deliveryAreaId}
+                  onDeliveryAreaChange={setDeliveryAreaId}
+                />
               )}
               <label>
                 Horário previsto
