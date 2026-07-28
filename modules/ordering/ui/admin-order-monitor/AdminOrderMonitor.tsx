@@ -1,12 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   classifyOrderPulse,
   type OrderPulse,
 } from "../../domain/order-pulse";
-import styles from "./admin-order-list.module.css";
+import styles from "./admin-order-monitor.module.css";
 
 const POLLING_INTERVAL_MS = 5_000;
 const ALERT_AUDIO_URL = "/audio/new-order.mp3";
@@ -14,13 +14,10 @@ const DEFAULT_VOLUME = 80;
 
 type AudioState = "loading" | "waiting" | "ready" | "unavailable";
 
-export function AdminOrderLiveUpdates({
-  initialPulse,
-}: {
-  initialPulse: OrderPulse;
-}) {
+export function AdminOrderMonitor() {
   const router = useRouter();
-  const pulseRef = useRef(initialPulse);
+  const pathname = usePathname();
+  const pulseRef = useRef<OrderPulse | null>(null);
   const checkingRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
   const audioBufferRef = useRef<AudioBuffer | null>(null);
@@ -33,10 +30,6 @@ export function AdminOrderLiveUpdates({
   const [notification, setNotification] = useState(
     "Som de novos pedidos ativo por padrão.",
   );
-
-  useEffect(() => {
-    pulseRef.current = initialPulse;
-  }, [initialPulse]);
 
   useEffect(() => {
     const AudioContextConstructor =
@@ -179,15 +172,19 @@ export function AdminOrderLiveUpdates({
         if (!response.ok) return;
 
         const nextPulse = (await response.json()) as OrderPulse;
-        const change = classifyOrderPulse(pulseRef.current, nextPulse);
+        const previousPulse = pulseRef.current;
         pulseRef.current = nextPulse;
+        if (!previousPulse) return;
+        const change = classifyOrderPulse(previousPulse, nextPulse);
         if (change === "unchanged") return;
 
         if (change === "new-order") {
           setNotification("Novo pedido recebido. Lista atualizada.");
           await playAlert();
         }
-        router.refresh();
+        if (pathname === "/admin" || pathname === "/admin/pedidos") {
+          router.refresh();
+        }
       } catch {
         // Uma falha temporária não interrompe as próximas verificações.
       } finally {
@@ -195,6 +192,7 @@ export function AdminOrderLiveUpdates({
       }
     }
 
+    void checkForUpdates();
     const intervalId = window.setInterval(
       checkForUpdates,
       POLLING_INTERVAL_MS,
@@ -207,7 +205,7 @@ export function AdminOrderLiveUpdates({
       window.clearInterval(intervalId);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [playAlert, router]);
+  }, [pathname, playAlert, router]);
 
   const soundStatus =
     audioState === "unavailable"

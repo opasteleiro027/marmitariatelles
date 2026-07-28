@@ -12,4 +12,5 @@ export async function updateOrderStatusAction(formData: FormData) {
     admin.email,
   );
   revalidatePath("/admin");
+  revalidatePath("/admin/pedidos");
 }

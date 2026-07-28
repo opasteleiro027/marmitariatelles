@@ -22,13 +22,14 @@ export type AdminOrder = {
 
 export type AdminOrderSnapshot = {
   orders: AdminOrder[];
-  pulse: OrderPulse;
-  metrics: {
-    received: number;
-    active: number;
-    completed: number;
-    projectedRevenueInCents: number;
-  };
+  metrics: AdminOrderMetrics;
+};
+
+export type AdminOrderMetrics = {
+  received: number;
+  active: number;
+  completed: number;
+  projectedRevenueInCents: number;
 };
 
 export async function getAdminOrderPulse(): Promise<OrderPulse> {
@@ -65,7 +66,7 @@ export async function getAdminOrderPulse(): Promise<OrderPulse> {
 
 export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
   const sql = getPostgresClient();
-  const [orders, metrics, pulse] = await Promise.all([
+  const [orders, metrics] = await Promise.all([
     sql.unsafe<
       Array<{
         id: string;
@@ -93,32 +94,8 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
        ORDER BY o.created_at DESC
        LIMIT 100`,
     ),
-    sql.unsafe<
-      Array<{
-        received: number;
-        active: number;
-        completed: number;
-        projected_revenue_cents: number;
-      }>
-    >(
-      `SELECT
-         COUNT(*)::INT AS received,
-         COUNT(*) FILTER (
-           WHERE status NOT IN ('delivered', 'cancelled')
-         )::INT AS active,
-         COUNT(*) FILTER (WHERE status = 'delivered')::INT AS completed,
-         COALESCE(SUM(total_cents) FILTER (WHERE status <> 'cancelled'), 0)::INT
-           AS projected_revenue_cents
-       FROM orders`,
-    ),
-    getAdminOrderPulse(),
+    getAdminOrderMetrics(),
   ]);
-  const totals = metrics[0] ?? {
-    received: 0,
-    active: 0,
-    completed: 0,
-    projected_revenue_cents: 0,
-  };
   return {
     orders: orders.map((order) => ({
       id: order.id,
@@ -132,13 +109,41 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
       itemCount: order.item_count,
       paymentLabel: order.payment_label,
     })),
-    pulse,
-    metrics: {
-      received: totals.received,
-      active: totals.active,
-      completed: totals.completed,
-      projectedRevenueInCents: totals.projected_revenue_cents,
-    },
+    metrics,
+  };
+}
+
+export async function getAdminOrderMetrics(): Promise<AdminOrderMetrics> {
+  const sql = getPostgresClient();
+  const rows = await sql.unsafe<
+    Array<{
+      received: number;
+      active: number;
+      completed: number;
+      projected_revenue_cents: number;
+    }>
+  >(
+    `SELECT
+       COUNT(*)::INT AS received,
+       COUNT(*) FILTER (
+         WHERE status NOT IN ('delivered', 'cancelled')
+       )::INT AS active,
+       COUNT(*) FILTER (WHERE status = 'delivered')::INT AS completed,
+       COALESCE(SUM(total_cents) FILTER (WHERE status <> 'cancelled'), 0)::INT
+         AS projected_revenue_cents
+     FROM orders`,
+  );
+  const totals = rows[0] ?? {
+    received: 0,
+    active: 0,
+    completed: 0,
+    projected_revenue_cents: 0,
+  };
+  return {
+    received: totals.received,
+    active: totals.active,
+    completed: totals.completed,
+    projectedRevenueInCents: totals.projected_revenue_cents,
   };
 }
 

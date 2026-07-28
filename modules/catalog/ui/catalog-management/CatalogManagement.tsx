@@ -18,11 +18,11 @@ export function CatalogManagement({
   products: AdminCatalogProduct[];
 }) {
   return (
-    <section className={styles.section} id="cardapio-admin">
+    <section className={styles.section}>
       <div className={styles.heading}>
         <div>
           <p>Cardápio</p>
-          <h2>Produtos do próximo domingo</h2>
+          <h2>Produtos do cardápio</h2>
         </div>
         <span>{products.length} produtos cadastrados</span>
       </div>

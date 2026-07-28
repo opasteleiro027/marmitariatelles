@@ -8,8 +8,17 @@ Protected operational surface for the merchant.
 
 - Require a server-verified identity.
 - Authorize only e-mails listed in `ADMIN_EMAILS`.
-- Present operational state without exposing customer data.
-- Host future order, catalog, schedule and configuration workflows.
+- Compose a persistent shell around dedicated administrative routes.
+- Highlight the current destination and keep navigation available on mobile.
+- Present the operational overview without owning domain business rules.
+
+## Routes
+
+- `/admin`: overview;
+- `/admin/pedidos`: orders;
+- `/admin/cardapio`: catalog;
+- `/admin/areas-entrega`: delivery areas;
+- `/admin/configuracoes`: business settings.
 
 ## Security boundary
 

@@ -5,7 +5,6 @@ import {
   ORDER_STATUS_TRANSITIONS,
 } from "../../application/order-status";
 import { updateOrderStatusAction } from "../../server/admin-order-actions";
-import { AdminOrderLiveUpdates } from "./AdminOrderLiveUpdates";
 import styles from "./admin-order-list.module.css";
 
 export function AdminOrderList({
@@ -14,16 +13,13 @@ export function AdminOrderList({
   snapshot: AdminOrderSnapshot;
 }) {
   return (
-    <section className={styles.panel} id="pedidos">
+    <section className={styles.panel}>
       <div className={styles.heading}>
         <div>
           <p>Operação em tempo real</p>
           <h2>Pedidos recebidos</h2>
         </div>
-        <div className={styles.headingActions}>
-          <span>{snapshot.orders.length} exibidos</span>
-          <AdminOrderLiveUpdates initialPulse={snapshot.pulse} />
-        </div>
+        <span>{snapshot.orders.length} exibidos</span>
       </div>
       {!snapshot.orders.length ? (
         <div className={styles.empty}>

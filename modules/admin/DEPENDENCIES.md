@@ -1,5 +1,7 @@
 # Direct dependencies
 
-- `app/chatgpt-auth.ts`: dispatch-owned identity adapter.
-- `modules/storefront`: current public catalog and sales-state snapshot.
-- `ADMIN_EMAILS`: comma-separated server-side allowlist.
+- `modules/admin-auth`: server session and logout;
+- `modules/storefront`: overview product count;
+- `modules/ordering`: overview metrics and dedicated orders page;
+- `modules/catalog`: dedicated catalog page;
+- `modules/establishment`: overview, areas and settings pages.

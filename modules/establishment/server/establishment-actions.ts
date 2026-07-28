@@ -23,13 +23,13 @@ export async function saveBusinessSettingsAction(formData: FormData) {
       required(formData, "minimumOrder"),
     ),
   });
-  refresh();
+  refreshSettings();
 }
 
 export async function toggleSiteAvailabilityAction(formData: FormData) {
   await requireAdmin();
   await setOrdersPaused(formData.get("enabled") !== "true");
-  refresh();
+  refreshSettings();
 }
 
 export async function createDeliveryAreaAction(formData: FormData) {
@@ -43,7 +43,7 @@ export async function createDeliveryAreaAction(formData: FormData) {
     ),
     estimatedMinutes: optionalPositiveInteger(formData, "estimatedMinutes"),
   });
-  refresh();
+  refreshAreas();
 }
 
 export async function updateDeliveryAreaAction(formData: FormData) {
@@ -59,7 +59,7 @@ export async function updateDeliveryAreaAction(formData: FormData) {
     estimatedMinutes: optionalPositiveInteger(formData, "estimatedMinutes"),
     active: formData.get("active") === "on",
   });
-  refresh();
+  refreshAreas();
 }
 
 export async function deleteDeliveryAreaAction(formData: FormData) {
@@ -68,7 +68,7 @@ export async function deleteDeliveryAreaAction(formData: FormData) {
   if (!deleted) {
     throw new Error("O bairro informado não está mais cadastrado.");
   }
-  refresh();
+  refreshAreas();
 }
 
 function required(formData: FormData, field: string) {
@@ -87,7 +87,13 @@ function optionalPositiveInteger(formData: FormData, field: string) {
   return parsed;
 }
 
-function refresh() {
+function refreshSettings() {
   revalidatePath("/");
   revalidatePath("/admin");
+  revalidatePath("/admin/configuracoes");
+}
+
+function refreshAreas() {
+  revalidatePath("/");
+  revalidatePath("/admin/areas-entrega");
 }

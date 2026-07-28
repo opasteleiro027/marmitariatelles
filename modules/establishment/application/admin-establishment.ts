@@ -23,65 +23,73 @@ export type AdminBusinessSettings = {
 
 type EditableBusinessSettings = Omit<AdminBusinessSettings, "ordersPaused">;
 
-export async function getAdminEstablishment() {
+export async function getAdminBusinessSettings(): Promise<AdminBusinessSettings> {
   const sql = getPostgresClient();
-  const [settingsRows, areas] = await Promise.all([
-    sql.unsafe<
-      Array<{
-        business_name: string;
-        whatsapp: string;
-        phone: string | null;
-        address: string | null;
-        welcome_message: string;
-        minimum_order_cents: number;
-        orders_paused: boolean;
-      }>
-    >(
-      `SELECT business_name, whatsapp, phone, address, welcome_message,
-              minimum_order_cents, orders_paused
-       FROM business_settings
-       ORDER BY updated_at DESC
-       LIMIT 1`,
-    ),
-    sql.unsafe<
-      Array<{
-        id: string;
-        city: string;
-        neighborhood: string;
-        delivery_fee_cents: number;
-        minimum_order_cents: number;
-        estimated_minutes: number | null;
-        active: boolean;
-      }>
-    >(
-      `SELECT id, city, neighborhood, delivery_fee_cents,
-              minimum_order_cents, estimated_minutes, active
-       FROM delivery_areas
-       ORDER BY display_order, neighborhood`,
-    ),
-  ]);
-  const settings = settingsRows[0];
+  const rows = await sql.unsafe<
+    Array<{
+      business_name: string;
+      whatsapp: string;
+      phone: string | null;
+      address: string | null;
+      welcome_message: string;
+      minimum_order_cents: number;
+      orders_paused: boolean;
+    }>
+  >(
+    `SELECT business_name, whatsapp, phone, address, welcome_message,
+            minimum_order_cents, orders_paused
+     FROM business_settings
+     ORDER BY updated_at DESC
+     LIMIT 1`,
+  );
+  const settings = rows[0];
   if (!settings) throw new Error("Configurações do estabelecimento ausentes.");
   return {
-    settings: {
-      businessName: settings.business_name,
-      whatsapp: settings.whatsapp,
-      phone: settings.phone ?? "",
-      address: settings.address ?? "",
-      welcomeMessage: settings.welcome_message,
-      minimumOrderInCents: settings.minimum_order_cents,
-      ordersPaused: settings.orders_paused,
-    } satisfies AdminBusinessSettings,
-    areas: areas.map((area) => ({
-      id: area.id,
-      city: area.city,
-      neighborhood: area.neighborhood,
-      deliveryFeeInCents: area.delivery_fee_cents,
-      minimumOrderInCents: area.minimum_order_cents,
-      estimatedMinutes: area.estimated_minutes,
-      active: area.active,
-    })) satisfies AdminDeliveryArea[],
+    businessName: settings.business_name,
+    whatsapp: settings.whatsapp,
+    phone: settings.phone ?? "",
+    address: settings.address ?? "",
+    welcomeMessage: settings.welcome_message,
+    minimumOrderInCents: settings.minimum_order_cents,
+    ordersPaused: settings.orders_paused,
   };
+}
+
+export async function getAdminDeliveryAreas(): Promise<AdminDeliveryArea[]> {
+  const sql = getPostgresClient();
+  const areas = await sql.unsafe<
+    Array<{
+      id: string;
+      city: string;
+      neighborhood: string;
+      delivery_fee_cents: number;
+      minimum_order_cents: number;
+      estimated_minutes: number | null;
+      active: boolean;
+    }>
+  >(
+    `SELECT id, city, neighborhood, delivery_fee_cents,
+            minimum_order_cents, estimated_minutes, active
+     FROM delivery_areas
+     ORDER BY display_order, neighborhood`,
+  );
+  return areas.map((area) => ({
+    id: area.id,
+    city: area.city,
+    neighborhood: area.neighborhood,
+    deliveryFeeInCents: area.delivery_fee_cents,
+    minimumOrderInCents: area.minimum_order_cents,
+    estimatedMinutes: area.estimated_minutes,
+    active: area.active,
+  }));
+}
+
+export async function getAdminEstablishment() {
+  const [settings, areas] = await Promise.all([
+    getAdminBusinessSettings(),
+    getAdminDeliveryAreas(),
+  ]);
+  return { settings, areas };
 }
 
 export async function saveBusinessSettings(input: EditableBusinessSettings) {

@@ -13,7 +13,8 @@ negócio, apresentação e persistência.
 - `ordering` depende das entidades anteriores e é dono da confirmação;
 - `storefront` expõe somente o snapshot público;
 - `admin-auth` protege o painel;
-- `admin` compõe as interfaces, sem possuir regras de catálogo ou pedido;
+- `admin` compõe shell, navegação, cabeçalhos e visão geral, sem possuir regras
+  de catálogo, pedido ou estabelecimento;
 - `operational-monitoring` fornece o health check.
 - `address-location` isola GPS, CEP, geocodificação reversa e correspondência
   entre o endereço confirmado e as áreas de entrega.
@@ -33,6 +34,17 @@ O cardápio e as faixas continuam relacionados internamente, mas data, janela e
 contadores acumulados não controlam a abertura da loja. O
 campo `orders_paused` é a única autoridade operacional exposta ao administrador.
 
+## Navegação administrativa
+
+As páginas do painel pertencem ao grupo autenticado `app/admin/(panel)`. O
+layout valida a sessão uma vez e mantém a estrutura comum. Cada rota importa
+somente a consulta e o componente do próprio domínio, evitando que abrir
+Cardápio também carregue pedidos, bairros e configurações.
+
+Os destinos são URLs reais e não âncoras. Áreas de entrega e configurações usam
+consultas e componentes separados, embora continuem no domínio
+`establishment`.
+
 ## Segurança
 
 - sessão administrativa `httpOnly`, assinada por HMAC e com expiração;
@@ -51,7 +63,8 @@ campo `orders_paused` é a única autoridade operacional exposta ao administrado
 ## Integrações de endereço
 
 O navegador fornece coordenadas somente com permissão e HTTPS. O servidor
-consulta ViaCEP por CEP e usa um adaptador de geocodificação reversa configurável.
+consulta BrasilAPI com fallback para ViaCEP por CEP e usa um adaptador de
+geocodificação reversa configurável.
 O adaptador padrão do Nominatim serializa chamadas, limita a uma por segundo,
 mantém cache em memória, identifica a aplicação e retorna atribuição visível.
 Falhas externas nunca removem a alternativa de preenchimento manual.

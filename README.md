@@ -18,9 +18,10 @@ domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
   idempotência e número amigável;
 - acompanhamento privado por token seguro;
 - login administrativo com sessão assinada;
-- dashboard com pedidos e faturamento;
+- painel com páginas individuais para visão geral, pedidos, cardápio, áreas de
+  entrega e configurações;
 - atualização automática do painel a cada cinco segundos e alerta sonoro
-  opcional para novos pedidos;
+  opcional para novos pedidos, ativos durante a navegação administrativa;
 - mudança de status com histórico e devolução de estoque no cancelamento;
 - criação e edição de produtos, esgotado, bairros, taxas, pedido mínimo e
   dados públicos do negócio;

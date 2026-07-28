@@ -27,6 +27,7 @@
 
 ## Operação administrativa — essencial concluído
 
+- [x] Navegação por páginas individuais e responsiva.
 - [x] Métricas, listagem e mudança segura de status.
 - [x] Cancelamento com devolução de estoque.
 - [x] Áreas, taxas, dados públicos e botão de ligar/desligar o site.

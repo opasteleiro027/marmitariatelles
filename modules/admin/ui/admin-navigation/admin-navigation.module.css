@@ -1,0 +1,46 @@
+.navigation {
+  display: grid;
+  gap: 5px;
+}
+
+.navigation a {
+  min-height: 46px;
+  padding: 0 13px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  border-radius: 11px;
+  color: #d9ccc3;
+  text-decoration: none;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.navigation a:hover,
+.navigation .active {
+  background: rgb(255 255 255 / 9%);
+  color: white;
+}
+
+.navigation a span {
+  width: 19px;
+  flex: 0 0 19px;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .navigation {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .navigation a {
+    min-height: 40px;
+    padding: 0 10px;
+    gap: 7px;
+    font-size: 12px;
+  }
+}

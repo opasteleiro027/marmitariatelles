@@ -51,4 +51,5 @@ function required(formData: FormData, field: string): string {
 function refreshCatalog() {
   revalidatePath("/");
   revalidatePath("/admin");
+  revalidatePath("/admin/cardapio");
 }

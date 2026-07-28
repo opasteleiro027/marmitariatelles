@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.5.0 - 2026-07-28
+
+### Alterado
+
+- Cada item do menu administrativo possui uma página e uma URL próprias:
+  Visão geral, Pedidos, Cardápio, Áreas de entrega e Configurações.
+- A navegação não usa mais âncoras nem rolagem para alcançar funcionalidades.
+- Cada página consulta somente os dados necessários para sua responsabilidade.
+- Áreas de entrega e configurações do estabelecimento foram separadas em
+  componentes, consultas e telas independentes.
+- O menu destaca a rota ativa e mantém todos os destinos acessíveis no celular.
+- A navegação exibe um estado de carregamento entre telas.
+- Ações administrativas revalidam suas novas rotas específicas.
+- O monitor e o alerta sonoro de novos pedidos permanecem ativos ao navegar
+  entre todas as telas do painel.
+
 ## 0.4.3 - 2026-07-28
 
 ### Alterado

@@ -1,0 +1,135 @@
+.liveControls {
+  position: relative;
+  margin-top: 18px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  border: 1px solid #e5dbcf;
+  border-radius: 14px;
+  background: white;
+}
+
+.soundControls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.soundStatus {
+  color: #526158;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.volumeControl {
+  min-height: 38px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #d8cbbc;
+  border-radius: 10px;
+  background: #fffaf4;
+  color: #5e5148;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.volumeControl input {
+  width: 90px;
+  accent-color: var(--orange-700);
+}
+
+.volumeControl output {
+  min-width: 31px;
+  color: var(--brown-950);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.liveStatus {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #526158;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.liveStatus > span:first-child {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2f9d62;
+  box-shadow: 0 0 0 4px #e4f4eb;
+}
+
+.liveControls button {
+  min-height: 38px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #d8cbbc;
+  border-radius: 10px;
+  background: #fffaf4;
+  color: var(--brown-950);
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.liveControls button.soundEnabled {
+  border-color: #a7d8bb;
+  background: #eaf7ef;
+  color: #17623b;
+}
+
+.liveControls button:disabled,
+.volumeControl input:disabled {
+  cursor: not-allowed;
+  opacity: .55;
+}
+
+.liveAnnouncement {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 10px;
+  z-index: 2;
+  width: max-content;
+  max-width: 280px;
+  margin: 0;
+  color: #526158;
+  font-size: 11px;
+  text-align: right;
+}
+
+@media (max-width: 720px) {
+  .liveStatus {
+    width: 100%;
+  }
+
+  .soundControls {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .soundStatus {
+    width: 100%;
+  }
+
+  .volumeControl {
+    flex: 1 1 190px;
+  }
+
+  .volumeControl input {
+    flex: 1;
+    min-width: 70px;
+  }
+}

@@ -68,6 +68,26 @@ test("ships the selected MP3 used by the new-order alert", async () => {
   assert.equal(audio[1], 0xfb);
 });
 
+test("admin navigation uses dedicated routes instead of page anchors", async () => {
+  const navigation = await readFile(
+    new URL(
+      "../modules/admin/ui/admin-navigation/AdminNavigation.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  for (const route of [
+    'href: "/admin"',
+    'href: "/admin/pedidos"',
+    'href: "/admin/cardapio"',
+    'href: "/admin/areas-entrega"',
+    'href: "/admin/configuracoes"',
+  ]) {
+    assert.match(navigation, new RegExp(route.replaceAll("/", "\\/")));
+  }
+  assert.doesNotMatch(navigation, /href:\s*["']#/);
+});
+
 test("uses only the site switch to release or block orders", () => {
   assert.equal(
     siteAcceptsOrders({

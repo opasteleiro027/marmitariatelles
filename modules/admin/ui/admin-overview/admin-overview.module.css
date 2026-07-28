@@ -1,0 +1,151 @@
+.operationBanner {
+  padding: 24px 26px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr auto;
+  align-items: center;
+  gap: 28px;
+  border-radius: 20px;
+  background: white;
+  box-shadow: 0 10px 35px rgb(62 42 28 / 7%);
+}
+
+.operationBanner p,
+.metricGrid p {
+  margin: 0 0 5px;
+  color: #7c6b60;
+  font-size: 14px;
+}
+
+.operationBanner > div:first-child {
+  position: relative;
+  padding-left: 18px;
+}
+
+.liveDot,
+.siteOffDot {
+  position: absolute;
+  left: 0;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+
+.liveDot {
+  background: #4b9258;
+}
+
+.siteOffDot {
+  background: #b13f32;
+}
+
+.operationBanner button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid #c96f4b;
+  border-radius: 12px;
+  background: #fff8f4;
+  color: #a33d17;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 850;
+}
+
+.operationBanner .enableSiteButton {
+  border-color: #4b9258;
+  background: #eff8f0;
+  color: #2f703c;
+}
+
+.metricGrid {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metricGrid article {
+  min-height: 156px;
+  padding: 22px;
+  border: 1px solid #e5dbcf;
+  border-radius: 18px;
+  background: #fbfaf7;
+}
+
+.metricGrid strong {
+  display: block;
+  margin: 16px 0 4px;
+  font-family: var(--font-fraunces), serif;
+  font-size: 30px;
+}
+
+.metricGrid small {
+  color: #89766b;
+}
+
+.foundationPanel {
+  margin-top: 22px;
+  padding: clamp(27px, 5vw, 48px);
+  display: grid;
+  grid-template-columns: 1.25fr .75fr;
+  gap: 55px;
+  border-radius: 22px;
+  background: #eadac5;
+}
+
+.eyebrow {
+  color: var(--orange-700);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.foundationPanel h2 {
+  margin: 9px 0 13px;
+  font-family: var(--font-fraunces), serif;
+  font-size: clamp(30px, 4vw, 44px);
+}
+
+.foundationPanel > div > p:last-child {
+  color: var(--brown-700);
+  line-height: 1.7;
+}
+
+.foundationPanel ul {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  align-content: center;
+  gap: 13px;
+  list-style: none;
+}
+
+.foundationPanel li {
+  display: flex;
+  gap: 10px;
+  font-weight: 800;
+}
+
+.foundationPanel li span {
+  color: var(--green-700);
+}
+
+@media (max-width: 1000px) {
+  .metricGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .operationBanner,
+  .foundationPanel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+}

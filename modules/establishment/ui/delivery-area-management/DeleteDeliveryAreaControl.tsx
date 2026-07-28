@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { deleteDeliveryAreaAction } from "../../server/establishment-actions";
-import styles from "./establishment-management.module.css";
+import styles from "./delivery-area-management.module.css";
 
 export function DeleteDeliveryAreaControl({
   id,

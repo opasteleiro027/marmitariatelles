@@ -33,6 +33,12 @@ conclusão.
 
 Cada mudança grava status anterior, novo status, horário e administrador.
 
+### Navegação
+
+Login → Visão geral → escolher Pedidos, Cardápio, Áreas de entrega ou
+Configurações → carregar somente a tela escolhida. Trocar de função altera a URL
+e o item ativo do menu; não existe rolagem automática entre seções.
+
 ### Novos pedidos no painel
 
 Enquanto o painel está aberto e visível, uma consulta protegida verifica
