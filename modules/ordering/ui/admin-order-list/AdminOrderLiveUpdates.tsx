@@ -9,23 +9,10 @@ import {
 import styles from "./admin-order-list.module.css";
 
 const POLLING_INTERVAL_MS = 5_000;
+const ALERT_AUDIO_URL = "/audio/new-order.mp3";
+const DEFAULT_VOLUME = 80;
 
-function playOrderAlert(context: AudioContext) {
-  const startAt = context.currentTime;
-  [0, 0.22].forEach((delay, index) => {
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.type = "sine";
-    oscillator.frequency.value = index === 0 ? 660 : 880;
-    gain.gain.setValueAtTime(0.0001, startAt + delay);
-    gain.gain.exponentialRampToValueAtTime(0.22, startAt + delay + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, startAt + delay + 0.16);
-    oscillator.connect(gain);
-    gain.connect(context.destination);
-    oscillator.start(startAt + delay);
-    oscillator.stop(startAt + delay + 0.18);
-  });
-}
+type AudioState = "loading" | "waiting" | "ready" | "unavailable";
 
 export function AdminOrderLiveUpdates({
   initialPulse,
@@ -36,29 +23,22 @@ export function AdminOrderLiveUpdates({
   const pulseRef = useRef(initialPulse);
   const checkingRef = useRef(false);
   const audioContextRef = useRef<AudioContext | null>(null);
-  const [soundEnabled, setSoundEnabled] = useState(false);
-  const [notification, setNotification] = useState("");
+  const audioBufferRef = useRef<AudioBuffer | null>(null);
+  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const soundEnabledRef = useRef(true);
+  const volumeRef = useRef(DEFAULT_VOLUME);
+  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [volume, setVolume] = useState(DEFAULT_VOLUME);
+  const [audioState, setAudioState] = useState<AudioState>("loading");
+  const [notification, setNotification] = useState(
+    "Som de novos pedidos ativo por padrão.",
+  );
 
   useEffect(() => {
     pulseRef.current = initialPulse;
   }, [initialPulse]);
 
-  useEffect(
-    () => () => {
-      void audioContextRef.current?.close();
-    },
-    [],
-  );
-
-  const toggleSound = useCallback(async () => {
-    if (soundEnabled) {
-      await audioContextRef.current?.close();
-      audioContextRef.current = null;
-      setSoundEnabled(false);
-      setNotification("Alerta sonoro desativado.");
-      return;
-    }
-
+  useEffect(() => {
     const AudioContextConstructor =
       window.AudioContext ??
       (
@@ -67,25 +47,130 @@ export function AdminOrderLiveUpdates({
         }
       ).webkitAudioContext;
     if (!AudioContextConstructor) {
-      setNotification("Este navegador não oferece alerta sonoro.");
+      const unavailableTimer = window.setTimeout(() => {
+        setAudioState("unavailable");
+        setNotification("Este navegador não oferece alerta sonoro.");
+      });
+      return () => window.clearTimeout(unavailableTimer);
+    }
+
+    const context = new AudioContextConstructor();
+    audioContextRef.current = context;
+    let cancelled = false;
+
+    const markContextState = () => {
+      if (cancelled) return;
+      setAudioState(
+        audioBufferRef.current && context.state === "running"
+          ? "ready"
+          : "waiting",
+      );
+    };
+    const unlockAudio = () => {
+      void context.resume().then(markContextState).catch(() => undefined);
+    };
+
+    window.addEventListener("pointerdown", unlockAudio, { capture: true });
+    window.addEventListener("keydown", unlockAudio, { capture: true });
+
+    void fetch(ALERT_AUDIO_URL, { cache: "force-cache" })
+      .then((response) => {
+        if (!response.ok) throw new Error("Áudio indisponível.");
+        return response.arrayBuffer();
+      })
+      .then((data) => context.decodeAudioData(data))
+      .then((buffer) => {
+        if (cancelled) return;
+        audioBufferRef.current = buffer;
+        markContextState();
+        void context.resume().then(markContextState).catch(() => undefined);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setAudioState("unavailable");
+        setNotification("Não foi possível carregar o som de novos pedidos.");
+      });
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("pointerdown", unlockAudio, {
+        capture: true,
+      });
+      window.removeEventListener("keydown", unlockAudio, { capture: true });
+      audioSourceRef.current?.stop();
+      void context.close();
+    };
+  }, []);
+
+  const playAlert = useCallback(async () => {
+    if (!soundEnabledRef.current) return;
+    const context = audioContextRef.current;
+    const buffer = audioBufferRef.current;
+    if (!context || !buffer) {
+      setNotification("O som ainda está sendo preparado.");
       return;
     }
 
     try {
-      const context = new AudioContextConstructor();
       await context.resume();
-      audioContextRef.current = context;
-      playOrderAlert(context);
-      setSoundEnabled(true);
-      setNotification("Alerta sonoro ativado.");
+      if (context.state !== "running") {
+        setAudioState("waiting");
+        setNotification(
+          "Clique em qualquer lugar do painel para liberar o som.",
+        );
+        return;
+      }
+
+      try {
+        audioSourceRef.current?.stop();
+      } catch {
+        // A fonte anterior já terminou.
+      }
+      const source = context.createBufferSource();
+      const gain = context.createGain();
+      source.buffer = buffer;
+      gain.gain.value = volumeRef.current / 100;
+      source.connect(gain);
+      gain.connect(context.destination);
+      source.onended = () => {
+        if (audioSourceRef.current === source) {
+          audioSourceRef.current = null;
+        }
+      };
+      audioSourceRef.current = source;
+      source.start();
+      setAudioState("ready");
     } catch {
-      setNotification("O navegador bloqueou o som. Tente ativar novamente.");
+      setAudioState("waiting");
+      setNotification("Clique no painel e teste o som novamente.");
     }
-  }, [soundEnabled]);
+  }, []);
+
+  const toggleSound = useCallback(() => {
+    const nextEnabled = !soundEnabledRef.current;
+    soundEnabledRef.current = nextEnabled;
+    setSoundEnabled(nextEnabled);
+    if (!nextEnabled) {
+      try {
+        audioSourceRef.current?.stop();
+      } catch {
+        // O áudio já terminou.
+      }
+      setNotification("Alerta sonoro silenciado.");
+      return;
+    }
+    setNotification("Alerta sonoro ativo.");
+  }, []);
+
+  function updateVolume(nextValue: number) {
+    const nextVolume = Math.min(100, Math.max(0, nextValue));
+    volumeRef.current = nextVolume;
+    setVolume(nextVolume);
+  }
 
   useEffect(() => {
     async function checkForUpdates() {
-      if (document.hidden || checkingRef.current) return;
+      if (checkingRef.current) return;
       checkingRef.current = true;
       try {
         const response = await fetch("/api/admin/orders/pulse", {
@@ -100,11 +185,7 @@ export function AdminOrderLiveUpdates({
 
         if (change === "new-order") {
           setNotification("Novo pedido recebido. Lista atualizada.");
-          const context = audioContextRef.current;
-          if (soundEnabled && context) {
-            await context.resume();
-            playOrderAlert(context);
-          }
+          await playAlert();
         }
         router.refresh();
       } catch {
@@ -126,7 +207,14 @@ export function AdminOrderLiveUpdates({
       window.clearInterval(intervalId);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [router, soundEnabled]);
+  }, [playAlert, router]);
+
+  const soundStatus =
+    audioState === "unavailable"
+      ? "Som indisponível"
+      : audioState === "ready"
+        ? `Som ativo · ${volume}%`
+        : "Som ativo · aguardando interação";
 
   return (
     <div className={styles.liveControls}>
@@ -134,15 +222,38 @@ export function AdminOrderLiveUpdates({
         <span aria-hidden="true" />
         <span>Atualização automática · 5s</span>
       </div>
-      <button
-        aria-pressed={soundEnabled}
-        className={soundEnabled ? styles.soundEnabled : undefined}
-        onClick={() => void toggleSound()}
-        type="button"
-      >
-        <span aria-hidden="true">{soundEnabled ? "🔊" : "🔔"}</span>
-        {soundEnabled ? "Desativar som" : "Ativar som"}
-      </button>
+      <div className={styles.soundControls}>
+        <span className={styles.soundStatus}>{soundStatus}</span>
+        <label className={styles.volumeControl}>
+          <span>Volume</span>
+          <input
+            aria-label="Volume do alerta de novo pedido"
+            disabled={!soundEnabled || audioState === "unavailable"}
+            max="100"
+            min="0"
+            onChange={(event) => updateVolume(Number(event.target.value))}
+            type="range"
+            value={volume}
+          />
+          <output>{volume}%</output>
+        </label>
+        <button
+          disabled={!soundEnabled || audioState === "unavailable"}
+          onClick={() => void playAlert()}
+          type="button"
+        >
+          Testar som
+        </button>
+        <button
+          aria-pressed={soundEnabled}
+          className={soundEnabled ? styles.soundEnabled : undefined}
+          onClick={toggleSound}
+          type="button"
+        >
+          <span aria-hidden="true">{soundEnabled ? "🔊" : "🔕"}</span>
+          {soundEnabled ? "Silenciar" : "Ativar som"}
+        </button>
+      </div>
       <p aria-live="polite" className={styles.liveAnnouncement}>
         {notification}
       </p>

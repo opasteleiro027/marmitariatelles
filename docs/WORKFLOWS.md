@@ -40,9 +40,10 @@ alterações a cada cinco segundos. Um novo pedido atualiza lista e métricas; u
 mudança de status também atualiza os dados, mas não dispara o alerta de novo
 pedido.
 
-O som é opcional e precisa ser liberado pelo botão **Ativar som** em cada
-abertura do painel, conforme a política de reprodução automática dos
-navegadores. Ao ativar, o administrador ouve um sinal de teste.
+O som inicia habilitado por padrão. Na primeira interação com o painel, o
+navegador libera automaticamente a reprodução; antes disso, a interface informa
+que aguarda interação. O administrador pode regular o volume, testar o toque,
+silenciar ou reativar o alerta.
 
 ### Ligar ou desligar o site
 

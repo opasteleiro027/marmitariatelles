@@ -59,6 +59,15 @@ test("detects a new order separately from other panel changes", () => {
   assert.equal(classifyOrderPulse(previous, previous), "unchanged");
 });
 
+test("ships the selected MP3 used by the new-order alert", async () => {
+  const audio = await readFile(
+    new URL("../public/audio/new-order.mp3", import.meta.url),
+  );
+  assert.ok(audio.length > 250_000);
+  assert.equal(audio[0], 0xff);
+  assert.equal(audio[1], 0xfb);
+});
+
 test("uses only the site switch to release or block orders", () => {
   assert.equal(
     siteAcceptsOrders({

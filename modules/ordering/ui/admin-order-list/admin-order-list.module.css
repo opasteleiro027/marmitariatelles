@@ -50,6 +50,44 @@
   gap: 8px;
 }
 
+.soundControls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.soundStatus {
+  color: #526158;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.volumeControl {
+  min-height: 38px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid #d8cbbc;
+  border-radius: 10px;
+  background: #fffaf4;
+  color: #5e5148;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.volumeControl input {
+  width: 90px;
+  accent-color: var(--orange-700);
+}
+
+.volumeControl output {
+  min-width: 31px;
+  color: var(--brown-950);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
 .liveStatus {
   display: flex;
   align-items: center;
@@ -87,6 +125,12 @@
   border-color: #a7d8bb;
   background: #eaf7ef;
   color: #17623b;
+}
+
+.liveControls button:disabled,
+.volumeControl input:disabled {
+  cursor: not-allowed;
+  opacity: .55;
 }
 
 .liveAnnouncement {
@@ -218,6 +262,7 @@
   }
 
   .liveControls {
+    width: 100%;
     flex-wrap: wrap;
     justify-content: flex-end;
   }
@@ -226,6 +271,26 @@
     order: 2;
     width: 100%;
     justify-content: flex-end;
+  }
+
+  .soundControls {
+    width: 100%;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .soundStatus {
+    width: 100%;
+    text-align: right;
+  }
+
+  .volumeControl {
+    flex: 1 1 190px;
+  }
+
+  .volumeControl input {
+    flex: 1;
+    min-width: 70px;
   }
 
   .list article {

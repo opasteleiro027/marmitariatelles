@@ -84,9 +84,11 @@ o endpoint configurado em `REVERSE_GEOCODING_BASE_URL`; o padrão público do
 Nominatim deve ser usado apenas em volume moderado, com atribuição e limite de
 uma requisição por segundo. O preenchimento manual sempre permanece disponível.
 
-O alerta de novos pedidos exige um clique em **Ativar som** depois que o painel
-administrativo é aberto. Essa ativação é exigida pelos navegadores; enquanto a
-aba permanecer aberta, novos pedidos atualizam a lista e emitem o sinal.
+O alerta de novos pedidos inicia ativo por padrão e usa o toque de telefone
+configurado pelo restaurante. O primeiro clique ou tecla no painel libera a
+reprodução exigida pelos navegadores. O administrador pode regular o volume,
+testar o toque ou silenciá-lo; enquanto a aba permanecer aberta, novos pedidos
+atualizam a lista e emitem o sinal.
 
 ## Banco e dados iniciais
 

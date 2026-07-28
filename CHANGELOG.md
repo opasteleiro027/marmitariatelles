@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.3 - 2026-07-28
+
+### Alterado
+
+- O alerta de novo pedido usa o toque de telefone enviado pelo restaurante.
+- O som inicia habilitado por padrão sempre que o painel é aberto.
+- A primeira interação com o painel libera automaticamente a reprodução exigida
+  pelo navegador, sem depender de um botão de ativação.
+- O administrador pode regular o volume de 0% a 100%, testar o toque e
+  silenciar ou reativar o alerta.
+- A verificação de pedidos permanece ativa com a aba em segundo plano, sujeita
+  ao gerenciamento de energia do navegador.
+
 ## 0.4.2 - 2026-07-28
 
 ### Corrigido
