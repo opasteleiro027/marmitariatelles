@@ -13,10 +13,10 @@ menu and begin an order.
 
 ## Inputs and outputs
 
-- Input: D1 records exposed through `storefront.repository.ts`.
+- Input: registros PostgreSQL expostos por `storefront.repository.ts`.
 - Output: accessible React UI and typed `StorefrontSnapshot`.
 
 ## Related modules
 
-The ordering workflow will consume product identifiers from this module without
-trusting prices sent by the browser.
+O checkout envia apenas identificadores e quantidades; preços vindos do
+navegador nunca são aceitos como definitivos.

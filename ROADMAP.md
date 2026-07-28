@@ -1,36 +1,41 @@
-# Roadmap do MVP
+# Roadmap
 
-## Fase 1 — Fundação
+## Fundação — concluída
 
-- [x] Arquitetura modular e documentação.
-- [x] Persistência D1 e schema relacional.
-- [x] Autenticação e autorização administrativa.
-- [x] Layout público e administrativo.
-- [x] Regras monetárias iniciais e testes.
+- [x] Next.js, TypeScript e arquitetura modular.
+- [x] PostgreSQL/Drizzle, migration e seed idempotente.
+- [x] Sessão administrativa deny-by-default.
+- [x] Railway standalone, migration pre-deploy e health check.
 
-## Fase 2 — Cardápio
+## Cardápio — essencial concluído
 
-- [ ] CRUD de categorias, produtos e fotos.
+- [x] Criar e editar produtos.
+- [x] Ativar/desativar e marcar esgotado.
+- [x] Cardápio publicado por domingo e preço histórico em snapshot.
+- [ ] Gestão de categorias, fotos e ordenação.
 - [ ] Complementos obrigatórios e opcionais.
-- [ ] Cardápio por domingo, disponibilidade e esgotado.
 
-## Fase 3 — Pedido do cliente
+## Pedido do cliente — essencial concluído
 
-- [ ] Carrinho persistente no dispositivo.
-- [ ] Dados, endereço, bairro, horário e pagamento.
-- [ ] Revisão, confirmação atômica e página de sucesso.
-- [ ] Acompanhamento por token seguro.
+- [x] Carrinho persistente, identificação, retirada/entrega e pagamento.
+- [x] Taxa, pedido mínimo, horário e troco.
+- [x] Confirmação transacional, estoque, capacidade e idempotência.
+- [x] Sucesso, WhatsApp e acompanhamento por token seguro.
+- [ ] Observações por item e tela intermediária de revisão detalhada.
+- [ ] Consentimento explícito para salvar dados pessoais localmente.
 
-## Fase 4 — Operação administrativa
+## Operação administrativa — essencial concluído
 
-- [ ] Dashboard com dados reais e alerta de novo pedido.
-- [ ] Filtros, detalhes, mudança de status e histórico.
-- [ ] Configuração de áreas, horários, pagamentos e aparência.
-- [ ] Comanda de impressão e relatórios básicos.
+- [x] Métricas, listagem e mudança segura de status.
+- [x] Cancelamento com devolução de estoque/capacidade.
+- [x] Áreas, taxas, dados públicos, pausa, agenda e faixas.
+- [ ] Busca, filtros, detalhes, nota interna e atualização automática.
+- [ ] Comanda, relatórios, gestão de pagamento e aparência.
 
-## Fase 5 — Qualidade
+## Qualidade — em andamento
 
-- [ ] Testes de integração dos fluxos críticos.
-- [ ] Concorrência, rate limit e idempotência.
-- [ ] Auditoria de acessibilidade, responsividade e segurança.
-- [ ] PWA básica, se não comprometer o MVP.
+- [x] Tipos, lint, testes de domínio e build.
+- [x] Concorrência e prevenção de duplicidade.
+- [ ] Testes de integração com PostgreSQL real.
+- [ ] Rate limit distribuído.
+- [ ] Auditoria final de acessibilidade e PWA.

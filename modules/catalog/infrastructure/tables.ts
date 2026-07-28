@@ -1,14 +1,21 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 
-export const categories = sqliteTable("categories", {
+export const categories = pgTable("categories", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   displayOrder: integer("display_order").notNull().default(0),
-  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  active: boolean("active").notNull().default(true),
   createdAt: text("created_at").notNull(),
 });
 
-export const products = sqliteTable(
+export const products = pgTable(
   "products",
   {
     id: text("id").primaryKey(),
@@ -21,10 +28,10 @@ export const products = sqliteTable(
     promotionalPriceCents: integer("promotional_price_cents"),
     stockQuantity: integer("stock_quantity"),
     orderLimit: integer("order_limit"),
-    featured: integer("featured", { mode: "boolean" }).notNull().default(false),
-    active: integer("active", { mode: "boolean" }).notNull().default(true),
-    soldOut: integer("sold_out", { mode: "boolean" }).notNull().default(false),
-    notesAllowed: integer("notes_allowed", { mode: "boolean" })
+    featured: boolean("featured").notNull().default(false),
+    active: boolean("active").notNull().default(true),
+    soldOut: boolean("sold_out").notNull().default(false),
+    notesAllowed: boolean("notes_allowed")
       .notNull()
       .default(true),
     displayOrder: integer("display_order").notNull().default(0),
@@ -35,7 +42,7 @@ export const products = sqliteTable(
   (table) => [index("products_category_idx").on(table.categoryId)],
 );
 
-export const productImages = sqliteTable(
+export const productImages = pgTable(
   "product_images",
   {
     id: text("id").primaryKey(),
@@ -49,19 +56,19 @@ export const productImages = sqliteTable(
   (table) => [index("product_images_product_idx").on(table.productId)],
 );
 
-export const addonGroups = sqliteTable("addon_groups", {
+export const addonGroups = pgTable("addon_groups", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
-  required: integer("required", { mode: "boolean" }).notNull().default(false),
+  required: boolean("required").notNull().default(false),
   minimumSelections: integer("minimum_selections").notNull().default(0),
   maximumSelections: integer("maximum_selections").notNull().default(1),
   selectionType: text("selection_type", { enum: ["single", "multiple"] })
     .notNull()
     .default("single"),
-  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  active: boolean("active").notNull().default(true),
 });
 
-export const addonOptions = sqliteTable(
+export const addonOptions = pgTable(
   "addon_options",
   {
     id: text("id").primaryKey(),
@@ -70,13 +77,13 @@ export const addonOptions = sqliteTable(
       .references(() => addonGroups.id),
     name: text("name").notNull(),
     additionalPriceCents: integer("additional_price_cents").notNull().default(0),
-    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    active: boolean("active").notNull().default(true),
     displayOrder: integer("display_order").notNull().default(0),
   },
   (table) => [index("addon_options_group_idx").on(table.groupId)],
 );
 
-export const productAddonGroups = sqliteTable(
+export const productAddonGroups = pgTable(
   "product_addon_groups",
   {
     productId: text("product_id")
@@ -95,7 +102,7 @@ export const productAddonGroups = sqliteTable(
   ],
 );
 
-export const salesMenus = sqliteTable(
+export const salesMenus = pgTable(
   "sales_menus",
   {
     id: text("id").primaryKey(),
@@ -103,8 +110,8 @@ export const salesMenus = sqliteTable(
     orderingOpensAt: text("ordering_opens_at").notNull(),
     orderingClosesAt: text("ordering_closes_at").notNull(),
     totalCapacity: integer("total_capacity"),
-    published: integer("published", { mode: "boolean" }).notNull().default(false),
-    closedManually: integer("closed_manually", { mode: "boolean" })
+    published: boolean("published").notNull().default(false),
+    closedManually: boolean("closed_manually")
       .notNull()
       .default(false),
     createdAt: text("created_at").notNull(),
@@ -113,7 +120,7 @@ export const salesMenus = sqliteTable(
   (table) => [uniqueIndex("sales_menus_date_unique").on(table.salesDate)],
 );
 
-export const salesMenuItems = sqliteTable(
+export const salesMenuItems = pgTable(
   "sales_menu_items",
   {
     id: text("id").primaryKey(),
@@ -126,7 +133,7 @@ export const salesMenuItems = sqliteTable(
     overridePriceCents: integer("override_price_cents"),
     availableQuantity: integer("available_quantity"),
     soldQuantity: integer("sold_quantity").notNull().default(0),
-    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    active: boolean("active").notNull().default(true),
     displayOrder: integer("display_order").notNull().default(0),
   },
   (table) => [

@@ -1,0 +1,281 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgb(43 29 22 / 46%);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+}
+
+.drawer {
+  width: min(100%, 560px);
+  height: 100%;
+  padding: 24px;
+  overflow-y: auto;
+  background: var(--cream-50);
+  box-shadow: -16px 0 55px rgb(43 29 22 / 20%);
+}
+
+.drawer > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.drawer header p {
+  margin: 0 0 5px;
+  color: var(--orange-700);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.drawer h2 {
+  margin: 0;
+  font-family: var(--font-fraunces), serif;
+  font-size: 29px;
+}
+
+.close {
+  min-height: 40px;
+  padding: 0 13px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: white;
+  color: var(--brown-700);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.items {
+  display: grid;
+  gap: 10px;
+  padding: 20px 0;
+}
+
+.items article {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: white;
+}
+
+.items article > div:first-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.items small {
+  color: var(--brown-700);
+}
+
+.quantity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quantity button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d9c9b9;
+  border-radius: 10px;
+  background: #fffaf3;
+  cursor: pointer;
+  font: inherit;
+  font-size: 20px;
+}
+
+.drawer fieldset {
+  margin: 14px 0;
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: white;
+}
+
+.drawer legend {
+  padding: 0 7px;
+  font-family: var(--font-fraunces), serif;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.drawer label {
+  display: grid;
+  gap: 6px;
+  color: var(--brown-700);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.drawer input,
+.drawer select {
+  width: 100%;
+  min-height: 47px;
+  padding: 0 12px;
+  border: 1px solid #d9c9b9;
+  border-radius: 10px;
+  background: #fffefa;
+  color: var(--brown-950);
+  font: inherit;
+}
+
+.radioGroup {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.radioGroup label {
+  min-height: 48px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.radioGroup input {
+  width: 18px;
+  min-height: 18px;
+}
+
+.addressGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.info {
+  margin: 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--green-100);
+  color: var(--green-700);
+  line-height: 1.5;
+}
+
+.total {
+  padding: 16px 4px;
+  display: grid;
+  gap: 8px;
+}
+
+.total span {
+  display: flex;
+  justify-content: space-between;
+}
+
+.total span:last-child {
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 20px;
+}
+
+.error {
+  padding: 12px;
+  border-radius: 10px;
+  background: #fff0ed;
+  color: #9c291d;
+  font-weight: 750;
+}
+
+.submit,
+.empty button,
+.success a {
+  width: 100%;
+  min-height: 54px;
+  border: 0;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--orange-600);
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.submit:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.empty,
+.success {
+  min-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+}
+
+.empty > span,
+.success > span {
+  width: 72px;
+  height: 72px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--green-100);
+  color: var(--green-700);
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.empty button {
+  width: auto;
+  padding: 0 20px;
+}
+
+.success h2 {
+  font-size: 38px;
+}
+
+.success > strong {
+  margin-bottom: 18px;
+  font-size: 26px;
+}
+
+.success > p {
+  max-width: 380px;
+  color: var(--brown-700);
+  line-height: 1.6;
+}
+
+.success a {
+  max-width: 340px;
+  margin-top: 10px;
+}
+
+.success .whatsapp {
+  background: var(--green-700);
+}
+
+@media (max-width: 560px) {
+  .drawer {
+    padding: 18px;
+  }
+
+  .addressGrid,
+  .radioGroup {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 :root {
+  --font-nunito: "Segoe UI", "Trebuchet MS", Arial, sans-serif;
+  --font-fraunces: Georgia, "Times New Roman", serif;
   --cream-50: #fffdf7;
   --cream-100: #fbf4e7;
   --brown-950: #2b1d16;

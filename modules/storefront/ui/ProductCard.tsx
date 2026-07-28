@@ -1,3 +1,5 @@
+"use client";
+
 import { formatMoney } from "../domain/format-money";
 import type { StorefrontProduct } from "../domain/storefront.types";
 import styles from "./product-card.module.css";
@@ -8,7 +10,13 @@ const categoryVisual: Record<string, string> = {
   Sobremesas: "🍮",
 };
 
-export function ProductCard({ product }: { product: StorefrontProduct }) {
+export function ProductCard({
+  product,
+  onAdd,
+}: {
+  product: StorefrontProduct;
+  onAdd: (product: StorefrontProduct) => void;
+}) {
   const currentPrice =
     product.promotionalPriceInCents ?? product.priceInCents;
 
@@ -30,7 +38,11 @@ export function ProductCard({ product }: { product: StorefrontProduct }) {
             ) : null}
             <strong>{formatMoney(currentPrice)}</strong>
           </div>
-          <button type="button" disabled={!product.available}>
+          <button
+            type="button"
+            disabled={!product.available}
+            onClick={() => onAdd(product)}
+          >
             {product.available ? "Adicionar" : "Esgotado"}
           </button>
         </div>

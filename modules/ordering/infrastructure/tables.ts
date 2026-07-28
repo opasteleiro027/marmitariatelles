@@ -1,9 +1,16 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  boolean,
+  index,
+  integer,
+  pgTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 import { salesMenus } from "../../catalog/infrastructure/tables";
 import { deliveryAreas, deliverySlots, paymentMethods } from "../../establishment/infrastructure/tables";
 import { adminUsers, customerAddresses, customers } from "../../identity/infrastructure/tables";
 
-export const coupons = sqliteTable(
+export const coupons = pgTable(
   "coupons",
   {
     id: text("id").primaryKey(),
@@ -18,12 +25,12 @@ export const coupons = sqliteTable(
     endsAt: text("ends_at"),
     usageLimit: integer("usage_limit"),
     usageCount: integer("usage_count").notNull().default(0),
-    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    active: boolean("active").notNull().default(true),
   },
   (table) => [uniqueIndex("coupons_code_unique").on(table.code)],
 );
 
-export const orders = sqliteTable(
+export const orders = pgTable(
   "orders",
   {
     id: text("id").primaryKey(),
@@ -72,7 +79,7 @@ export const orders = sqliteTable(
   ],
 );
 
-export const orderItems = sqliteTable(
+export const orderItems = pgTable(
   "order_items",
   {
     id: text("id").primaryKey(),
@@ -89,7 +96,7 @@ export const orderItems = sqliteTable(
   (table) => [index("order_items_order_idx").on(table.orderId)],
 );
 
-export const orderItemAddons = sqliteTable(
+export const orderItemAddons = pgTable(
   "order_item_addons",
   {
     id: text("id").primaryKey(),
@@ -106,7 +113,7 @@ export const orderItemAddons = sqliteTable(
   (table) => [index("order_item_addons_item_idx").on(table.orderItemId)],
 );
 
-export const payments = sqliteTable(
+export const payments = pgTable(
   "payments",
   {
     id: text("id").primaryKey(),
@@ -127,7 +134,7 @@ export const payments = sqliteTable(
   (table) => [index("payments_order_idx").on(table.orderId)],
 );
 
-export const orderStatusHistory = sqliteTable(
+export const orderStatusHistory = pgTable(
   "order_status_history",
   {
     id: text("id").primaryKey(),
@@ -142,7 +149,7 @@ export const orderStatusHistory = sqliteTable(
   (table) => [index("order_status_history_order_idx").on(table.orderId)],
 );
 
-export const internalOrderNotes = sqliteTable(
+export const internalOrderNotes = pgTable(
   "internal_order_notes",
   {
     id: text("id").primaryKey(),
@@ -158,7 +165,7 @@ export const internalOrderNotes = sqliteTable(
   (table) => [index("internal_order_notes_order_idx").on(table.orderId)],
 );
 
-export const orderIdempotencyKeys = sqliteTable("order_idempotency_keys", {
+export const orderIdempotencyKeys = pgTable("order_idempotency_keys", {
   keyHash: text("key_hash").primaryKey(),
   orderId: text("order_id").references(() => orders.id),
   requestHash: text("request_hash").notNull(),

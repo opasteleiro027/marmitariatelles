@@ -1,18 +1,14 @@
 import type { StorefrontSnapshot } from "../domain/storefront.types";
 import { formatMoney } from "../domain/format-money";
-import { ProductCard } from "./ProductCard";
+import { StorefrontCatalog } from "./StorefrontCatalog";
 import styles from "./storefront.module.css";
 
 export function StorefrontPage({ snapshot }: { snapshot: StorefrontSnapshot }) {
-  const categories = Array.from(
-    new Set(snapshot.products.map((product) => product.category)),
-  );
-
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <a className={styles.brand} href="#" aria-label="Domingo na Mesa, início">
-          <span aria-hidden="true">DM</span>
+        <a className={styles.brand} href="#" aria-label="Marmitaria Telles, início">
+          <span aria-hidden="true">MT</span>
           <strong>{snapshot.businessName}</strong>
         </a>
         <nav aria-label="Navegação principal">
@@ -60,28 +56,7 @@ export function StorefrontPage({ snapshot }: { snapshot: StorefrontSnapshot }) {
         <div><span>03</span><p><strong>Receba</strong> tudo fresquinho em casa.</p></div>
       </section>
 
-      <section className={styles.menuSection} id="cardapio">
-        <div className={styles.sectionHeading}>
-          <div>
-            <p className={styles.eyebrow}>Cardápio do próximo domingo</p>
-            <h2>Escolha o que vai à sua mesa</h2>
-          </div>
-          <p>{snapshot.products.length} opções disponíveis</p>
-        </div>
-
-        {categories.map((category) => (
-          <div className={styles.category} key={category}>
-            <h3>{category}</h3>
-            <div className={styles.productGrid}>
-              {snapshot.products
-                .filter((product) => product.category === category)
-                .map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-            </div>
-          </div>
-        ))}
-      </section>
+      <StorefrontCatalog snapshot={snapshot} />
 
       <section className={styles.howItWorks} id="como-funciona">
         <p className={styles.eyebrow}>Do pedido à mesa</p>
@@ -94,15 +69,13 @@ export function StorefrontPage({ snapshot }: { snapshot: StorefrontSnapshot }) {
       </section>
 
       <footer className={styles.footer}>
-        <div><strong>{snapshot.businessName}</strong><p>Comida que abraça.</p></div>
+        <div>
+          <strong>{snapshot.businessName}</strong>
+          <p>{snapshot.address}</p>
+        </div>
         <a href={`https://wa.me/${snapshot.whatsapp}`}>WhatsApp</a>
       </footer>
 
-      <a className={styles.floatingCart} href="#cardapio" aria-label="Começar pedido">
-        <span>🛍️</span>
-        <strong>Começar pedido</strong>
-        <small>0 itens</small>
-      </a>
     </main>
   );
 }

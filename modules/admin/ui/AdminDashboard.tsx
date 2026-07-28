@@ -1,35 +1,60 @@
-import { chatGPTSignOutPath } from "@/app/chatgpt-auth";
+import { clearAdminSession } from "@/modules/admin-auth/server/admin-session";
+import { redirect } from "next/navigation";
 import type { StorefrontSnapshot } from "@/modules/storefront/domain/storefront.types";
+import type { getAdminCatalog } from "@/modules/catalog/application/catalog-admin";
+import { CatalogManagement } from "@/modules/catalog/ui/catalog-management/CatalogManagement";
+import type { AdminOrderSnapshot } from "@/modules/ordering/application/admin-orders";
+import { AdminOrderList } from "@/modules/ordering/ui/admin-order-list/AdminOrderList";
+import { formatMoney } from "@/modules/storefront/domain/format-money";
+import type { getAdminEstablishment } from "@/modules/establishment/application/admin-establishment";
+import { EstablishmentManagement } from "@/modules/establishment/ui/establishment-management/EstablishmentManagement";
+import { toggleOrdersPausedAction } from "@/modules/establishment/server/establishment-actions";
+import type { AdminSalesCalendar } from "@/modules/sales-calendar/application/admin-sales-calendar";
+import { SalesCalendarManagement } from "@/modules/sales-calendar/ui/sales-calendar-management/SalesCalendarManagement";
 import styles from "./admin.module.css";
 
 const navigation = [
-  ["⌂", "Visão geral"],
-  ["▤", "Pedidos"],
-  ["◫", "Cardápio"],
-  ["◎", "Áreas de entrega"],
-  ["◷", "Horários"],
-  ["⚙", "Configurações"],
+  ["⌂", "Visão geral", "/admin"],
+  ["▤", "Pedidos", "#pedidos"],
+  ["◫", "Cardápio", "#cardapio-admin"],
+  ["◎", "Áreas de entrega", "#configuracoes"],
+  ["◷", "Horários", "#horarios"],
+  ["⚙", "Configurações", "#configuracoes"],
 ];
+
+async function logoutAction() {
+  "use server";
+  await clearAdminSession();
+  redirect("/admin/login");
+}
 
 export function AdminDashboard({
   userName,
   storefront,
+  catalog,
+  orders,
+  establishment,
+  salesCalendar,
 }: {
   userName: string;
   storefront: StorefrontSnapshot;
+  catalog: Awaited<ReturnType<typeof getAdminCatalog>>;
+  orders: AdminOrderSnapshot;
+  establishment: Awaited<ReturnType<typeof getAdminEstablishment>>;
+  salesCalendar: AdminSalesCalendar;
 }) {
   return (
     <main className={styles.adminShell}>
       <aside className={styles.sidebar}>
         <a className={styles.brand} href="/admin">
-          <span>DM</span>
-          <strong>Domingo na Mesa</strong>
+          <span>MT</span>
+          <strong>Marmitaria Telles</strong>
         </a>
         <nav aria-label="Administração">
-          {navigation.map(([icon, label], index) => (
+          {navigation.map(([icon, label, href], index) => (
             <a
               className={index === 0 ? styles.activeNav : undefined}
-              href={index === 0 ? "/admin" : "#em-breve"}
+              href={href}
               key={label}
             >
               <span aria-hidden="true">{icon}</span>
@@ -37,9 +62,9 @@ export function AdminDashboard({
             </a>
           ))}
         </nav>
-        <a className={styles.signOut} href={chatGPTSignOutPath("/")}>
-          Sair
-        </a>
+        <form action={logoutAction} className={styles.signOutForm}>
+          <button className={styles.signOut} type="submit">Sair</button>
+        </form>
       </aside>
 
       <section className={styles.adminContent}>
@@ -65,32 +90,50 @@ export function AdminDashboard({
               {storefront.ordersOpen ? "Pedidos abertos" : "Pedidos pausados"}
             </strong>
           </div>
-          <button type="button">Pausar novos pedidos</button>
+          <form action={toggleOrdersPausedAction}>
+            <input
+              type="hidden"
+              name="paused"
+              value={String(establishment.settings.ordersPaused)}
+            />
+            <button type="submit">
+              {establishment.settings.ordersPaused
+                ? "Reabrir pedidos"
+                : "Pausar novos pedidos"}
+            </button>
+          </form>
         </section>
 
         <div className={styles.metricGrid}>
           <article><p>Produtos ativos</p><strong>{storefront.products.length}</strong><small>no cardápio atual</small></article>
-          <article><p>Pedidos recebidos</p><strong>0</strong><small>fundação sem pedidos reais</small></article>
-          <article><p>Capacidade utilizada</p><strong>0%</strong><small>faixas serão configuradas</small></article>
-          <article><p>Faturamento previsto</p><strong>R$ 0,00</strong><small>nenhum pedido confirmado</small></article>
+          <article><p>Pedidos recebidos</p><strong>{orders.metrics.received}</strong><small>{orders.metrics.active} em andamento</small></article>
+          <article><p>Pedidos concluídos</p><strong>{orders.metrics.completed}</strong><small>entregues ou retirados</small></article>
+          <article><p>Faturamento previsto</p><strong>{formatMoney(orders.metrics.projectedRevenueInCents)}</strong><small>pedidos não cancelados</small></article>
         </div>
 
         <section className={styles.foundationPanel} id="em-breve">
           <div>
-            <p className={styles.eyebrow}>Fase 1 — Fundação</p>
-            <h2>A operação já tem uma base organizada.</h2>
+            <p className={styles.eyebrow}>Operação integrada</p>
+            <h2>A loja e o painel trabalham na mesma base.</h2>
             <p>
-              Persistência, autenticação e módulos de negócio foram separados
-              para receber o fluxo completo sem misturar regras com interface.
+              Catálogo, checkout, estoque e acompanhamento estão conectados ao
+              PostgreSQL com validações no servidor.
             </p>
           </div>
           <ul>
             <li><span>✓</span> Layout público responsivo</li>
             <li><span>✓</span> Área administrativa protegida</li>
-            <li><span>✓</span> Catálogo inicial persistente</li>
-            <li><span>→</span> Carrinho e checkout na próxima etapa</li>
+            <li><span>✓</span> Catálogo administrável</li>
+            <li><span>✓</span> Carrinho e checkout transacional</li>
           </ul>
         </section>
+        <AdminOrderList snapshot={orders} />
+        <CatalogManagement
+          categories={catalog.categories}
+          products={catalog.products}
+        />
+        <EstablishmentManagement snapshot={establishment} />
+        <SalesCalendarManagement snapshot={salesCalendar} />
       </section>
     </main>
   );

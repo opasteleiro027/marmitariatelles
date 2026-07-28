@@ -1,18 +1,30 @@
-import { requireChatGPTUser } from "@/app/chatgpt-auth";
-import { isAuthorizedAdmin } from "@/modules/admin/domain/admin-authorization";
-import { AdminAccessDenied } from "@/modules/admin/ui/AdminAccessDenied";
+import { requireAdmin } from "@/modules/admin-auth/server/admin-session";
 import { AdminDashboard } from "@/modules/admin/ui/AdminDashboard";
+import { getAdminCatalog } from "@/modules/catalog/application/catalog-admin";
+import { getAdminOrders } from "@/modules/ordering/application/admin-orders";
+import { getAdminEstablishment } from "@/modules/establishment/application/admin-establishment";
+import { getAdminSalesCalendar } from "@/modules/sales-calendar/application/admin-sales-calendar";
 import { getStorefrontSnapshot } from "@/modules/storefront/infrastructure/storefront.repository";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  const user = await requireChatGPTUser("/admin");
-
-  if (!isAuthorizedAdmin(user.email)) {
-    return <AdminAccessDenied email={user.email} />;
-  }
-
-  const storefront = await getStorefrontSnapshot();
-  return <AdminDashboard userName={user.displayName} storefront={storefront} />;
+  const user = await requireAdmin();
+  const [storefront, catalog, orders, establishment, salesCalendar] = await Promise.all([
+    getStorefrontSnapshot(),
+    getAdminCatalog(),
+    getAdminOrders(),
+    getAdminEstablishment(),
+    getAdminSalesCalendar(),
+  ]);
+  return (
+    <AdminDashboard
+      userName={user.email}
+      storefront={storefront}
+      catalog={catalog}
+      orders={orders}
+      establishment={establishment}
+      salesCalendar={salesCalendar}
+    />
+  );
 }

@@ -67,6 +67,18 @@
   margin-top: auto;
 }
 
+.signOutForm {
+  margin-top: auto;
+}
+
+.signOutForm .signOut {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
 .adminContent {
   padding: 36px clamp(22px, 5vw, 68px) 60px;
 }

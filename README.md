@@ -1,74 +1,86 @@
-# Domingo na Mesa
+# Marmitaria Telles
 
-Aplicação web mobile-first para vender marmitas aos domingos, substituir o
-registro informal de pedidos por WhatsApp e dar ao comerciante uma operação
-rastreável.
+Aplicação web mobile-first para receber e administrar pedidos de marmitas aos
+domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
 
-## Estado atual
+## O que já funciona
 
-A Fase 1 (Fundação) está em desenvolvimento. A versão atual já contém:
+- loja pública responsiva, cardápio e carrinho persistente no dispositivo;
+- checkout para retirada ou entrega, horário, pagamento e troco;
+- confirmação transacional com preço recalculado no servidor, estoque,
+  capacidade, idempotência e número amigável;
+- acompanhamento privado por token seguro;
+- login administrativo com sessão assinada;
+- dashboard com pedidos e faturamento;
+- mudança de status com histórico e devolução de estoque no cancelamento;
+- criação e edição de produtos, esgotado, bairros, taxas, pedido mínimo,
+  agenda do domingo, faixas de horário e dados públicos do negócio;
+- health check para Railway em `/api/health`.
 
-- página pública responsiva com status da venda e catálogo persistente;
-- painel administrativo com autenticação e autorização por allowlist;
-- esquema relacional para catálogo, clientes, pedidos, pagamentos e operação;
-- dados iniciais de demonstração carregados de forma idempotente;
-- regras monetárias puras e testes automatizados;
-- documentação e mapas arquiteturais.
+Os seis produtos e preços iniciais são dados de demonstração e devem ser
+revisados no painel antes da operação real. Nenhuma área de entrega é presumida:
+até o administrador cadastrar bairros e taxas, apenas retirada fica disponível.
 
-Carrinho, checkout, confirmação atômica e gestão administrativa ainda não estão
-concluídos. Consulte `ROADMAP.md`.
+## Dados do estabelecimento
+
+- Nome: Marmitaria Telles
+- Administrador: `abraaofcjunior@gmail.com`
+- WhatsApp: `+55 27 98844-6510`
+- Endereço: Av. Bartolomeu de Las Casa, nº 16, Quadra 17, Cidade Continental,
+  Setor América, Serra - ES
 
 ## Tecnologias
 
-- TypeScript e React 19;
-- App Router compatível com Next.js por meio do Vinext;
-- Tailwind CSS 4 e CSS Modules;
-- Cloudflare D1 com Drizzle ORM;
-- Cloudflare Workers / OpenAI Sites;
+- Next.js 16 App Router, React 19 e TypeScript;
+- CSS Modules e Tailwind CSS 4;
+- PostgreSQL no Railway;
+- Drizzle ORM para schema e migrations;
+- `postgres.js` para consultas e transações;
 - Node.js Test Runner.
 
-O briefing recomendava Supabase e Vercel para um projeto sem stack. O ambiente
-de entrega atual fornece D1, autenticação gerenciada e Workers, então a Fase 1
-usa esses recursos para manter a aplicação executável e publicável. O domínio
-permanece separado da infraestrutura para permitir um futuro adaptador Supabase
-sem reescrever as regras de negócio. Supabase não está configurado nesta fase.
+Não há Supabase. O repositório é preparado para GitHub e a aplicação para
+Railway, seguindo o mesmo modelo operacional do projeto Clube do Pasteleiro.
 
-## Instalação e desenvolvimento
+## Instalação local
 
-Requisito: Node.js `>=22.13.0`.
+Requisito: Node.js `>=22.13.0` e PostgreSQL.
 
 ```bash
 npm install
+copy .env.example .env.local
+npm run db:migrate
 npm run dev
 ```
 
-Copie `.env.example` para `.env.local` e substitua o e-mail de exemplo. Nunca
-versione credenciais reais.
+Acesse `http://localhost:3000`. O painel fica em `/admin`.
 
-## Banco e migrations
+## Variáveis de ambiente
 
-O binding lógico `DB` está declarado em `.openai/hosting.json`.
+```dotenv
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/marmitaria_telles
+ADMIN_EMAILS=abraaofcjunior@gmail.com
+ADMIN_PASSWORD=defina-uma-senha-forte
+SESSION_SECRET=gere-um-segredo-longo-e-aleatorio
+ORDER_TOKEN_SECRET=opcional-separado-do-segredo-da-sessao
+APP_URL=http://localhost:3000
+```
+
+`ORDER_TOKEN_SECRET` é opcional; quando ausente, `SESSION_SECRET` também assina
+os tokens de acompanhamento. Nunca versionar valores reais.
+
+## Banco e dados iniciais
+
+O schema fonte é reexportado por `db/schema.ts`. A migration PostgreSQL fica em
+`drizzle-postgres/`.
 
 ```bash
 npm run db:generate
+npm run db:migrate
 ```
 
-O schema fonte fica em módulos de negócio e é reexportado por `db/schema.ts`.
-As migrations geradas ficam em `drizzle/`. A página pública cria apenas o
-subconjunto mínimo da fundação de forma idempotente; as demais tabelas entram
-pela migration.
-
-## Autenticação e primeiro administrador
-
-O painel `/admin` usa a identidade gerenciada pela plataforma e uma segunda
-verificação de autorização no servidor.
-
-1. Defina `ADMIN_EMAILS` com um ou mais e-mails separados por vírgula.
-2. Publique a aplicação.
-3. Entre com um dos e-mails autorizados.
-
-Sem `ADMIN_EMAILS`, o acesso é negado por padrão. Não existem credenciais fixas
-de produção.
+`db:migrate` aplica migrations pendentes e executa um seed idempotente com os
+dados reais do estabelecimento, categorias, catálogo de demonstração, formas de
+pagamento, próximo domingo e três faixas de horário.
 
 ## Verificações
 
@@ -79,25 +91,27 @@ npm test
 npm run build
 ```
 
-## Estrutura e publicação
+## Publicação no Railway
 
-Veja `PROJECT_STRUCTURE.md` para o mapa de módulos e `docs/ARCHITECTURE.md` para
-as decisões. A publicação é feita pelo fluxo de Sites após testes e build.
+1. Crie/conecte um repositório GitHub para este projeto.
+2. No Railway, crie um projeto a partir do repositório.
+3. Adicione um serviço PostgreSQL.
+4. Configure as variáveis acima; use a `DATABASE_URL` fornecida pelo Railway.
+5. O arquivo `railway.json` executa build, migration antes do deploy, start do
+   standalone e health check.
+6. Depois do primeiro domínio público, atualize `APP_URL`.
 
-## Dados de demonstração
+## Estrutura e decisões
 
-O bootstrap idempotente adiciona três categorias e seis produtos do briefing.
-Eles são adequados para desenvolvimento e devem ser substituídos no painel
-administrativo antes da operação real.
+- `PROJECT_STRUCTURE.md`: mapa de módulos e integrações.
+- `docs/ARCHITECTURE.md`: limites e decisões arquiteturais.
+- `docs/DATA_MODEL.md`: entidades e relacionamentos.
+- `docs/WORKFLOWS.md`: fluxos críticos.
+- `ROADMAP.md`: concluído e pendente.
 
-## Supabase
+## Fora desta entrega
 
-Não há integração Supabase ativa. As variáveis comentadas de `.env.example`
-reservam o contrato esperado para um futuro adaptador. Quando essa decisão for
-tomada, será necessário implementar repositórios, migrations, políticas RLS,
-storage e autenticação Supabase; inserir apenas chaves não habilita o recurso.
-
-## Escopo futuro
-
-Pagamento on-line, WhatsApp oficial, aplicativo nativo, fidelidade, rastreamento
-de entregador e múltiplas lojas não pertencem ao MVP.
+Complementos configuráveis, upload de fotos, cupom no checkout, filtros
+avançados, comanda, relatórios, Pix/QR Code e notificações automáticas continuam
+no roadmap. Pagamento on-line, WhatsApp oficial, fidelidade e múltiplas lojas
+permanecem fora do MVP inicial.

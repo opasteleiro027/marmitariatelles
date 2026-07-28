@@ -1,6 +1,12 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import {
+  boolean,
+  index,
+  pgTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/pg-core";
 
-export const adminUsers = sqliteTable(
+export const adminUsers = pgTable(
   "admin_users",
   {
     id: text("id").primaryKey(),
@@ -9,14 +15,14 @@ export const adminUsers = sqliteTable(
     role: text("role", { enum: ["owner", "manager", "operator"] })
       .notNull()
       .default("operator"),
-    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    active: boolean("active").notNull().default(true),
     createdAt: text("created_at").notNull(),
     updatedAt: text("updated_at").notNull(),
   },
   (table) => [uniqueIndex("admin_users_email_unique").on(table.email)],
 );
 
-export const customers = sqliteTable(
+export const customers = pgTable(
   "customers",
   {
     id: text("id").primaryKey(),
@@ -29,7 +35,7 @@ export const customers = sqliteTable(
   (table) => [index("customers_phone_idx").on(table.phone)],
 );
 
-export const customerAddresses = sqliteTable(
+export const customerAddresses = pgTable(
   "customer_addresses",
   {
     id: text("id").primaryKey(),

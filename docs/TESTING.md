@@ -6,7 +6,7 @@ Regras monetárias, janelas, taxas, troco, autorização, complementos e cupons.
 
 ## Integração
 
-Repositórios D1, migrations, confirmação atômica, idempotência, estoque e
+Repositórios PostgreSQL, migrations, confirmação atômica, idempotência, estoque e
 capacidade.
 
 ## Fluxo

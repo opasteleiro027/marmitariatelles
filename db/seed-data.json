@@ -1,0 +1,112 @@
+{
+  "administrator": {
+    "id": "admin-abraao",
+    "email": "abraaofcjunior@gmail.com",
+    "displayName": "Abraão",
+    "role": "owner"
+  },
+  "settings": {
+    "id": "default",
+    "businessName": "Marmitaria Telles",
+    "description": "Marmitas caseiras preparadas com carinho para o almoço de domingo.",
+    "welcomeMessage": "Comida caseira, caprichada e pronta para o seu domingo.",
+    "whatsapp": "5527988446510",
+    "phone": "+55 27 98844-6510",
+    "address": "Av. Bartolomeu de Las Casa, nº 16, Quadra 17, Cidade Continental, Setor América, Serra - ES",
+    "primaryColor": "#d85b27",
+    "minimumOrderCents": 2000,
+    "orderDeadlineLabel": "Pedidos até 10h30",
+    "deliveryWindowLabel": "Entregas das 11h às 14h",
+    "notice": "Consulte a disponibilidade de entrega para o seu bairro.",
+    "pickupInstructions": "Retirada no endereço da Marmitaria Telles, no horário confirmado no pedido.",
+    "deliveryInstructions": "A entrega depende da área e da faixa de horário disponíveis.",
+    "ordersPaused": false
+  },
+  "categories": [
+    { "id": "category-1", "name": "Marmitas", "displayOrder": 1 },
+    { "id": "category-2", "name": "Bebidas", "displayOrder": 2 },
+    { "id": "category-3", "name": "Sobremesas", "displayOrder": 3 }
+  ],
+  "products": [
+    {
+      "id": "marmita-pequena",
+      "categoryId": "category-1",
+      "name": "Marmita pequena",
+      "description": "Arroz, feijão, proteína do dia e dois acompanhamentos.",
+      "priceCents": 2200,
+      "promotionalPriceCents": null,
+      "featured": false,
+      "displayOrder": 1
+    },
+    {
+      "id": "marmita-media",
+      "categoryId": "category-1",
+      "name": "Marmita média",
+      "description": "A medida certa de comida caseira para um domingo gostoso.",
+      "priceCents": 2800,
+      "promotionalPriceCents": 2600,
+      "featured": true,
+      "displayOrder": 2
+    },
+    {
+      "id": "marmita-grande",
+      "categoryId": "category-1",
+      "name": "Marmita grande",
+      "description": "Porção generosa com proteína e acompanhamentos à escolha.",
+      "priceCents": 3400,
+      "promotionalPriceCents": null,
+      "featured": false,
+      "displayOrder": 3
+    },
+    {
+      "id": "coca-cola-lata",
+      "categoryId": "category-2",
+      "name": "Coca-Cola lata",
+      "description": "350 ml, bem gelada.",
+      "priceCents": 600,
+      "promotionalPriceCents": null,
+      "featured": false,
+      "displayOrder": 1
+    },
+    {
+      "id": "guarana-lata",
+      "categoryId": "category-2",
+      "name": "Guaraná lata",
+      "description": "350 ml, bem gelado.",
+      "priceCents": 550,
+      "promotionalPriceCents": null,
+      "featured": false,
+      "displayOrder": 2
+    },
+    {
+      "id": "pudim",
+      "categoryId": "category-3",
+      "name": "Pudim da casa",
+      "description": "Fatia cremosa com calda de caramelo.",
+      "priceCents": 900,
+      "promotionalPriceCents": null,
+      "featured": false,
+      "displayOrder": 1
+    }
+  ],
+  "paymentMethods": [
+    {
+      "id": "payment-cash",
+      "code": "cash",
+      "label": "Dinheiro na entrega ou retirada",
+      "displayOrder": 1
+    },
+    {
+      "id": "payment-card",
+      "code": "card_on_delivery",
+      "label": "Cartão na entrega",
+      "displayOrder": 2
+    },
+    {
+      "id": "payment-pickup",
+      "code": "pay_on_pickup",
+      "label": "Pagamento na retirada",
+      "displayOrder": 3
+    }
+  ]
+}

@@ -1,19 +1,26 @@
 # Changelog
 
-## 0.1.0 - 2026-07-27
+## 0.2.0 - 2026-07-27
 
 ### Adicionado
 
-- Fundação Vinext, TypeScript, Tailwind e D1.
-- Storefront responsivo com catálogo inicial persistente.
-- Painel administrativo protegido e allowlist deny-by-default.
-- Schema modular completo para as entidades do MVP.
-- Regras monetárias e testes da fundação.
-- Documentação arquitetural, estrutura, dados e fluxos.
-- Cartão social próprio alinhado à identidade visual.
+- Identidade e dados reais da Marmitaria Telles.
+- Migração de infraestrutura para Next.js, PostgreSQL, Railway e GitHub.
+- Login administrativo interno com cookie seguro.
+- Catálogo administrável e controle de esgotado.
+- Carrinho persistente e checkout responsivo.
+- Confirmação transacional com validação de preço, estoque, área, faixa,
+  capacidade, pagamento, troco e idempotência.
+- Página de acompanhamento por token seguro.
+- Pedidos e métricas reais no painel, histórico de status e cancelamento.
+- Gestão de áreas, taxas, dados do estabelecimento e agenda do domingo.
+- Migration, seed, health check e empacotamento standalone para Railway.
 
 ### Pendente
 
-- Carrinho, complementos, checkout e confirmação de pedido.
-- CRUDs administrativos e acompanhamento do pedido.
-- Aplicação transacional das regras de estoque e capacidade.
+- Fotos, complementos, cupons, filtros detalhados, comanda e relatórios.
+- Conexão do repositório GitHub e criação do serviço Railway.
+
+## 0.1.0 - 2026-07-27
+
+- Fundação modular inicial, storefront e schema relacional.

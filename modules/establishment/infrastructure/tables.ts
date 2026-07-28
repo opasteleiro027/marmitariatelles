@@ -1,6 +1,6 @@
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { boolean, index, integer, pgTable, text } from "drizzle-orm/pg-core";
 
-export const businessSettings = sqliteTable("business_settings", {
+export const businessSettings = pgTable("business_settings", {
   id: text("id").primaryKey(),
   businessName: text("business_name").notNull(),
   description: text("description"),
@@ -17,13 +17,13 @@ export const businessSettings = sqliteTable("business_settings", {
   pickupInstructions: text("pickup_instructions"),
   deliveryInstructions: text("delivery_instructions"),
   cancellationPolicy: text("cancellation_policy"),
-  ordersPaused: integer("orders_paused", { mode: "boolean" })
+  ordersPaused: boolean("orders_paused")
     .notNull()
     .default(false),
   updatedAt: text("updated_at").notNull(),
 });
 
-export const deliveryAreas = sqliteTable(
+export const deliveryAreas = pgTable(
   "delivery_areas",
   {
     id: text("id").primaryKey(),
@@ -34,7 +34,7 @@ export const deliveryAreas = sqliteTable(
     deliveryFeeCents: integer("delivery_fee_cents").notNull(),
     minimumOrderCents: integer("minimum_order_cents").notNull().default(0),
     estimatedMinutes: integer("estimated_minutes"),
-    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    active: boolean("active").notNull().default(true),
     displayOrder: integer("display_order").notNull().default(0),
     createdAt: text("created_at").notNull(),
     updatedAt: text("updated_at").notNull(),
@@ -44,7 +44,7 @@ export const deliveryAreas = sqliteTable(
   ],
 );
 
-export const deliverySlots = sqliteTable(
+export const deliverySlots = pgTable(
   "delivery_slots",
   {
     id: text("id").primaryKey(),
@@ -53,18 +53,18 @@ export const deliverySlots = sqliteTable(
     endsAt: text("ends_at").notNull(),
     capacity: integer("capacity").notNull(),
     reservedCount: integer("reserved_count").notNull().default(0),
-    active: integer("active", { mode: "boolean" }).notNull().default(true),
+    active: boolean("active").notNull().default(true),
   },
   (table) => [index("delivery_slots_date_idx").on(table.salesDate)],
 );
 
-export const paymentMethods = sqliteTable("payment_methods", {
+export const paymentMethods = pgTable("payment_methods", {
   id: text("id").primaryKey(),
   code: text("code", {
     enum: ["pix", "cash", "card_on_delivery", "pay_on_pickup"],
   }).notNull(),
   label: text("label").notNull(),
   instructions: text("instructions"),
-  active: integer("active", { mode: "boolean" }).notNull().default(true),
+  active: boolean("active").notNull().default(true),
   displayOrder: integer("display_order").notNull().default(0),
 });
