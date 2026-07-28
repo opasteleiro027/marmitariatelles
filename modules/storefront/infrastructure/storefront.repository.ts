@@ -132,10 +132,10 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
         ORDER BY display_order, neighborhood`,
       ).all<DeliveryAreaRow>(),
       database.prepare(
-        `SELECT id, starts_at, ends_at
+        `SELECT DISTINCT ON (starts_at, ends_at) id, starts_at, ends_at
         FROM delivery_slots
         WHERE active = TRUE AND sales_date = ?
-        ORDER BY starts_at`,
+        ORDER BY starts_at, ends_at, id`,
       ).bind(menu?.sales_date ?? "").all<DeliverySlotRow>(),
       database.prepare(
         `SELECT id, code, label

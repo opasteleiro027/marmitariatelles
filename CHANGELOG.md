@@ -12,6 +12,7 @@
 - A loja pública mostra somente se o site está ligado ou desligado e não exibe
   mais data ou prazo de encerramento.
 - Produtos e carrinho ficam desabilitados enquanto o site estiver desligado.
+- Faixas de retirada duplicadas por agendas antigas são consolidadas na loja.
 
 ### Infraestrutura
 
