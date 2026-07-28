@@ -24,11 +24,10 @@ export function MarmitaConfigurator({
   orderingEnabled: boolean;
   onAdd: (item: CartItem) => void;
 }) {
-  const firstAvailable =
-    builder.sizes.find((size) => size.available) ?? builder.sizes[0];
-  const [sizeId, setSizeId] = useState(firstAvailable?.id ?? "");
+  const [sizeId, setSizeId] = useState("");
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [notes, setNotes] = useState("");
+  const [addedToCart, setAddedToCart] = useState(false);
   const size = builder.sizes.find((candidate) => candidate.id === sizeId);
 
   const selections = useMemo(
@@ -71,6 +70,7 @@ export function MarmitaConfigurator({
     });
 
   function selectSize(nextSizeId: string) {
+    if (addedToCart) return;
     const nextSize = builder.sizes.find((candidate) => candidate.id === nextSizeId);
     if (!nextSize?.available) return;
     setSizeId(nextSizeId);
@@ -84,7 +84,7 @@ export function MarmitaConfigurator({
     optionId: string,
     delta: number,
   ) {
-    if (!size) return;
+    if (!size || addedToCart) return;
     const option = group.options.find((candidate) => candidate.id === optionId);
     if (!option?.available) return;
     const maximum = size.limits[group.id]?.maximum ?? 99;
@@ -111,8 +111,14 @@ export function MarmitaConfigurator({
       selections,
       notes: notes.trim(),
     });
+    setAddedToCart(true);
+  }
+
+  function continueShopping() {
+    setSizeId("");
     setQuantities({});
     setNotes("");
+    setAddedToCart(false);
   }
 
   if (!builder.sizes.length || !builder.groups.length) {
@@ -139,12 +145,14 @@ export function MarmitaConfigurator({
               >
                 <input
                   checked={sizeId === candidate.id}
-                  disabled={!candidate.available}
+                  disabled={!candidate.available || addedToCart}
                   name="marmita-size"
                   onChange={() => selectSize(candidate.id)}
                   type="radio"
                 />
-                <span aria-hidden="true">▤</span>
+                <span aria-hidden="true">
+                  {sizeId === candidate.id ? "✔️" : "▤"}
+                </span>
                 <strong>{candidate.name}</strong>
                 <small>{candidate.description}</small>
                 <b>
@@ -164,6 +172,7 @@ export function MarmitaConfigurator({
           <MarmitaGroupStep
             group={group}
             key={group.id}
+            locked={addedToCart}
             number={index + 2}
             onChange={changeOption}
             orderingEnabled={orderingEnabled}
@@ -176,6 +185,7 @@ export function MarmitaConfigurator({
           <StepTitle number={builder.groups.length + 2} title="Alguma observação?" />
           <div className={styles.notes}>
             <textarea
+              disabled={addedToCart}
               maxLength={150}
               onChange={(event) => setNotes(event.target.value)}
               placeholder="Ex.: Tirar a cebola, arroz bem soltinho..."
@@ -187,9 +197,11 @@ export function MarmitaConfigurator({
       </div>
 
       <MarmitaSummary
+        addedToCart={addedToCart}
         builder={builder}
         complete={complete}
         onAdd={addToCart}
+        onContinue={continueShopping}
         orderingEnabled={orderingEnabled}
         selections={selections}
         size={size}

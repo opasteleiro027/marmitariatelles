@@ -247,8 +247,14 @@ test("ships the Stitch menu hero and the seven-step marmita builder", async () =
   assert.ok(hero.length > 1_000_000);
   assert.match(builder, /categories\.map/);
   assert.match(builder, /MarmitaConfigurator/);
+  assert.match(builder, /FINALIZAR PEDIDO/);
   assert.match(configurator, /Escolha o tamanho/);
   assert.match(configurator, /Alguma observação/);
+  assert.match(configurator, /const \[sizeId, setSizeId\] = useState\(""\)/);
+  assert.match(configurator, /sizeId === candidate\.id \? "✔️" : "▤"/);
+  assert.match(configurator, /function continueShopping/);
+  assert.match(configurator, /setSizeId\(""\)/);
+  assert.match(configuratorParts, /CONTINUAR COMPRANDO/);
   assert.match(configuratorParts, /Complete sua marmita/);
   assert.match(configuratorParts, /group\.role === "base"/);
   assert.match(configuratorParts, /group\.role === "beans"/);

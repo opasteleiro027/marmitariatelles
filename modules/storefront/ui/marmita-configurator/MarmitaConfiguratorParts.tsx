@@ -17,6 +17,7 @@ export type ConfiguredSelection = {
 
 export function MarmitaGroupStep({
   group,
+  locked,
   number,
   size,
   quantities,
@@ -24,6 +25,7 @@ export function MarmitaGroupStep({
   onChange,
 }: {
   group: StorefrontMarmitaGroup;
+  locked: boolean;
   number: number;
   size: StorefrontMarmitaSize | undefined;
   quantities: Record<string, number>;
@@ -52,7 +54,9 @@ export function MarmitaGroupStep({
                 className={`${styles.radioOption} ${
                   selected ? styles.selected : ""
                 }`}
-                disabled={!option.available || !orderingEnabled}
+                disabled={
+                  locked || !size || !option.available || !orderingEnabled
+                }
                 key={option.id}
                 onClick={() => onChange(group, option.id, 1)}
                 type="button"
@@ -66,7 +70,9 @@ export function MarmitaGroupStep({
             return (
               <button
                 className={`${styles.chip} ${selected ? styles.selected : ""}`}
-                disabled={!option.available || !orderingEnabled}
+                disabled={
+                  locked || !size || !option.available || !orderingEnabled
+                }
                 key={option.id}
                 onClick={() => onChange(group, option.id, selected ? -1 : 1)}
                 type="button"
@@ -94,7 +100,9 @@ export function MarmitaGroupStep({
                 <b>{quantity}</b>
                 <button
                   aria-label={`Adicionar ${option.name}`}
-                  disabled={!option.available || !orderingEnabled}
+                  disabled={
+                    locked || !size || !option.available || !orderingEnabled
+                  }
                   onClick={() => onChange(group, option.id, 1)}
                   type="button"
                 >
@@ -111,20 +119,24 @@ export function MarmitaGroupStep({
 
 export function MarmitaSummary({
   builder,
+  addedToCart,
   size,
   selections,
   total,
   complete,
   orderingEnabled,
   onAdd,
+  onContinue,
 }: {
   builder: StorefrontSnapshot["marmitaBuilder"];
+  addedToCart: boolean;
   size: StorefrontMarmitaSize | undefined;
   selections: ConfiguredSelection[];
   total: number;
   complete: boolean;
   orderingEnabled: boolean;
   onAdd: () => void;
+  onContinue: () => void;
 }) {
   const basePrice = size
     ? size.promotionalPriceInCents ?? size.priceInCents
@@ -172,12 +184,14 @@ export function MarmitaSummary({
       </div>
       <button
         className={styles.addButton}
-        disabled={!complete || !orderingEnabled}
-        onClick={onAdd}
+        disabled={!orderingEnabled || (!complete && !addedToCart)}
+        onClick={addedToCart ? onContinue : onAdd}
         type="button"
       >
         {!orderingEnabled
           ? "Pedidos indisponíveis"
+          : addedToCart
+            ? "CONTINUAR COMPRANDO"
           : complete
             ? "Adicionar ao carrinho"
             : "Complete sua marmita"}

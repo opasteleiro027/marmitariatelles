@@ -227,7 +227,7 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
             ? "Site desligado"
             : subtotal < snapshot.minimumOrderInCents
               ? "Complete o mínimo"
-              : "Continuar"}
+              : "FINALIZAR PEDIDO"}
         </b>
       </button>
 

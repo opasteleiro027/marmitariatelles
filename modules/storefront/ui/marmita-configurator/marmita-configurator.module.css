@@ -226,6 +226,11 @@
   font-size: 12px;
 }
 
+.notes textarea:disabled {
+  cursor: not-allowed;
+  opacity: .65;
+}
+
 .notes small {
   position: absolute;
   right: 10px;
