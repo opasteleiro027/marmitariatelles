@@ -13,8 +13,6 @@ export type StorefrontSnapshot = {
   businessName: string;
   welcomeMessage: string;
   ordersOpen: boolean;
-  salesDateLabel: string;
-  orderDeadlineLabel: string;
   deliveryWindowLabel: string;
   minimumOrderInCents: number;
   notice: string;

@@ -4,5 +4,5 @@
 - desativar entrega sem apagar pedidos antigos;
 - cancelar ou confirmar a exclusão de um bairro;
 - excluir bairro sem apagar pedidos históricos;
-- pausar pedidos e bloquear checkout no servidor;
+- manter o liga/desliga como controle único no topo do painel;
 - atualizar dados públicos.

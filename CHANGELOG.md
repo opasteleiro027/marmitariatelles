@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.4.0 - 2026-07-28
+
+### Alterado
+
+- O painel agora possui um único controle operacional: **Ligar site** ou
+  **Desligar site**.
+- Datas, janelas de abertura, publicação e fechamento manual não interferem
+  mais na aceitação de pedidos.
+- A agenda e seus controles foram removidos do painel administrativo.
+- A loja pública mostra somente se o site está ligado ou desligado e não exibe
+  mais data ou prazo de encerramento.
+- Produtos e carrinho ficam desabilitados enquanto o site estiver desligado.
+
+### Infraestrutura
+
+- Um cardápio operacional interno e estável preserva produtos e faixas de
+  retirada sem exigir configuração de agenda pelo administrador.
+- Contadores acumulados por data não bloqueiam mais um site que está ligado.
+- O servidor revalida o estado ligado/desligado dentro da transação do pedido.
+
 ## 0.3.4 - 2026-07-28
 
 ### Adicionado

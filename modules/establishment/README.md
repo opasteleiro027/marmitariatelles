@@ -1,5 +1,7 @@
 # Establishment
 
-Owns editable business settings, delivery areas, time slots and enabled payment
-methods. These records define whether an order can be accepted. Delivery areas
-can be deleted without removing historical order snapshots.
+Owns the site availability switch, editable business settings, delivery areas
+and enabled payment methods. Turning the site on or off is the only
+administrator-facing rule that releases or blocks new orders.
+
+Delivery areas can be deleted without removing historical order snapshots.

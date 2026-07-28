@@ -14,26 +14,17 @@ import {
 type MenuRow = {
   id: string;
   sales_date: string;
-  ordering_opens_at: string;
-  ordering_closes_at: string;
-  total_capacity: number | null;
-  closed_manually: boolean;
 };
 
 type ProductRow = {
-  menu_item_id: string;
   product_id: string;
   name: string;
   price_cents: number;
   promotional_price_cents: number | null;
-  override_price_cents: number | null;
   stock_quantity: number | null;
   order_limit: number | null;
-  available_quantity: number | null;
-  sold_quantity: number;
   product_active: boolean;
   sold_out: boolean;
-  menu_item_active: boolean;
 };
 
 export type ConfirmedOrder = {
@@ -91,22 +82,17 @@ export async function confirmOrder(
     }
 
     const menuRows = await sql.unsafe<MenuRow[]>(
-      `SELECT id, sales_date, ordering_opens_at, ordering_closes_at,
-              total_capacity, closed_manually
+      `SELECT id, sales_date
        FROM sales_menus
-       WHERE published = TRUE
-         AND ordering_opens_at <= $1
-         AND ordering_closes_at >= $1
-       ORDER BY sales_date ASC
+       WHERE operational = TRUE
        LIMIT 1
        FOR UPDATE`,
-      [new Date().toISOString()],
     );
     const menu = menuRows[0];
-    if (!menu || menu.closed_manually) {
+    if (!menu) {
       throw new OrderRequestError(
-        "Os pedidos estão fechados neste momento.",
-        409,
+        "O cardápio interno está temporariamente indisponível.",
+        503,
       );
     }
 
@@ -121,39 +107,21 @@ export async function confirmOrder(
     const settings = settingsRows[0];
     if (!settings || settings.orders_paused) {
       throw new OrderRequestError(
-        "Os pedidos estão pausados neste momento.",
+        "O site está desligado para novos pedidos.",
         409,
       );
     }
 
-    if (menu.total_capacity !== null) {
-      const countRows = await sql.unsafe<Array<{ count: number }>>(
-        `SELECT COUNT(*)::INT AS count
-         FROM orders
-         WHERE menu_id = $1 AND status <> 'cancelled'`,
-        [menu.id],
-      );
-      if ((countRows[0]?.count ?? 0) >= menu.total_capacity) {
-        throw new OrderRequestError(
-          "A capacidade desta venda foi preenchida.",
-          409,
-        );
-      }
-    }
-
     const productIds = request.items.map((item) => item.productId);
     const productRows = await sql.unsafe<ProductRow[]>(
-      `SELECT smi.id AS menu_item_id, p.id AS product_id, p.name,
+      `SELECT p.id AS product_id, p.name,
               p.price_cents, p.promotional_price_cents,
-              smi.override_price_cents, p.stock_quantity, p.order_limit,
-              smi.available_quantity, smi.sold_quantity,
-              p.active AS product_active, p.sold_out,
-              smi.active AS menu_item_active
-       FROM sales_menu_items smi
-       JOIN products p ON p.id = smi.product_id
-       WHERE smi.menu_id = $1 AND p.id = ANY($2::TEXT[])
-       FOR UPDATE OF smi, p`,
-      [menu.id, productIds],
+              p.stock_quantity, p.order_limit,
+              p.active AS product_active, p.sold_out
+       FROM products p
+       WHERE p.id = ANY($1::TEXT[]) AND p.deleted_at IS NULL
+       FOR UPDATE OF p`,
+      [productIds],
     );
     if (productRows.length !== productIds.length) {
       throw new OrderRequestError(
@@ -167,7 +135,7 @@ export async function confirmOrder(
     );
     const pricedItems = productRows.map((product) => {
       const quantity = requestedByProduct.get(product.product_id) ?? 0;
-      if (!product.product_active || !product.menu_item_active || product.sold_out) {
+      if (!product.product_active || product.sold_out) {
         throw new OrderRequestError(
           `${product.name} está indisponível no momento.`,
           409,
@@ -185,22 +153,11 @@ export async function confirmOrder(
           409,
         );
       }
-      if (
-        product.available_quantity !== null &&
-        product.sold_quantity + quantity > product.available_quantity
-      ) {
-        throw new OrderRequestError(
-          `Não há quantidade suficiente de ${product.name}.`,
-          409,
-        );
-      }
       return {
         ...product,
         quantity,
         unitPriceInCents:
-          product.override_price_cents ??
-          product.promotional_price_cents ??
-          product.price_cents,
+          product.promotional_price_cents ?? product.price_cents,
       };
     });
 
@@ -306,12 +263,6 @@ export async function confirmOrder(
         ],
       );
       await sql.unsafe(
-        `UPDATE sales_menu_items
-         SET sold_quantity = sold_quantity + $1
-         WHERE id = $2`,
-        [item.quantity, item.menu_item_id],
-      );
-      await sql.unsafe(
         `UPDATE products
          SET stock_quantity = stock_quantity - $1, updated_at = $2
          WHERE id = $3 AND stock_quantity IS NOT NULL`,
@@ -340,12 +291,6 @@ export async function confirmOrder(
       [randomUUID(), orderId, timestamp],
     );
     await sql.unsafe(
-      `UPDATE delivery_slots
-       SET reserved_count = reserved_count + 1
-       WHERE id = $1`,
-      [request.deliverySlotId],
-    );
-    await sql.unsafe(
       `INSERT INTO order_idempotency_keys
         (key_hash, order_id, request_hash, created_at, expires_at)
        VALUES ($1, $2, $3, $4, $5)`,
@@ -368,16 +313,16 @@ async function validateFulfillment(
   salesDate: string,
 ) {
   const slotRows = await sql.unsafe<
-    Array<{ id: string; capacity: number; reserved_count: number }>
+    Array<{ id: string }>
   >(
-    `SELECT id, capacity, reserved_count
+    `SELECT id
      FROM delivery_slots
      WHERE id = $1 AND sales_date = $2 AND active = TRUE
      FOR UPDATE`,
     [request.deliverySlotId, salesDate],
   );
   const slot = slotRows[0];
-  if (!slot || slot.reserved_count >= slot.capacity) {
+  if (!slot) {
     throw new OrderRequestError(
       "O horário escolhido não está mais disponível.",
       409,

@@ -11,7 +11,7 @@
 
 - [x] Criar e editar produtos.
 - [x] Ativar/desativar e marcar esgotado.
-- [x] Cardápio publicado por domingo e preço histórico em snapshot.
+- [x] Cardápio operacional contínuo e preço histórico em snapshot.
 - [ ] Gestão de categorias, fotos e ordenação.
 - [ ] Complementos obrigatórios e opcionais.
 
@@ -19,7 +19,7 @@
 
 - [x] Carrinho persistente, identificação, retirada/entrega e pagamento.
 - [x] Taxa, pedido mínimo, horário e troco.
-- [x] Confirmação transacional, estoque, capacidade e idempotência.
+- [x] Confirmação transacional, estoque e idempotência.
 - [x] Sucesso, WhatsApp e acompanhamento por token seguro.
 - [x] GPS opcional, busca de CEP e validação do bairro atendido.
 - [ ] Observações por item e tela intermediária de revisão detalhada.
@@ -28,8 +28,8 @@
 ## Operação administrativa — essencial concluído
 
 - [x] Métricas, listagem e mudança segura de status.
-- [x] Cancelamento com devolução de estoque/capacidade.
-- [x] Áreas, taxas, dados públicos, pausa, agenda e faixas.
+- [x] Cancelamento com devolução de estoque.
+- [x] Áreas, taxas, dados públicos e botão de ligar/desligar o site.
 - [ ] Busca, filtros, detalhes, nota interna e atualização automática.
 - [ ] Comanda, relatórios, gestão de pagamento e aparência.
 

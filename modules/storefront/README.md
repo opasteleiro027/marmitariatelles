@@ -2,14 +2,14 @@
 
 ## Purpose
 
-Public, mobile-first surface used by customers to discover the selected
-published sales menu and begin an order.
+Public, mobile-first surface used by customers to discover the operational
+menu and begin an order while the site is enabled.
 
 ## Responsibilities
 
 - Read a server-authoritative storefront snapshot.
-- Present opening status, delivery information and available products.
-- Display the configured sales date and slots instead of assuming Sunday.
+- Present the enabled/disabled status, delivery information and products.
+- Disable ordering controls while the administrator has the site turned off.
 - Keep presentation independent from persistence details.
 
 ## Inputs and outputs

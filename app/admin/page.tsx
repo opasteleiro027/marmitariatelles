@@ -3,19 +3,17 @@ import { AdminDashboard } from "@/modules/admin/ui/AdminDashboard";
 import { getAdminCatalog } from "@/modules/catalog/application/catalog-admin";
 import { getAdminOrders } from "@/modules/ordering/application/admin-orders";
 import { getAdminEstablishment } from "@/modules/establishment/application/admin-establishment";
-import { getAdminSalesCalendar } from "@/modules/sales-calendar/application/admin-sales-calendar";
 import { getStorefrontSnapshot } from "@/modules/storefront/infrastructure/storefront.repository";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   const user = await requireAdmin();
-  const [storefront, catalog, orders, establishment, salesCalendar] = await Promise.all([
+  const [storefront, catalog, orders, establishment] = await Promise.all([
     getStorefrontSnapshot(),
     getAdminCatalog(),
     getAdminOrders(),
     getAdminEstablishment(),
-    getAdminSalesCalendar(),
   ]);
   return (
     <AdminDashboard
@@ -24,7 +22,6 @@ export default async function AdminPage() {
       catalog={catalog}
       orders={orders}
       establishment={establishment}
-      salesCalendar={salesCalendar}
     />
   );
 }

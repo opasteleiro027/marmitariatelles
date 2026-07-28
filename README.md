@@ -14,13 +14,14 @@ domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
 - checkout para retirada ou entrega, horário, pagamento e troco;
 - endereço por GPS opcional, busca automática de CEP e conferência de área;
 - confirmação transacional com preço recalculado no servidor, estoque,
-  capacidade, idempotência e número amigável;
+  idempotência e número amigável;
 - acompanhamento privado por token seguro;
 - login administrativo com sessão assinada;
 - dashboard com pedidos e faturamento;
 - mudança de status com histórico e devolução de estoque no cancelamento;
-- criação e edição de produtos, esgotado, bairros, taxas, pedido mínimo,
-  agenda do domingo, faixas de horário e dados públicos do negócio;
+- criação e edição de produtos, esgotado, bairros, taxas, pedido mínimo e
+  dados públicos do negócio;
+- botão único para ligar ou desligar novos pedidos;
 - health check para Railway em `/api/health`.
 
 Os seis produtos e preços iniciais são dados de demonstração e devem ser
@@ -92,7 +93,7 @@ npm run db:migrate
 
 `db:migrate` aplica migrations pendentes e executa um seed idempotente com os
 dados reais do estabelecimento, categorias, catálogo de demonstração, formas de
-pagamento, próximo domingo e três faixas de horário.
+pagamento, cardápio operacional interno e três faixas de horário.
 
 ## Verificações
 

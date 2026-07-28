@@ -62,29 +62,15 @@ export async function createCatalogProduct(input: {
   const id = crypto.randomUUID();
   const timestamp = new Date().toISOString();
 
-  await database.begin(async (transaction) => {
-    await transaction`
-      INSERT INTO products
-        (id, category_id, name, description, price_cents, featured, active,
-          sold_out, notes_allowed, display_order, created_at, updated_at)
-      VALUES
-        (${id}, ${input.categoryId}, ${input.name}, ${input.description},
-          ${input.priceInCents}, FALSE, TRUE, FALSE, TRUE, 999,
-          ${timestamp}, ${timestamp})
-    `;
-    await transaction`
-      INSERT INTO sales_menu_items
-        (id, menu_id, product_id, available_quantity, sold_quantity,
-          active, display_order)
-      SELECT
-        ${`menu-item-${id}`}, id, ${id}, 40, 0, TRUE, 999
-      FROM sales_menus
-      WHERE published = TRUE AND closed_manually = FALSE
-      ORDER BY sales_date
-      LIMIT 1
-      ON CONFLICT (menu_id, product_id) DO NOTHING
-    `;
-  });
+  await database`
+    INSERT INTO products
+      (id, category_id, name, description, price_cents, featured, active,
+        sold_out, notes_allowed, display_order, created_at, updated_at)
+    VALUES
+      (${id}, ${input.categoryId}, ${input.name}, ${input.description},
+        ${input.priceInCents}, FALSE, TRUE, FALSE, TRUE, 999,
+        ${timestamp}, ${timestamp})
+  `;
 }
 
 export async function updateCatalogProduct(input: {

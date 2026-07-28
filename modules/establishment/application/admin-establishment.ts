@@ -21,6 +21,8 @@ export type AdminBusinessSettings = {
   ordersPaused: boolean;
 };
 
+type EditableBusinessSettings = Omit<AdminBusinessSettings, "ordersPaused">;
+
 export async function getAdminEstablishment() {
   const sql = getPostgresClient();
   const [settingsRows, areas] = await Promise.all([
@@ -82,13 +84,12 @@ export async function getAdminEstablishment() {
   };
 }
 
-export async function saveBusinessSettings(input: AdminBusinessSettings) {
+export async function saveBusinessSettings(input: EditableBusinessSettings) {
   const sql = getPostgresClient();
   await sql.unsafe(
     `UPDATE business_settings
      SET business_name = $1, whatsapp = $2, phone = $3, address = $4,
-         welcome_message = $5, minimum_order_cents = $6,
-         orders_paused = $7, updated_at = $8
+         welcome_message = $5, minimum_order_cents = $6, updated_at = $7
      WHERE id = (
        SELECT id FROM business_settings ORDER BY updated_at DESC LIMIT 1
      )`,
@@ -99,7 +100,6 @@ export async function saveBusinessSettings(input: AdminBusinessSettings) {
       input.address,
       input.welcomeMessage,
       input.minimumOrderInCents,
-      input.ordersPaused,
       new Date().toISOString(),
     ],
   );

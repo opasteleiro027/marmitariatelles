@@ -12,9 +12,11 @@ const categoryVisual: Record<string, string> = {
 
 export function ProductCard({
   product,
+  orderingEnabled,
   onAdd,
 }: {
   product: StorefrontProduct;
+  orderingEnabled: boolean;
   onAdd: (product: StorefrontProduct) => void;
 }) {
   const currentPrice =
@@ -40,10 +42,14 @@ export function ProductCard({
           </div>
           <button
             type="button"
-            disabled={!product.available}
+            disabled={!product.available || !orderingEnabled}
             onClick={() => onAdd(product)}
           >
-            {product.available ? "Adicionar" : "Esgotado"}
+            {!orderingEnabled
+              ? "Site desligado"
+              : product.available
+                ? "Adicionar"
+                : "Esgotado"}
           </button>
         </div>
       </div>

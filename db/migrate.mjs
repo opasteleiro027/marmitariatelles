@@ -59,7 +59,7 @@ async function seedFoundation(database) {
     await readFile(new URL("./seed-data.json", import.meta.url), "utf8"),
   );
   const timestamp = new Date().toISOString();
-  const salesDate = nextSundayDateKey();
+  let salesDate = nextSundayDateKey();
   let menuId = `seed-menu-${salesDate}`;
 
   await database.begin(async (transaction) => {
@@ -130,24 +130,36 @@ async function seedFoundation(database) {
       `;
     }
 
-    const [existingMenu] = await transaction`
-      SELECT id
+    const [operationalMenu] = await transaction`
+      SELECT id, sales_date
       FROM sales_menus
-      WHERE sales_date = ${salesDate}
+      WHERE operational = TRUE
       LIMIT 1
     `;
-    if (existingMenu) menuId = existingMenu.id;
+    if (operationalMenu) {
+      menuId = operationalMenu.id;
+      salesDate = operationalMenu.sales_date;
+    } else {
+      const [existingMenu] = await transaction`
+        SELECT id
+        FROM sales_menus
+        WHERE sales_date = ${salesDate}
+        LIMIT 1
+      `;
+      if (existingMenu) menuId = existingMenu.id;
+    }
 
     await transaction`
       INSERT INTO sales_menus
         (id, sales_date, ordering_opens_at, ordering_closes_at, total_capacity,
-          published, closed_manually, created_at, updated_at)
+          published, closed_manually, operational, created_at, updated_at)
       VALUES
         (${menuId}, ${salesDate}, ${timestamp},
           ${new Date(`${salesDate}T10:30:00-03:00`).toISOString()},
-          60, TRUE, FALSE, ${timestamp}, ${timestamp})
+          60, TRUE, FALSE, TRUE, ${timestamp}, ${timestamp})
       ON CONFLICT (id) DO UPDATE SET
         published = TRUE,
+        operational = TRUE,
         updated_at = EXCLUDED.updated_at
     `;
 

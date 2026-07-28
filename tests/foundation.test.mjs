@@ -16,7 +16,7 @@ import {
 } from "../modules/ordering/domain/order-request.ts";
 import { selectAutomaticDeliverySlot } from "../modules/ordering/domain/select-automatic-delivery-slot.ts";
 import { formatMoney } from "../modules/storefront/domain/format-money.ts";
-import { nextSundayLabel } from "../modules/storefront/domain/next-sales-date.ts";
+import { siteAcceptsOrders } from "../modules/establishment/domain/site-availability.ts";
 import { mapNominatimAddress } from "../modules/address-location/domain/map-nominatim-address.ts";
 import { describeAddressAreaResult } from "../modules/address-location/domain/describe-address-area-result.ts";
 import { findMatchingDeliveryArea } from "../modules/address-location/domain/match-delivery-area.ts";
@@ -25,48 +25,45 @@ import {
   normalizePostalCode,
 } from "../modules/address-location/domain/normalize-location-name.ts";
 import { validateCoordinates } from "../modules/address-location/domain/validate-coordinates.ts";
-import {
-  dateKeyInSaoPaulo,
-  formatSalesDateLabel,
-} from "../modules/sales-calendar/domain/operational-date.ts";
-import { assertSalesDateAvailable } from "../modules/sales-calendar/domain/sales-calendar-error.ts";
 
 test("formats monetary values stored as integer cents", () => {
   assert.match(formatMoney(2850), /28,50/);
 });
 
-test("finds the next Sunday in the sales calendar", () => {
-  const label = nextSundayLabel(new Date("2026-07-27T15:00:00.000Z"));
-  assert.match(label, /domingo/i);
-  assert.match(label, /2 de agosto/i);
-});
-
-test("keeps the Sunday date stable around the UTC boundary", () => {
-  const label = nextSundayLabel(new Date("2026-07-28T00:30:00.000Z"));
-  assert.match(label, /domingo/i);
-  assert.match(label, /2 de agosto/i);
-});
-
-test("formats the configured sales date instead of assuming Sunday", () => {
-  assert.match(formatSalesDateLabel("2026-07-28"), /terça-feira, 28 de julho/i);
+test("uses only the site switch to release or block orders", () => {
   assert.equal(
-    dateKeyInSaoPaulo(new Date("2026-07-28T02:30:00.000Z")),
-    "2026-07-27",
+    siteAcceptsOrders({
+      ordersPaused: false,
+      operationalMenuAvailable: true,
+    }),
+    true,
+  );
+  assert.equal(
+    siteAcceptsOrders({
+      ordersPaused: true,
+      operationalMenuAvailable: true,
+    }),
+    false,
+  );
+  assert.equal(
+    siteAcceptsOrders({
+      ordersPaused: false,
+      operationalMenuAvailable: false,
+    }),
+    false,
   );
 });
 
-test("rejects changing a menu to a date owned by another menu", () => {
-  assert.doesNotThrow(() =>
-    assertSalesDateAvailable("menu-a", [{ id: "menu-a" }]),
+test("keeps exactly one internal operational menu", async () => {
+  const migration = await readFile(
+    new URL(
+      "../drizzle-postgres/0002_operational_site_switch.sql",
+      import.meta.url,
+    ),
+    "utf8",
   );
-  assert.throws(
-    () =>
-      assertSalesDateAvailable("menu-a", [
-        { id: "menu-a" },
-        { id: "menu-b" },
-      ]),
-    /Já existe uma agenda/,
-  );
+  assert.match(migration, /sales_menus_one_operational/i);
+  assert.match(migration, /WHERE "operational" = TRUE/i);
 });
 
 test("normalizes Brazilian location names and postal codes", () => {

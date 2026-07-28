@@ -9,11 +9,9 @@
 | `modules/address-location/` | GPS opcional, CEP, geocodificação e correspondência de área | Geolocation API, ViaCEP, Nominatim |
 | `modules/admin/` | composição visual do painel | módulos administrativos |
 | `modules/catalog/` | categorias, produtos, adicionais e cardápios | PostgreSQL |
-| `modules/establishment/` | loja, áreas e pagamentos | PostgreSQL |
+| `modules/establishment/` | loja, liga/desliga, áreas e pagamentos | PostgreSQL |
 | `modules/identity/` | administradores, clientes e endereços | PostgreSQL |
 | `modules/ordering/` | checkout, totais, pedidos, status e tracking | demais domínios |
-| `modules/sales-calendar/` | domingo, janela e faixas de atendimento | catálogo, estabelecimento |
-| `modules/sales-calendar/ui/sales-calendar-form/` | formulário com feedback de sucesso, validação e conflito | ação autenticada da agenda |
 | `modules/storefront/` | snapshot e experiência pública | catálogo, ordering |
 | `modules/operational-monitoring/` | saúde da aplicação e banco | PostgreSQL |
 | `tests/` | testes automatizados de domínio e segurança | módulos de domínio |

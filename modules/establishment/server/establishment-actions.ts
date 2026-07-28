@@ -22,14 +22,13 @@ export async function saveBusinessSettingsAction(formData: FormData) {
     minimumOrderInCents: parsePriceToCents(
       required(formData, "minimumOrder"),
     ),
-    ordersPaused: formData.get("ordersPaused") === "on",
   });
   refresh();
 }
 
-export async function toggleOrdersPausedAction(formData: FormData) {
+export async function toggleSiteAvailabilityAction(formData: FormData) {
   await requireAdmin();
-  await setOrdersPaused(formData.get("paused") !== "true");
+  await setOrdersPaused(formData.get("enabled") !== "true");
   refresh();
 }
 

@@ -5,7 +5,7 @@
 Cardápio → produto → carrinho → identificação → entrega/retirada → horário →
 pagamento → revisão → confirmação → sucesso → acompanhamento.
 
-Na confirmação, o servidor reconsulta produto, menu, área, capacidade e
+Na confirmação, o servidor reconsulta produto, menu, área e
 pagamento, recalcula valores e grava tudo de forma atômica.
 
 ### Endereço de entrega
@@ -33,12 +33,15 @@ conclusão.
 
 Cada mudança grava status anterior, novo status, horário e administrador.
 
-### Agenda
+### Ligar ou desligar o site
 
-O painel abre primeiro a agenda de hoje; quando não existe, abre a data futura
-mais próxima e, por último, a data passada mais recente. A loja usa a mesma
-agenda publicada para exibir data, disponibilidade e faixas. Uma data já
-ocupada por outra agenda gera mensagem no formulário, sem erro de página.
+O administrador usa um único botão. **Ligar site** libera imediatamente novos
+pedidos; **Desligar site** bloqueia imediatamente produtos, carrinho e
+confirmação no servidor. Não existe configuração de data, abertura ou
+encerramento no painel.
+
+Cardápio e faixas são mantidos internamente para validar estoque e retirada,
+sem interferir no estado ligado/desligado.
 
 ## Fundação entregue
 

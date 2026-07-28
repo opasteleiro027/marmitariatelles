@@ -2,19 +2,18 @@
 
 ## Unidade
 
-Regras monetárias, janelas, taxas, troco, autorização, localização, normalização
-de CEP e correspondência de área.
+Regras monetárias, liga/desliga, taxas, troco, autorização, localização,
+normalização de CEP e correspondência de área.
 
 ## Integração
 
 Repositórios PostgreSQL, migrations, confirmação atômica, idempotência, estoque,
-capacidade e nova execução do seed após edição da data do menu.
-Também validar conflito entre duas agendas da mesma data e seleção prioritária
-da agenda de hoje.
+cardápio operacional estável e nova execução idempotente do seed.
 
 ## Fluxo
 
-Pedido completo do cliente e operação administrativa, incluindo rotas
+Pedido completo do cliente e operação administrativa, incluindo ligar/desligar,
+rotas
 protegidas, acompanhamento por token, permissão de GPS negada, CEP indisponível
 e confirmação manual do endereço.
 

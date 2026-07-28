@@ -6,6 +6,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 export const categories = pgTable("categories", {
   id: text("id").primaryKey(),
@@ -114,10 +115,16 @@ export const salesMenus = pgTable(
     closedManually: boolean("closed_manually")
       .notNull()
       .default(false),
+    operational: boolean("operational").notNull().default(false),
     createdAt: text("created_at").notNull(),
     updatedAt: text("updated_at").notNull(),
   },
-  (table) => [uniqueIndex("sales_menus_date_unique").on(table.salesDate)],
+  (table) => [
+    uniqueIndex("sales_menus_date_unique").on(table.salesDate),
+    uniqueIndex("sales_menus_one_operational")
+      .on(table.operational)
+      .where(sql`${table.operational} = TRUE`),
+  ],
 );
 
 export const salesMenuItems = pgTable(

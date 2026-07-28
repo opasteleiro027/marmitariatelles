@@ -60,14 +60,6 @@ export function EstablishmentManagement({
             Endereço
             <textarea name="address" defaultValue={settings.address} required />
           </label>
-          <label className={styles.check}>
-            <input
-              type="checkbox"
-              name="ordersPaused"
-              defaultChecked={settings.ordersPaused}
-            />
-            Pausar novos pedidos
-          </label>
           <button type="submit">Salvar configurações</button>
         </form>
       </details>

@@ -8,9 +8,7 @@ import { AdminOrderList } from "@/modules/ordering/ui/admin-order-list/AdminOrde
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type { getAdminEstablishment } from "@/modules/establishment/application/admin-establishment";
 import { EstablishmentManagement } from "@/modules/establishment/ui/establishment-management/EstablishmentManagement";
-import { toggleOrdersPausedAction } from "@/modules/establishment/server/establishment-actions";
-import type { AdminSalesCalendar } from "@/modules/sales-calendar/application/admin-sales-calendar";
-import { SalesCalendarManagement } from "@/modules/sales-calendar/ui/sales-calendar-management/SalesCalendarManagement";
+import { toggleSiteAvailabilityAction } from "@/modules/establishment/server/establishment-actions";
 import styles from "./admin.module.css";
 
 const navigation = [
@@ -18,7 +16,6 @@ const navigation = [
   ["▤", "Pedidos", "#pedidos"],
   ["◫", "Cardápio", "#cardapio-admin"],
   ["◎", "Áreas de entrega", "#configuracoes"],
-  ["◷", "Horários", "#horarios"],
   ["⚙", "Configurações", "#configuracoes"],
 ];
 
@@ -34,15 +31,14 @@ export function AdminDashboard({
   catalog,
   orders,
   establishment,
-  salesCalendar,
 }: {
   userName: string;
   storefront: StorefrontSnapshot;
   catalog: Awaited<ReturnType<typeof getAdminCatalog>>;
   orders: AdminOrderSnapshot;
   establishment: Awaited<ReturnType<typeof getAdminEstablishment>>;
-  salesCalendar: AdminSalesCalendar;
 }) {
+  const siteEnabled = !establishment.settings.ordersPaused;
   return (
     <main className={styles.adminShell}>
       <aside className={styles.sidebar}>
@@ -80,26 +76,29 @@ export function AdminDashboard({
 
         <section className={styles.operationBanner}>
           <div>
-            <span className={styles.liveDot} />
-            <p>Próxima venda</p>
-            <strong>{storefront.salesDateLabel}</strong>
+            <span
+              className={siteEnabled ? styles.liveDot : styles.siteOffDot}
+            />
+            <p>Controle do site</p>
+            <strong>{siteEnabled ? "Site ligado" : "Site desligado"}</strong>
           </div>
           <div>
-            <p>Status</p>
+            <p>Novos pedidos</p>
             <strong>
-              {storefront.ordersOpen ? "Pedidos abertos" : "Pedidos pausados"}
+              {siteEnabled ? "Liberados" : "Bloqueados"}
             </strong>
           </div>
-          <form action={toggleOrdersPausedAction}>
+          <form action={toggleSiteAvailabilityAction}>
             <input
               type="hidden"
-              name="paused"
-              value={String(establishment.settings.ordersPaused)}
+              name="enabled"
+              value={String(!siteEnabled)}
             />
-            <button type="submit">
-              {establishment.settings.ordersPaused
-                ? "Reabrir pedidos"
-                : "Pausar novos pedidos"}
+            <button
+              className={siteEnabled ? undefined : styles.enableSiteButton}
+              type="submit"
+            >
+              {siteEnabled ? "Desligar site" : "Ligar site"}
             </button>
           </form>
         </section>
@@ -133,7 +132,6 @@ export function AdminDashboard({
           products={catalog.products}
         />
         <EstablishmentManagement snapshot={establishment} />
-        <SalesCalendarManagement snapshot={salesCalendar} />
       </section>
     </main>
   );

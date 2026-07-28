@@ -93,7 +93,7 @@ export function StorefrontCatalog({
       <section className={styles.menuSection} id="cardapio">
         <div className={styles.sectionHeading}>
           <div>
-            <p className={styles.eyebrow}>Cardápio do próximo domingo</p>
+            <p className={styles.eyebrow}>Cardápio disponível</p>
             <h2>Escolha o que vai à sua mesa</h2>
           </div>
           <p>{snapshot.products.length} opções disponíveis</p>
@@ -109,6 +109,7 @@ export function StorefrontCatalog({
                   <ProductCard
                     key={product.id}
                     product={product}
+                    orderingEnabled={snapshot.ordersOpen}
                     onAdd={addProduct}
                   />
                 ))}
@@ -121,10 +122,17 @@ export function StorefrontCatalog({
         className={styles.floatingCart}
         type="button"
         onClick={() => setDrawerOpen(true)}
+        disabled={!snapshot.ordersOpen}
         aria-label={`Abrir pedido com ${itemCount} itens`}
       >
         <span aria-hidden="true">🛍️</span>
-        <strong>{itemCount ? "Ver pedido" : "Começar pedido"}</strong>
+        <strong>
+          {snapshot.ordersOpen
+            ? itemCount
+              ? "Ver pedido"
+              : "Começar pedido"
+            : "Site desligado"}
+        </strong>
         <small>{itemCount} {itemCount === 1 ? "item" : "itens"}</small>
       </button>
 

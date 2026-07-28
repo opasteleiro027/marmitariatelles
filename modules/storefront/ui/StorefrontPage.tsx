@@ -35,12 +35,15 @@ export function StorefrontPage({ snapshot }: { snapshot: StorefrontSnapshot }) {
           <div className={styles.statusTopline}>
             <span className={snapshot.ordersOpen ? styles.openDot : styles.closedDot} />
             <strong>
-              {snapshot.ordersOpen ? "Pedidos abertos" : "Pedidos encerrados"}
+              {snapshot.ordersOpen ? "Site ligado" : "Site desligado"}
             </strong>
           </div>
-          <p className={styles.salesDate}>{snapshot.salesDateLabel}</p>
+          <p className={styles.salesDate}>
+            {snapshot.ordersOpen
+              ? "Pedidos liberados"
+              : "Novos pedidos temporariamente bloqueados"}
+          </p>
           <ul>
-            <li><span>⏰</span>{snapshot.orderDeadlineLabel}</li>
             <li><span>🛵</span>{snapshot.deliveryWindowLabel}</li>
             <li><span>📍</span>{snapshot.notice}</li>
           </ul>

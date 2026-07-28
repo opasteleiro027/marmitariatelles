@@ -154,27 +154,10 @@ export async function updateOrderStatus(
       for (const item of items) {
         if (!item.product_id) continue;
         await sql.unsafe(
-          `UPDATE sales_menu_items smi
-           SET sold_quantity = GREATEST(0, smi.sold_quantity - $1)
-           FROM orders o
-           WHERE o.id = $2
-             AND smi.menu_id = o.menu_id
-             AND smi.product_id = $3`,
-          [item.quantity, orderId, item.product_id],
-        );
-        await sql.unsafe(
           `UPDATE products
            SET stock_quantity = stock_quantity + $1, updated_at = $2
            WHERE id = $3 AND stock_quantity IS NOT NULL`,
           [item.quantity, timestamp, item.product_id],
-        );
-      }
-      if (order.delivery_slot_id) {
-        await sql.unsafe(
-          `UPDATE delivery_slots
-           SET reserved_count = GREATEST(0, reserved_count - 1)
-           WHERE id = $1`,
-          [order.delivery_slot_id],
         );
       }
       await sql.unsafe(

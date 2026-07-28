@@ -1,10 +1,6 @@
 import seedData from "@/db/seed-data.json";
 import { getDatabase } from "@/db";
-import {
-  dateKeyInSaoPaulo,
-  formatSalesDateLabel,
-} from "@/modules/sales-calendar/domain/operational-date";
-import { nextSundayLabel } from "../domain/next-sales-date";
+import { siteAcceptsOrders } from "@/modules/establishment/domain/site-availability";
 import type {
   StorefrontProduct,
   StorefrontSnapshot,
@@ -47,8 +43,6 @@ type DeliverySlotRow = {
   id: string;
   starts_at: string;
   ends_at: string;
-  capacity: number;
-  reserved_count: number;
 };
 
 type PaymentMethodRow = {
@@ -59,8 +53,6 @@ type PaymentMethodRow = {
 
 type SalesMenuRow = {
   sales_date: string;
-  ordering_opens_at: string;
-  ordering_closes_at: string;
 };
 
 function previewProducts(): StorefrontProduct[] {
@@ -83,9 +75,7 @@ function safePreviewSnapshot(): StorefrontSnapshot {
   return {
     businessName: seedData.settings.businessName,
     welcomeMessage: seedData.settings.welcomeMessage,
-    ordersOpen: !seedData.settings.ordersPaused,
-    salesDateLabel: nextSundayLabel(),
-    orderDeadlineLabel: seedData.settings.orderDeadlineLabel,
+    ordersOpen: false,
     deliveryWindowLabel: seedData.settings.deliveryWindowLabel,
     minimumOrderInCents: seedData.settings.minimumOrderCents,
     notice: seedData.settings.notice,
@@ -115,24 +105,13 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
       .prepare("SELECT * FROM business_settings WHERE id = ?")
       .bind("default")
       .first<SettingsRow>();
-    const now = new Date().toISOString();
-    const today = dateKeyInSaoPaulo();
     const menu = await database
       .prepare(
-        `SELECT sales_date, ordering_opens_at, ordering_closes_at
+        `SELECT sales_date
          FROM sales_menus
-         WHERE published = TRUE AND closed_manually = FALSE
-         ORDER BY
-           CASE
-             WHEN ordering_opens_at <= ? AND ordering_closes_at >= ? THEN 0
-             WHEN sales_date >= ? THEN 1
-             ELSE 2
-           END,
-           CASE WHEN sales_date >= ? THEN sales_date END ASC,
-           sales_date DESC
+         WHERE operational = TRUE
          LIMIT 1`,
       )
-      .bind(now, now, today, today)
       .first<SalesMenuRow>();
 
     const [result, areas, slots, methods] = await Promise.all([
@@ -153,7 +132,7 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
         ORDER BY display_order, neighborhood`,
       ).all<DeliveryAreaRow>(),
       database.prepare(
-        `SELECT id, starts_at, ends_at, capacity, reserved_count
+        `SELECT id, starts_at, ends_at
         FROM delivery_slots
         WHERE active = TRUE AND sales_date = ?
         ORDER BY starts_at`,
@@ -171,17 +150,10 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
     return {
       businessName: settings.business_name,
       welcomeMessage: settings.welcome_message,
-      ordersOpen:
-        !settings.orders_paused &&
-        Boolean(
-          menu &&
-            menu.ordering_opens_at <= now &&
-            menu.ordering_closes_at >= now,
-        ),
-      salesDateLabel: menu
-        ? formatSalesDateLabel(menu.sales_date)
-        : nextSundayLabel(),
-      orderDeadlineLabel: settings.order_deadline_label,
+      ordersOpen: siteAcceptsOrders({
+        ordersPaused: settings.orders_paused,
+        operationalMenuAvailable: Boolean(menu),
+      }),
       deliveryWindowLabel: settings.delivery_window_label,
       minimumOrderInCents: settings.minimum_order_cents,
       notice: settings.notice,
@@ -211,7 +183,7 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
         label: `${slot.starts_at.slice(0, 5).replace(":", "h")} às ${slot.ends_at
           .slice(0, 5)
           .replace(":", "h")}`,
-        available: slot.reserved_count < slot.capacity,
+        available: true,
       })),
       paymentMethods: methods.results,
       source: "database",

@@ -9,7 +9,7 @@ negócio, apresentação e persistência.
 ## Módulos e dependências
 
 - `identity`, `catalog` e `establishment` possuem as entidades base;
-- `sales-calendar` controla a agenda operacional;
+- `establishment` controla a disponibilidade pelo único estado ligado/desligado;
 - `ordering` depende das entidades anteriores e é dono da confirmação;
 - `storefront` expõe somente o snapshot público;
 - `admin-auth` protege o painel;
@@ -27,7 +27,11 @@ As operações concorrentes do checkout usam uma transação PostgreSQL, locks d
 linha e lock consultivo por chave de idempotência.
 
 Estado transitório do carrinho pode ficar em `localStorage`. Pedido, preço,
-estoque, capacidade, taxas, pagamento e status sempre ficam no servidor.
+estoque, taxas, pagamento e status sempre ficam no servidor.
+
+O cardápio e as faixas continuam relacionados internamente, mas data, janela e
+contadores acumulados não controlam a abertura da loja. O
+campo `orders_paused` é a única autoridade operacional exposta ao administrador.
 
 ## Segurança
 
@@ -39,7 +43,7 @@ estoque, capacidade, taxas, pagamento e status sempre ficam no servidor.
 - pedido duplicado é evitado com chave de idempotência;
 - acompanhamento usa token não sequencial e armazena apenas seu hash;
 - número amigável não concede acesso ao pedido;
-- cancelamento restaura estoque e reserva uma única vez.
+- cancelamento restaura estoque uma única vez.
 - GPS só é solicitado após ação explícita, coordenadas não são persistidas e o
   endereço permanece editável;
 - a área escolhida é conferida no servidor contra cidade e bairro informados.

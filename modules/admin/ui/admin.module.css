@@ -133,14 +133,22 @@
   padding-left: 18px;
 }
 
-.liveDot {
+.liveDot,
+.siteOffDot {
   position: absolute;
   left: 0;
   top: 5px;
   width: 9px;
   height: 9px;
   border-radius: 50%;
+}
+
+.liveDot {
   background: #4b9258;
+}
+
+.siteOffDot {
+  background: #b13f32;
 }
 
 .operationBanner button {
@@ -152,6 +160,12 @@
   color: #a33d17;
   font: inherit;
   font-weight: 850;
+}
+
+.operationBanner .enableSiteButton {
+  border-color: #4b9258;
+  background: #eff8f0;
+  color: #2f703c;
 }
 
 .metricGrid {
