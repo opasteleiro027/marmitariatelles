@@ -10,6 +10,7 @@
 - Storefront exibe a data realmente configurada e abre pedidos somente dentro
   da janela publicada dessa agenda.
 - Faixas de horário exibidas agora pertencem somente à agenda selecionada.
+- Falhas do snapshot público agora registram a causa antes do fallback seguro.
 
 ## 0.3.0 - 2026-07-28
 

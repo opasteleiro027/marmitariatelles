@@ -13,7 +13,7 @@ export function SalesCalendarManagement({
       <div className={styles.heading}>
         <div>
           <p>Agenda de vendas</p>
-          <h2>Próximo domingo e faixas de horário</h2>
+          <h2>Data selecionada e faixas de horário</h2>
         </div>
         <span>{snapshot.menu.published ? "Publicado" : "Oculto"}</span>
       </div>

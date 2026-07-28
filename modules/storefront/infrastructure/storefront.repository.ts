@@ -216,7 +216,11 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
       paymentMethods: methods.results,
       source: "database",
     };
-  } catch {
+  } catch (reason) {
+    console.error(
+      "Falha ao carregar o storefront; usando o preview seguro.",
+      reason,
+    );
     return safePreviewSnapshot();
   }
 }
