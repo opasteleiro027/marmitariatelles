@@ -15,17 +15,6 @@
   text-decoration: none;
 }
 
-.brand span {
-  width: 40px;
-  height: 40px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--orange-600);
-  color: white;
-  font-size: 13px;
-}
-
 .card {
   width: min(920px, 100%);
   margin: auto;

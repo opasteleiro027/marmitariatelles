@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.9.0 - 2026-07-28
+
+### Alterado
+
+- A marca textual `MT` foi substituída pela nova logo oficial da Marmitaria
+  Telles no cabeçalho público, painel, login e acompanhamento do pedido.
+- Favicon, ícone para dispositivos e imagem de compartilhamento agora usam a
+  nova identidade visual.
+- A arte original ganhou versões otimizadas quadrada e completa, reduzindo o
+  peso de aproximadamente 2,4 MB para cerca de 110 KB e 131 KB.
+
 ## 0.8.1 - 2026-07-28
 
 ### Adicionado

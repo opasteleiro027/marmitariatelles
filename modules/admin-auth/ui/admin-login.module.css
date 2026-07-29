@@ -27,17 +27,6 @@
   text-decoration: none;
 }
 
-.brand span {
-  width: 42px;
-  height: 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: var(--orange-600);
-  color: white;
-  font-size: 13px;
-}
-
 .eyebrow {
   margin: 34px 0 7px;
   color: var(--orange-700);

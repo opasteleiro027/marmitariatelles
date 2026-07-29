@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { clearAdminSession } from "@/modules/admin-auth/server/admin-session";
+import { BrandLogo } from "@/modules/brand/ui/brand-logo/BrandLogo";
 import { AdminOrderMonitor } from "@/modules/ordering/ui/admin-order-monitor/AdminOrderMonitor";
 import { AdminNavigation } from "../admin-navigation/AdminNavigation";
 import styles from "./admin-shell.module.css";
@@ -23,7 +24,7 @@ export function AdminShell({
     <main className={styles.shell}>
       <aside className={styles.sidebar}>
         <Link className={styles.brand} href="/admin">
-          <span>MT</span>
+          <BrandLogo priority size={48} />
           <strong>Marmitaria Telles</strong>
         </Link>
         <AdminNavigation />

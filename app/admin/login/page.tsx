@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/modules/brand/ui/brand-logo/BrandLogo";
 import { loginAction } from "./actions";
 import styles from "@/modules/admin-auth/ui/admin-login.module.css";
 
@@ -12,7 +13,7 @@ export default async function AdminLoginPage({
     <main className={styles.page}>
       <section className={styles.card}>
         <Link href="/" className={styles.brand}>
-          <span>MT</span>
+          <BrandLogo priority size={72} />
           Marmitaria Telles
         </Link>
         <p className={styles.eyebrow}>Área administrativa</p>

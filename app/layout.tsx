@@ -9,6 +9,10 @@ export const metadata: Metadata = {
   },
   description:
     "Comida caseira feita com carinho para deixar o seu domingo mais gostoso.",
+  icons: {
+    icon: "/brand/marmitaria-telles-mark.png",
+    apple: "/brand/marmitaria-telles-mark.png",
+  },
   openGraph: {
     title: "Marmitaria Telles",
     description: "Escolha sua marmita e receba o almoço de domingo em casa.",
@@ -17,8 +21,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: "/og.png",
-        width: 1716,
-        height: 920,
+        width: 1200,
+        height: 630,
         alt: "Marmitaria Telles — comida com gosto de casa",
       },
     ],

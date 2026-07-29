@@ -3,6 +3,10 @@
 Aplicação web mobile-first para receber e administrar pedidos de marmitas aos
 domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
 
+A identidade visual usa a logo oficial com a cozinheira e o prato da
+Marmitaria Telles, em versões otimizadas para cabeçalhos, ícones e
+compartilhamento.
+
 ## Produção
 
 - Aplicação: https://marmitariatelles-production.up.railway.app

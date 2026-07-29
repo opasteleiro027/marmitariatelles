@@ -26,18 +26,6 @@
   text-decoration: none;
 }
 
-.brand span {
-  width: 34px;
-  height: 34px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  background: #9e3d00;
-  color: white;
-  font-size: 11px;
-  font-weight: 900;
-}
-
 .brand strong {
   font-family: var(--font-heading);
   font-size: 16px;

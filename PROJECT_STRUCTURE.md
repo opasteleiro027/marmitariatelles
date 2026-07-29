@@ -8,6 +8,7 @@
 | `modules/admin-auth/` | credenciais, token e sessão administrativa | Node crypto, Next cookies |
 | `modules/address-location/` | GPS opcional, CEP, geocodificação e correspondência de área | Geolocation API, BrasilAPI, ViaCEP, Nominatim |
 | `modules/admin/` | shell, navegação, cabeçalhos e visão geral do painel | módulos administrativos |
+| `modules/brand/` | logo oficial e identidade visual compartilhada | Next Image, arquivos públicos da marca |
 | `modules/catalog/` | categorias, produtos, adicionais e cardápios | PostgreSQL |
 | `modules/establishment/` | loja, liga/desliga, áreas e pagamentos | PostgreSQL |
 | `modules/identity/` | administradores, clientes e endereços | PostgreSQL |
@@ -19,6 +20,7 @@
 | `build/` | empacotamento/start standalone | Next.js |
 | `railway.json` | contrato de implantação | Railway |
 | `public/images/menu-builder-hero.png` | hero gastronômico do cardápio | export do projeto Stitch |
+| `public/brand/` | versões otimizadas da nova logo oficial | arte enviada pelo estabelecimento |
 
 Peças significativas de interface possuem `README.md`, `DEPENDENCIES.md` e
 `TESTS.md` na própria pasta. Os READMEs dos módulos registram entradas, saídas e

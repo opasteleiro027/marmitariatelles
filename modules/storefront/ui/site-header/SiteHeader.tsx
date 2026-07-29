@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/modules/brand/ui/brand-logo/BrandLogo";
 import styles from "./site-header.module.css";
 
 type SiteHeaderProps = {
@@ -25,7 +26,7 @@ export function SiteHeader({
     <header className={styles.header}>
       <div className={styles.inner}>
         <Link className={styles.brand} href="/" aria-label={`${businessName}, início`}>
-          <span aria-hidden="true">MT</span>
+          <BrandLogo priority size={44} />
           <strong>{businessName}</strong>
         </Link>
 

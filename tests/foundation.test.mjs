@@ -211,6 +211,57 @@ test("ships the selected MP3 used by the new-order alert", async () => {
   assert.equal(audio[1], 0xfb);
 });
 
+test("uses the official optimized logo across the application", async () => {
+  const [mark, logo, brandComponent, publicHeader, adminShell, login, tracking] =
+    await Promise.all([
+      readFile(
+        new URL(
+          "../public/brand/marmitaria-telles-mark.png",
+          import.meta.url,
+        ),
+      ),
+      readFile(
+        new URL(
+          "../public/brand/marmitaria-telles-logo.png",
+          import.meta.url,
+        ),
+      ),
+      readFile(
+        new URL(
+          "../modules/brand/ui/brand-logo/BrandLogo.tsx",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+      readFile(
+        new URL(
+          "../modules/storefront/ui/site-header/SiteHeader.tsx",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+      readFile(
+        new URL(
+          "../modules/admin/ui/admin-shell/AdminShell.tsx",
+          import.meta.url,
+        ),
+        "utf8",
+      ),
+      readFile(new URL("../app/admin/login/page.tsx", import.meta.url), "utf8"),
+      readFile(
+        new URL("../app/pedido/[token]/page.tsx", import.meta.url),
+        "utf8",
+      ),
+    ]);
+  assert.ok(mark.length > 50_000 && mark.length < 200_000);
+  assert.ok(logo.length > 50_000 && logo.length < 200_000);
+  assert.match(brandComponent, /marmitaria-telles-mark\.png/);
+  for (const surface of [publicHeader, adminShell, login, tracking]) {
+    assert.match(surface, /BrandLogo/);
+    assert.doesNotMatch(surface, />MT</);
+  }
+});
+
 test("admin navigation uses dedicated routes instead of page anchors", async () => {
   const navigation = await readFile(
     new URL(

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { BrandLogo } from "@/modules/brand/ui/brand-logo/BrandLogo";
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import { getTrackedOrder } from "@/modules/ordering/application/get-tracked-order";
 import {
@@ -41,7 +42,7 @@ export default async function TrackingPage({
   return (
     <main className={styles.page}>
       <Link className={styles.brand} href="/">
-        <span>MT</span>
+        <BrandLogo priority size={54} />
         Marmitaria Telles
       </Link>
       <section className={styles.card}>

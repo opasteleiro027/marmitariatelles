@@ -7,6 +7,7 @@ Shared public navigation for the independent customer pages.
 ## Responsibilities
 
 - Link to Home and Cardápio.
+- Display the official Marmitaria Telles brand mark.
 - Expose the operational status.
 - Optionally open the cart from the menu page.
 
