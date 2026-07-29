@@ -17,6 +17,7 @@ export type AdminBusinessSettings = {
   phone: string;
   address: string;
   welcomeMessage: string;
+  deliveryWindowLabel: string;
   minimumOrderInCents: number;
   ordersPaused: boolean;
 };
@@ -32,12 +33,13 @@ export async function getAdminBusinessSettings(): Promise<AdminBusinessSettings>
       phone: string | null;
       address: string | null;
       welcome_message: string;
+      delivery_window_label: string;
       minimum_order_cents: number;
       orders_paused: boolean;
     }>
   >(
     `SELECT business_name, whatsapp, phone, address, welcome_message,
-            minimum_order_cents, orders_paused
+            delivery_window_label, minimum_order_cents, orders_paused
      FROM business_settings
      ORDER BY updated_at DESC
      LIMIT 1`,
@@ -50,6 +52,7 @@ export async function getAdminBusinessSettings(): Promise<AdminBusinessSettings>
     phone: settings.phone ?? "",
     address: settings.address ?? "",
     welcomeMessage: settings.welcome_message,
+    deliveryWindowLabel: settings.delivery_window_label,
     minimumOrderInCents: settings.minimum_order_cents,
     ordersPaused: settings.orders_paused,
   };
@@ -97,7 +100,8 @@ export async function saveBusinessSettings(input: EditableBusinessSettings) {
   await sql.unsafe(
     `UPDATE business_settings
      SET business_name = $1, whatsapp = $2, phone = $3, address = $4,
-         welcome_message = $5, minimum_order_cents = $6, updated_at = $7
+         welcome_message = $5, delivery_window_label = $6,
+         minimum_order_cents = $7, updated_at = $8
      WHERE id = (
        SELECT id FROM business_settings ORDER BY updated_at DESC LIMIT 1
      )`,
@@ -107,6 +111,7 @@ export async function saveBusinessSettings(input: EditableBusinessSettings) {
       input.phone,
       input.address,
       input.welcomeMessage,
+      input.deliveryWindowLabel,
       input.minimumOrderInCents,
       new Date().toISOString(),
     ],

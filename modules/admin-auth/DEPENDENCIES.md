@@ -1,5 +1,7 @@
 # Dependências diretas
 
-- Variáveis `ADMIN_EMAILS`, `ADMIN_PASSWORD` e `SESSION_SECRET`.
+- PostgreSQL para credenciais administrativas individuais.
+- Variáveis legadas `ADMIN_EMAILS` e `ADMIN_PASSWORD`.
+- Variável obrigatória `SESSION_SECRET`.
 - API de cookies do Next.js.
 - Criptografia nativa do Node.js.

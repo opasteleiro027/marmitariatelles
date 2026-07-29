@@ -19,6 +19,7 @@ export async function saveBusinessSettingsAction(formData: FormData) {
     phone: required(formData, "phone"),
     address: required(formData, "address"),
     welcomeMessage: required(formData, "welcomeMessage"),
+    deliveryWindowLabel: required(formData, "deliveryWindowLabel"),
     minimumOrderInCents: parsePriceToCents(
       required(formData, "minimumOrder"),
     ),

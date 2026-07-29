@@ -7,7 +7,8 @@ Protected operational surface for the merchant.
 ## Responsibilities
 
 - Require a server-verified identity.
-- Authorize only e-mails listed in `ADMIN_EMAILS`.
+- Authorize active administrators from PostgreSQL or the legacy
+  `ADMIN_EMAILS` configuration.
 - Compose a persistent shell around dedicated administrative routes.
 - Highlight the current destination and keep navigation available on mobile.
 - Present the operational overview without owning domain business rules.
@@ -22,5 +23,6 @@ Protected operational surface for the merchant.
 
 ## Security boundary
 
-Authentication identifies a user; the e-mail allowlist authorizes the user.
-Both checks happen on the server. Missing configuration denies access.
+Authentication and authorization happen on the server. Individual PostgreSQL
+credentials use salted `scrypt` hashes; the environment allowlist remains only
+for backward compatibility. Missing credentials deny access.

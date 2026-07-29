@@ -1,8 +1,8 @@
 # Test scenarios
 
-- Denies every account when `ADMIN_EMAILS` is absent.
+- Denies every account when no database or environment credential matches.
 - Matches configured e-mail addresses without case sensitivity.
-- Rejects authenticated accounts outside the allowlist.
+- Rejects inactive and unknown accounts.
 - Redirects anonymous users to the platform sign-in route.
 - Keeps the dashboard usable on narrow screens.
 - Uses dedicated URLs without hash anchors.

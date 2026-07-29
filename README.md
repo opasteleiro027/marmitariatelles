@@ -43,7 +43,7 @@ até o administrador cadastrar bairros e taxas, apenas retirada fica disponível
 ## Dados do estabelecimento
 
 - Nome: Marmitaria Telles
-- Administrador: `abraaofcjunior@gmail.com`
+- Administradores: `abraaofcjunior@gmail.com` e `padariateles10@gmail.com`
 - WhatsApp: `+55 27 98844-6510`
 - Endereço: Av. Bartolomeu de Las Casa, nº 16, Quadra 17, Cidade Continental,
   Setor América, Serra - ES
@@ -84,6 +84,10 @@ ORDER_TOKEN_SECRET=opcional-separado-do-segredo-da-sessao
 APP_URL=http://localhost:3000
 REVERSE_GEOCODING_BASE_URL=https://nominatim.openstreetmap.org
 ```
+
+`ADMIN_EMAILS` e `ADMIN_PASSWORD` mantêm a credencial administrativa original.
+Contas adicionais usam credenciais individuais derivadas por `scrypt` no
+PostgreSQL; senhas reais nunca devem ser registradas na documentação.
 
 `ORDER_TOKEN_SECRET` é opcional; quando ausente, `SESSION_SECRET` também assina
 os tokens de acompanhamento. Nunca versionar valores reais.

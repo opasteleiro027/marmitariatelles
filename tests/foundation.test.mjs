@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
+import { scryptSync } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import { adminPasswordMatches } from "../modules/admin-auth/domain/password-credential.ts";
 import {
   createSessionToken,
   credentialsMatch,
@@ -282,6 +284,45 @@ test("admin navigation uses dedicated routes instead of page anchors", async () 
   assert.doesNotMatch(navigation, /href:\s*["']#/);
 });
 
+test("admin can edit the storefront operating-hours label", async () => {
+  const [application, action, form, storefront] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/establishment/application/admin-establishment.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/establishment/server/establishment-actions.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/establishment/ui/business-settings-management/BusinessSettingsManagement.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/storefront/infrastructure/storefront.repository.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+
+  assert.match(application, /delivery_window_label/);
+  assert.match(action, /required\(formData, "deliveryWindowLabel"\)/);
+  assert.match(form, /name="deliveryWindowLabel"/);
+  assert.match(form, /Horário de funcionamento/);
+  assert.match(storefront, /settings\.delivery_window_label/);
+});
+
 test("public navigation keeps the ordering journey focused", async () => {
   const navigation = await readFile(
     new URL(
@@ -542,6 +583,15 @@ test("admin credentials are deny-by-default and case-insensitive", () => {
     ),
     false,
   );
+});
+
+test("admin individual password credentials use salted scrypt hashes", () => {
+  const salt = "salt-de-teste";
+  const hash = scryptSync("senha-correta", salt, 64).toString("hex");
+
+  assert.equal(adminPasswordMatches("senha-correta", salt, hash), true);
+  assert.equal(adminPasswordMatches("senha-incorreta", salt, hash), false);
+  assert.equal(adminPasswordMatches("senha-correta", salt, "inválido"), false);
 });
 
 test("admin session rejects tampering and expiration", () => {

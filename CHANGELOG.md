@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.10.0 - 2026-07-28
+
+### Adicionado
+
+- Campo administrativo para editar o horário de funcionamento exibido na loja.
+- Suporte a credenciais individuais de administradores com hash `scrypt` e salt.
+- Nova conta administrativa para a Padaria Telles.
+
+### Alterado
+
+- O login não sugere mais o e-mail da conta original, permitindo o uso natural
+  de qualquer administrador ativo.
+- A autenticação por variáveis de ambiente foi preservada para compatibilidade
+  com a conta administrativa existente.
+
 ## 0.9.0 - 2026-07-28
 
 ### Alterado

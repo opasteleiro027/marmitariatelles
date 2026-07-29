@@ -33,7 +33,6 @@ export default async function AdminLoginPage({
             name="email"
             type="email"
             autoComplete="username"
-            defaultValue="abraaofcjunior@gmail.com"
             required
           />
           <label htmlFor="password">Senha</label>

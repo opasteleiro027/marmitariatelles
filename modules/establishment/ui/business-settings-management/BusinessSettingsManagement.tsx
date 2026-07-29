@@ -32,6 +32,15 @@ export function BusinessSettingsManagement({
           <input name="phone" defaultValue={settings.phone} required />
         </label>
         <label>
+          Horário de funcionamento
+          <input
+            name="deliveryWindowLabel"
+            defaultValue={settings.deliveryWindowLabel}
+            placeholder="Ex.: Domingos, das 11h às 14h"
+            required
+          />
+        </label>
+        <label>
           Pedido mínimo
           <input
             name="minimumOrder"
