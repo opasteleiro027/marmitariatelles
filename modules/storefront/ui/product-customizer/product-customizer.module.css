@@ -1,0 +1,68 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  padding: 22px;
+  display: grid;
+  place-items: center;
+  background: rgb(35 24 13 / 68%);
+  backdrop-filter: blur(8px);
+}
+
+.dialog {
+  position: relative;
+  width: min(640px, 100%);
+  max-height: calc(100vh - 44px);
+  overflow: auto;
+  border-radius: 28px;
+  background: #fffdf8;
+  box-shadow: 0 30px 90px rgb(35 24 13 / 32%);
+}
+
+.close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 92%);
+  color: #7a3423;
+  cursor: pointer;
+  font-size: 27px;
+}
+
+.image {
+  width: 100%;
+  height: 255px;
+  display: block;
+  object-fit: cover;
+}
+
+.content { padding: 28px; }
+.eyebrow { margin: 0; color: var(--pote-green); font-size: 11px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.content h2 { margin: 6px 0 8px; font-family: var(--font-heading); font-size: 28px; }
+.description { margin: 0 0 24px; color: #745f54; line-height: 1.55; }
+.content fieldset { margin: 22px 0 0; padding: 0; border: 0; }
+.content legend { font-weight: 900; font-size: 16px; }
+.content fieldset > small { color: #806b60; }
+.options { margin-top: 10px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.options button { min-height: 52px; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border: 1px solid #e8d9c9; border-radius: 13px; background: white; color: #412b21; cursor: pointer; font: inherit; text-align: left; }
+.options button strong { color: #a84325; font-size: 11px; white-space: nowrap; }
+.options button.selected { border-color: var(--pote-green); background: #eef5ea; box-shadow: inset 0 0 0 1px var(--pote-green); }
+.options button:disabled { opacity: .5; cursor: not-allowed; }
+.notes { margin-top: 24px; display: grid; gap: 7px; font-weight: 850; }
+.notes small { color: #806b60; font-weight: 500; }
+.notes textarea { min-height: 84px; padding: 13px; resize: vertical; border: 1px solid #e8d9c9; border-radius: 13px; background: white; font: inherit; }
+.add { width: 100%; min-height: 58px; margin-top: 22px; padding: 0 18px; display: flex; align-items: center; justify-content: space-between; border: 0; border-radius: 15px; background: var(--pote-orange); color: white; cursor: pointer; font: inherit; font-weight: 900; }
+.add:disabled { cursor: not-allowed; opacity: .55; }
+
+@media (max-width: 600px) {
+  .backdrop { padding: 0; place-items: end center; }
+  .dialog { max-height: 94vh; border-radius: 24px 24px 0 0; }
+  .image { height: 210px; }
+  .content { padding: 22px 18px 28px; }
+  .options { grid-template-columns: 1fr; }
+}

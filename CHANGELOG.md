@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.0.0 — Pote Mix
+
+- Rebranding completo do site, painel, acompanhamento e comanda para Pote Mix.
+- Logo oficial extraída do arquivo fornecido e nova paleta laranja, verde e
+  vermelho aplicada em todas as superfícies principais.
+- Cardápio mobile-first com fotos reais, montagem de potes de 350 g e 550 g,
+  receitas prontas e saladas.
+- Mac'n Cheese, Baratíssimo, Penne com camarão, Salada Caesar e Salada Completa
+  cadastrados com descrições e preços informados.
+- Personalizador de saladas com adicionais de R$ 2,00 e opção separada de
+  macarrão por R$ 6,00.
+- Validação dos adicionais generalizada no servidor para qualquer produto
+  configurável, preservando snapshots e preços das comandas.
+
 ## 0.10.0 - 2026-07-28
 
 ### Adicionado

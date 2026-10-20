@@ -19,11 +19,11 @@ const GROUP_DESCRIPTIONS: Record<
   beans: { step: 3, description: "O cliente escolhe uma opção." },
   protein: {
     step: 4,
-    description: "O limite é definido em cada tamanho de marmita.",
+    description: "O limite é definido em cada tamanho de pote.",
   },
   side: {
     step: 5,
-    description: "O limite é definido em cada tamanho de marmita.",
+    description: "O limite é definido em cada tamanho de pote.",
   },
   extra: {
     step: 6,
@@ -41,10 +41,10 @@ export function MarmitaManagement({
       <header className={styles.heading}>
         <div>
           <p>Montagem personalizada</p>
-          <h2>Cadastro das marmitas</h2>
+          <h2>Montagem do Pote Mix</h2>
           <span>
             Configure exatamente as etapas que o cliente verá ao montar a
-            marmita.
+            pedido.
           </span>
         </div>
         <b>{configuration.sizes.length} tamanhos</b>
@@ -55,7 +55,7 @@ export function MarmitaManagement({
           <span>1</span>
           <div>
             <h3>Tamanhos e limites</h3>
-            <p>Preço inicial, proteínas e acompanhamentos permitidos.</p>
+            <p>Preço inicial, complementos e finalizações permitidos.</p>
           </div>
         </div>
 
@@ -79,12 +79,12 @@ export function MarmitaManagement({
               />
             </label>
             <label>
-              Máx. de proteínas
-              <input name="proteinLimit" type="number" min="1" max="2" defaultValue="1" />
+              Máx. de complementos
+              <input name="proteinLimit" type="number" min="1" max="8" defaultValue="4" />
             </label>
             <label>
-              Máx. de acompanhamentos
-              <input name="sideLimit" type="number" min="1" max="6" defaultValue="3" />
+              Máx. de finalizações
+              <input name="sideLimit" type="number" min="1" max="6" defaultValue="2" />
             </label>
             <button type="submit">Cadastrar tamanho</button>
           </form>
@@ -97,7 +97,7 @@ export function MarmitaManagement({
                 <span>
                   <strong>{size.name}</strong>
                   <small>
-                    {size.proteinLimit} proteína(s) · {size.sideLimit} acompanhamento(s)
+                    {size.proteinLimit} complemento(s) · {size.sideLimit} finalização(ões)
                   </small>
                 </span>
                 <b>{size.soldOut ? "Esgotada" : formatMoney(size.priceInCents)}</b>
@@ -122,17 +122,17 @@ export function MarmitaManagement({
                   <input name="description" defaultValue={size.description} required />
                 </label>
                 <label>
-                  Máx. de proteínas
+                  Máx. de complementos
                   <input
                     name="proteinLimit"
                     type="number"
                     min="1"
-                    max="2"
+                    max="8"
                     defaultValue={size.proteinLimit}
                   />
                 </label>
                 <label>
-                  Máx. de acompanhamentos
+                  Máx. de finalizações
                   <input
                     name="sideLimit"
                     type="number"

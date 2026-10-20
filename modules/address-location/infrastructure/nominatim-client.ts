@@ -77,7 +77,7 @@ async function requestProvider(
       headers: {
         accept: "application/json",
         "accept-language": "pt-BR",
-        "user-agent": `MarmitariaTelles/0.4 (+${appUrl}; contact: abraaofcjunior@gmail.com)`,
+        "user-agent": `PoteMix/1.0 (+${appUrl}; contact: abraaofcjunior@gmail.com)`,
       },
       signal: AbortSignal.timeout(10_000),
     });

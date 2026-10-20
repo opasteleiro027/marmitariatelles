@@ -13,7 +13,7 @@ export default async function ContactPage() {
   return (
     <PublicContentPage
       active="contact"
-      eyebrow="Fale com a Marmitaria Telles"
+      eyebrow="Fale com o Pote Mix"
       intro="Estamos à disposição para dúvidas sobre pedidos, retirada e entrega."
       snapshot={snapshot}
       title="Conte com a gente"

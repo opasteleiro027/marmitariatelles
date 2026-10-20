@@ -25,7 +25,7 @@ export function AdminShell({
       <aside className={styles.sidebar}>
         <Link className={styles.brand} href="/admin">
           <BrandLogo priority size={48} />
-          <strong>Marmitaria Telles</strong>
+          <strong>Pote Mix</strong>
         </Link>
         <AdminNavigation />
         <form action={logoutAction} className={styles.signOutForm}>

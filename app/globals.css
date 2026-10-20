@@ -8,12 +8,15 @@
   --cream-100: #fff0ee;
   --brown-950: #2b1613;
   --brown-700: #594238;
-  --orange-600: #c64f00;
-  --orange-700: #9e3d00;
-  --green-700: #50652a;
-  --green-100: #d2eca2;
-  --line: #e0c0b2;
+  --orange-600: #e99d32;
+  --orange-700: #a64129;
+  --green-700: #527b57;
+  --green-100: #e5f0df;
+  --line: #e8d9c9;
   --shadow: 0 18px 55px rgb(68 40 23 / 10%);
+  --pote-orange: #e99d32;
+  --pote-green: #6e976f;
+  --pote-red: #a64129;
 }
 
 @theme inline {
@@ -31,7 +34,7 @@ html {
 
 body {
   margin: 0;
-  background: var(--cream-50);
+  background: #fffdf8;
   color: var(--brown-950);
   font-family: var(--font-nunito), sans-serif;
 }

@@ -1,201 +1,92 @@
 {
-  "administrator": {
-    "id": "admin-abraao",
-    "email": "abraaofcjunior@gmail.com",
-    "displayName": "Abraão",
-    "role": "owner"
-  },
+  "administrator": { "id": "admin-abraao", "email": "abraaofcjunior@gmail.com", "displayName": "Abraão", "role": "owner" },
   "settings": {
-    "id": "default",
-    "businessName": "Marmitaria Telles",
-    "description": "Marmitas caseiras preparadas com carinho para o almoço de domingo.",
-    "welcomeMessage": "Comida caseira, caprichada e pronta para o seu domingo.",
-    "whatsapp": "5527988446510",
-    "phone": "+55 27 98844-6510",
+    "id": "default", "businessName": "Pote Mix",
+    "description": "Massas e saladas preparadas na hora, do seu jeito.",
+    "welcomeMessage": "Você escolhe. Você monta. A gente prepara.",
+    "whatsapp": "5527988446510", "phone": "+55 27 98844-6510",
     "address": "Av. Bartolomeu de Las Casa, nº 16, Quadra 17, Cidade Continental, Setor América, Serra - ES",
-    "primaryColor": "#d85b27",
-    "minimumOrderCents": 2000,
-    "orderDeadlineLabel": "Pedidos até 10h30",
-    "deliveryWindowLabel": "Entregas das 11h às 14h",
-    "notice": "Consulte a disponibilidade de entrega para o seu bairro.",
-    "pickupInstructions": "Retirada no endereço da Marmitaria Telles, no horário confirmado no pedido.",
-    "deliveryInstructions": "A entrega depende da área e da faixa de horário disponíveis.",
-    "ordersPaused": false
+    "primaryColor": "#e99d32", "minimumOrderCents": 2000,
+    "orderDeadlineLabel": "Consulte o horário de atendimento", "deliveryWindowLabel": "Entrega ou retirada",
+    "notice": "Seu sabor favorito, no pote perfeito.",
+    "pickupInstructions": "Retirada no endereço do Pote Mix, no horário confirmado no pedido.",
+    "deliveryInstructions": "A entrega depende da área e da faixa de horário disponíveis.", "ordersPaused": false
   },
   "categories": [
-    { "id": "category-1", "name": "Marmitas", "displayOrder": 1 },
-    { "id": "category-2", "name": "Bebidas", "displayOrder": 2 },
-    { "id": "category-3", "name": "Sobremesas", "displayOrder": 3 }
+    { "id": "pote-mix-monte", "name": "Monte seu pote", "displayOrder": 1 },
+    { "id": "pote-mix-receitas", "name": "Receitas prontas", "displayOrder": 2 },
+    { "id": "pote-mix-saladas", "name": "Saladas", "displayOrder": 3 }
   ],
   "products": [
-    {
-      "id": "marmita-pequena",
-      "categoryId": "category-1",
-      "name": "Marmita pequena",
-      "description": "Arroz, feijão, proteína do dia e dois acompanhamentos.",
-      "priceCents": 2200,
-      "promotionalPriceCents": null,
-      "featured": false,
-      "displayOrder": 1
-    },
-    {
-      "id": "marmita-media",
-      "categoryId": "category-1",
-      "name": "Marmita média",
-      "description": "A medida certa de comida caseira para um domingo gostoso.",
-      "priceCents": 2800,
-      "promotionalPriceCents": 2600,
-      "featured": true,
-      "displayOrder": 2
-    },
-    {
-      "id": "marmita-grande",
-      "categoryId": "category-1",
-      "name": "Marmita grande",
-      "description": "Porção generosa com proteína e acompanhamentos à escolha.",
-      "priceCents": 3400,
-      "promotionalPriceCents": null,
-      "featured": false,
-      "displayOrder": 3
-    },
-    {
-      "id": "coca-cola-lata",
-      "categoryId": "category-2",
-      "name": "Coca-Cola lata",
-      "description": "350 ml, bem gelada.",
-      "priceCents": 600,
-      "promotionalPriceCents": null,
-      "featured": false,
-      "displayOrder": 1
-    },
-    {
-      "id": "guarana-lata",
-      "categoryId": "category-2",
-      "name": "Guaraná lata",
-      "description": "350 ml, bem gelado.",
-      "priceCents": 550,
-      "promotionalPriceCents": null,
-      "featured": false,
-      "displayOrder": 2
-    },
-    {
-      "id": "pudim",
-      "categoryId": "category-3",
-      "name": "Pudim da casa",
-      "description": "Fatia cremosa com calda de caramelo.",
-      "priceCents": 900,
-      "promotionalPriceCents": null,
-      "featured": false,
-      "displayOrder": 1
-    }
+    { "id": "pote-mix-350", "categoryId": "pote-mix-monte", "name": "Pote 350 g", "description": "Escolha a massa, o molho, os complementos e a finalização.", "priceCents": 1590, "promotionalPriceCents": null, "featured": false, "displayOrder": 1, "imagePath": "/images/pote-mix/monte-seu-pote.webp" },
+    { "id": "pote-mix-550", "categoryId": "pote-mix-monte", "name": "Pote 550 g", "description": "Um pote maior para montar com ainda mais sabor.", "priceCents": 2590, "promotionalPriceCents": null, "featured": true, "displayOrder": 2, "imagePath": "/images/pote-mix/monte-seu-pote.webp" },
+    { "id": "mac-cheese-350", "categoryId": "pote-mix-receitas", "name": "Mac'n Cheese 350 g", "description": "Massa joelinho, molho cheddar, bacon e queijo parmesão.", "priceCents": 1590, "promotionalPriceCents": null, "featured": true, "displayOrder": 1, "imagePath": "/images/pote-mix/mac-n-cheese.webp" },
+    { "id": "mac-cheese-550", "categoryId": "pote-mix-receitas", "name": "Mac'n Cheese 550 g", "description": "Massa joelinho, molho cheddar, bacon e queijo parmesão.", "priceCents": 2590, "promotionalPriceCents": null, "featured": false, "displayOrder": 2, "imagePath": "/images/pote-mix/mac-n-cheese.webp" },
+    { "id": "baratissimo-350", "categoryId": "pote-mix-receitas", "name": "Baratíssimo 350 g", "description": "Massa parafuso, molho sugo e queijo parmesão. Disponível somente em 350 g.", "priceCents": 990, "promotionalPriceCents": null, "featured": false, "displayOrder": 3, "imagePath": "/images/pote-mix/monte-seu-pote.webp" },
+    { "id": "penne-camarao-550", "categoryId": "pote-mix-receitas", "name": "Penne com camarão 550 g", "description": "Massa penne, molho branco, camarão frito, tomate-cereja e queijo parmesão.", "priceCents": 3890, "promotionalPriceCents": null, "featured": true, "displayOrder": 4, "imagePath": "/images/pote-mix/penne-camarao.webp" },
+    { "id": "salada-caesar", "categoryId": "pote-mix-saladas", "name": "Salada Caesar", "description": "Alface americana, frango, queijo parmesão, molho Caesar e croutons.", "priceCents": 2490, "promotionalPriceCents": null, "featured": true, "displayOrder": 1, "imagePath": "/images/pote-mix/salada-caesar.webp" },
+    { "id": "salada-completa", "categoryId": "pote-mix-saladas", "name": "Salada Completa", "description": "Tomate, cebola, frango, cenoura e croutons.", "priceCents": 2990, "promotionalPriceCents": null, "featured": false, "displayOrder": 2, "imagePath": "/images/pote-mix/salada-completa.webp" }
   ],
   "marmitaBuilder": {
     "groups": [
-      {
-        "id": "builder-base",
-        "role": "base",
-        "name": "Escolha sua base",
-        "required": true,
-        "minimumSelections": 1,
-        "maximumSelections": 1,
-        "selectionType": "single",
-        "displayOrder": 1,
-        "options": [
-          { "id": "base-arroz-branco", "name": "Arroz branco", "additionalPriceCents": 0, "displayOrder": 1 },
-          { "id": "base-arroz-integral", "name": "Arroz integral", "additionalPriceCents": 0, "displayOrder": 2 },
-          { "id": "base-sem-arroz", "name": "Sem arroz", "additionalPriceCents": 0, "displayOrder": 3 }
-        ]
-      },
-      {
-        "id": "builder-beans",
-        "role": "beans",
-        "name": "Escolha seu feijão",
-        "required": true,
-        "minimumSelections": 1,
-        "maximumSelections": 1,
-        "selectionType": "single",
-        "displayOrder": 2,
-        "options": [
-          { "id": "beans-carioca", "name": "Feijão carioca", "additionalPriceCents": 0, "displayOrder": 1 },
-          { "id": "beans-preto", "name": "Feijão preto", "additionalPriceCents": 0, "displayOrder": 2 },
-          { "id": "beans-tropeiro", "name": "Feijão tropeiro", "additionalPriceCents": 200, "displayOrder": 3 },
-          { "id": "beans-sem-feijao", "name": "Sem feijão", "additionalPriceCents": 0, "displayOrder": 4 }
-        ]
-      },
-      {
-        "id": "builder-protein",
-        "role": "protein",
-        "name": "Agora escolha a proteína",
-        "required": true,
-        "minimumSelections": 1,
-        "maximumSelections": 2,
-        "selectionType": "multiple",
-        "displayOrder": 3,
-        "options": [
-          { "id": "protein-frango", "name": "Frango grelhado", "additionalPriceCents": 0, "displayOrder": 1 },
-          { "id": "protein-bife", "name": "Bife acebolado", "additionalPriceCents": 450, "displayOrder": 2 },
-          { "id": "protein-pernil", "name": "Pernil assado", "additionalPriceCents": 300, "displayOrder": 3 },
-          { "id": "protein-ovo", "name": "Ovo frito", "additionalPriceCents": 0, "displayOrder": 4 }
-        ]
-      },
-      {
-        "id": "builder-side",
-        "role": "side",
-        "name": "Acompanhamentos",
-        "required": true,
-        "minimumSelections": 1,
-        "maximumSelections": 4,
-        "selectionType": "multiple",
-        "displayOrder": 4,
-        "options": [
-          { "id": "side-macarrao", "name": "Macarrão", "additionalPriceCents": 0, "displayOrder": 1 },
-          { "id": "side-pure", "name": "Purê de batata", "additionalPriceCents": 0, "displayOrder": 2 },
-          { "id": "side-farofa", "name": "Farofa", "additionalPriceCents": 0, "displayOrder": 3 },
-          { "id": "side-batata", "name": "Batata frita", "additionalPriceCents": 0, "displayOrder": 4 },
-          { "id": "side-legumes", "name": "Legumes", "additionalPriceCents": 0, "displayOrder": 5 },
-          { "id": "side-couve", "name": "Couve refogada", "additionalPriceCents": 0, "displayOrder": 6 },
-          { "id": "side-salada", "name": "Salada", "additionalPriceCents": 0, "displayOrder": 7 }
-        ]
-      },
-      {
-        "id": "builder-extra",
-        "role": "extra",
-        "name": "Adicionais opcionais",
-        "required": false,
-        "minimumSelections": 0,
-        "maximumSelections": 10,
-        "selectionType": "multiple",
-        "displayOrder": 5,
-        "options": [
-          { "id": "extra-ovo", "name": "Ovo frito", "additionalPriceCents": 300, "displayOrder": 1 },
-          { "id": "extra-bacon", "name": "Bacon", "additionalPriceCents": 400, "displayOrder": 2 }
-        ]
-      }
+      { "id": "builder-massa", "role": "base", "name": "Escolha sua massa", "required": true, "minimumSelections": 1, "maximumSelections": 1, "selectionType": "single", "displayOrder": 1, "options": [
+        { "id": "massa-parafuso", "name": "Parafuso", "additionalPriceCents": 0, "displayOrder": 1 },
+        { "id": "massa-penne", "name": "Penne", "additionalPriceCents": 0, "displayOrder": 2 },
+        { "id": "massa-joelinho", "name": "Joelinho", "additionalPriceCents": 0, "displayOrder": 3 }
+      ] },
+      { "id": "builder-molho", "role": "beans", "name": "Escolha seu molho", "required": true, "minimumSelections": 1, "maximumSelections": 1, "selectionType": "single", "displayOrder": 2, "options": [
+        { "id": "molho-sugo", "name": "Molho sugo", "additionalPriceCents": 0, "displayOrder": 1 },
+        { "id": "molho-branco", "name": "Molho branco", "additionalPriceCents": 0, "displayOrder": 2 },
+        { "id": "molho-cheddar", "name": "Molho cheddar", "additionalPriceCents": 0, "displayOrder": 3 }
+      ] },
+      { "id": "builder-complementos", "role": "protein", "name": "Escolha os complementos", "required": true, "minimumSelections": 1, "maximumSelections": 6, "selectionType": "multiple", "displayOrder": 3, "options": [
+        { "id": "complemento-milho", "name": "Milho", "additionalPriceCents": 0, "displayOrder": 1 },
+        { "id": "complemento-bacon", "name": "Bacon", "additionalPriceCents": 0, "displayOrder": 2 },
+        { "id": "complemento-brocolis", "name": "Brócolis", "additionalPriceCents": 0, "displayOrder": 3 },
+        { "id": "complemento-ovo", "name": "Ovo", "additionalPriceCents": 0, "displayOrder": 4 },
+        { "id": "complemento-ervilha", "name": "Ervilha", "additionalPriceCents": 0, "displayOrder": 5 },
+        { "id": "complemento-azeitona", "name": "Azeitona", "additionalPriceCents": 0, "displayOrder": 6 },
+        { "id": "complemento-frango-defumado", "name": "Frango defumado", "additionalPriceCents": 0, "displayOrder": 7 },
+        { "id": "complemento-calabresa", "name": "Calabresa", "additionalPriceCents": 0, "displayOrder": 8 }
+      ] },
+      { "id": "builder-finalizacao", "role": "side", "name": "Escolha a finalização", "required": false, "minimumSelections": 0, "maximumSelections": 2, "selectionType": "multiple", "displayOrder": 4, "options": [
+        { "id": "finalizacao-parmesao", "name": "Queijo parmesão", "additionalPriceCents": 0, "displayOrder": 1 },
+        { "id": "finalizacao-cheiro-verde", "name": "Cheiro-verde", "additionalPriceCents": 0, "displayOrder": 2 }
+      ] },
+      { "id": "builder-adicionais", "role": "extra", "name": "Adicionais", "required": false, "minimumSelections": 0, "maximumSelections": 10, "selectionType": "multiple", "displayOrder": 5, "options": [
+        { "id": "extra-bacon", "name": "Bacon extra", "additionalPriceCents": 200, "displayOrder": 1 },
+        { "id": "extra-milho", "name": "Milho extra", "additionalPriceCents": 200, "displayOrder": 2 },
+        { "id": "extra-azeitona", "name": "Azeitona extra", "additionalPriceCents": 200, "displayOrder": 3 },
+        { "id": "extra-calabresa", "name": "Calabresa extra", "additionalPriceCents": 200, "displayOrder": 4 },
+        { "id": "extra-molho", "name": "Molho adicional", "additionalPriceCents": 600, "displayOrder": 5 }
+      ] }
     ],
-    "sizeLimits": {
-      "marmita-pequena": { "protein": 1, "side": 2 },
-      "marmita-media": { "protein": 1, "side": 3 },
-      "marmita-grande": { "protein": 2, "side": 4 }
-    }
+    "sizeLimits": { "pote-mix-350": { "protein": 4, "side": 2 }, "pote-mix-550": { "protein": 6, "side": 2 } }
   },
+  "customizationGroups": [
+    { "id": "salada-adicionais", "name": "Adicionais para a salada", "required": false, "minimumSelections": 0, "maximumSelections": 7, "selectionType": "multiple", "displayOrder": 1, "options": [
+      { "id": "salada-extra-bacon", "name": "Bacon", "additionalPriceCents": 200, "displayOrder": 1 },
+      { "id": "salada-extra-milho", "name": "Milho", "additionalPriceCents": 200, "displayOrder": 2 },
+      { "id": "salada-extra-azeitona", "name": "Azeitona", "additionalPriceCents": 200, "displayOrder": 3 },
+      { "id": "salada-extra-ovo-codorna", "name": "Ovo de codorna", "additionalPriceCents": 200, "displayOrder": 4 },
+      { "id": "salada-extra-calabresa", "name": "Calabresa", "additionalPriceCents": 200, "displayOrder": 5 },
+      { "id": "salada-extra-ervilha", "name": "Ervilha", "additionalPriceCents": 200, "displayOrder": 6 },
+      { "id": "salada-extra-brocolis", "name": "Brócolis", "additionalPriceCents": 200, "displayOrder": 7 }
+    ] },
+    { "id": "salada-macarrao", "name": "Adicionar macarrão + R$ 6,00", "required": false, "minimumSelections": 0, "maximumSelections": 1, "selectionType": "single", "displayOrder": 2, "options": [
+      { "id": "salada-extra-macarrao", "name": "Adicionar macarrão", "additionalPriceCents": 600, "displayOrder": 1 }
+    ] }
+  ],
+  "productAddonGroups": [
+    { "productId": "salada-caesar", "groupId": "salada-adicionais", "minimumSelections": 0, "maximumSelections": 7, "displayOrder": 1 },
+    { "productId": "salada-caesar", "groupId": "salada-macarrao", "minimumSelections": 0, "maximumSelections": 1, "displayOrder": 2 },
+    { "productId": "salada-completa", "groupId": "salada-adicionais", "minimumSelections": 0, "maximumSelections": 7, "displayOrder": 1 },
+    { "productId": "salada-completa", "groupId": "salada-macarrao", "minimumSelections": 0, "maximumSelections": 1, "displayOrder": 2 }
+  ],
   "paymentMethods": [
-    {
-      "id": "payment-cash",
-      "code": "cash",
-      "label": "Dinheiro na entrega ou retirada",
-      "displayOrder": 1
-    },
-    {
-      "id": "payment-card",
-      "code": "card_on_delivery",
-      "label": "Cartão na entrega",
-      "displayOrder": 2
-    },
-    {
-      "id": "payment-pickup",
-      "code": "pay_on_pickup",
-      "label": "Pagamento na retirada",
-      "displayOrder": 3
-    }
+    { "id": "payment-cash", "code": "cash", "label": "Dinheiro na entrega ou retirada", "displayOrder": 1 },
+    { "id": "payment-card", "code": "card_on_delivery", "label": "Cartão na entrega", "displayOrder": 2 },
+    { "id": "payment-pix", "code": "pix", "label": "Pix", "displayOrder": 3 },
+    { "id": "payment-pickup", "code": "pay_on_pickup", "label": "Pagamento na retirada", "displayOrder": 4 }
   ]
 }

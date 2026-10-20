@@ -72,7 +72,7 @@ function getClient(): postgres.Sql {
 
   const databaseUrl = process.env.DATABASE_URL?.trim();
   if (!databaseUrl) {
-    throw new Error("O PostgreSQL da Marmitaria Telles está indisponível.");
+    throw new Error("O PostgreSQL do Pote Mix está indisponível.");
   }
 
   const databaseHost = new URL(databaseUrl).hostname;

@@ -88,17 +88,17 @@ export function parseOrderRequest(input: unknown): ConfirmOrderRequest {
     const notes = optionalText(item.notes, 150);
     const rawSelections = Array.isArray(item.selections) ? item.selections : [];
     if (rawSelections.length > 40) {
-      throw new OrderRequestError("Há opções demais em uma marmita.");
+      throw new OrderRequestError("Há opções demais em um item.");
     }
     const selectedQuantities = new Map<string, number>();
     for (const rawSelection of rawSelections) {
       const selection = asObject(
         rawSelection,
-        "Há uma opção inválida na marmita.",
+        "Há uma opção inválida no item.",
       );
       const optionId = requiredText(
         selection.optionId,
-        "Há uma opção inválida na marmita.",
+        "Há uma opção inválida no item.",
         120,
       );
       const selectedQuantity = Number(selection.quantity);

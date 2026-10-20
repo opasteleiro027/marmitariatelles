@@ -57,7 +57,7 @@ export function AdminOrderList({
                   {ORDER_STATUS_LABELS[order.status]}
                 </span>
                 <details className={styles.orderItems}>
-                  <summary>Ver marmitas e escolhas</summary>
+                  <summary>Ver itens e escolhas</summary>
                   <div>
                     {order.items.map((item) => (
                       <section key={item.id}>

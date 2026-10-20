@@ -7,6 +7,17 @@ export type StorefrontProduct = {
   category: string;
   featured: boolean;
   available: boolean;
+  imageUrl: string | null;
+  customizationGroups: StorefrontCustomizationGroup[];
+};
+
+export type StorefrontCustomizationGroup = {
+  id: string;
+  name: string;
+  selectionType: "single" | "multiple";
+  minimumSelections: number;
+  maximumSelections: number;
+  options: StorefrontMarmitaOption[];
 };
 
 export type StorefrontMarmitaOption = {

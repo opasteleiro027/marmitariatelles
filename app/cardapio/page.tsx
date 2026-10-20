@@ -6,7 +6,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Cardápio",
-  description: "Monte seu pedido na Marmitaria Telles e confira o valor em tempo real.",
+  description: "Monte seu pedido no Pote Mix e confira o valor em tempo real.",
 };
 
 export default async function MenuPage() {

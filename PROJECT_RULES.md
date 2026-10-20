@@ -1,7 +1,7 @@
 # Regras do projeto
 
 Este arquivo registra a aplicação prática do `RULES.md` fornecido para o
-Marmitaria Telles.
+Pote Mix.
 
 1. Organizar por domínio de negócio, nunca por arquivos genéricos.
 2. Cada módulo expõe propósito, dependências e cenários de teste.

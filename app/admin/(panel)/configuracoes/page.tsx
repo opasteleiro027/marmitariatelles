@@ -11,7 +11,7 @@ export default async function AdminSettingsPage() {
       <AdminPageHeader
         eyebrow="Estabelecimento"
         title="Configurações"
-        description="Edite os dados públicos, contatos, endereço e regras comerciais da Marmitaria Telles."
+        description="Edite os dados públicos, contatos, endereço e regras comerciais do Pote Mix."
       />
       <BusinessSettingsManagement settings={settings} />
     </>

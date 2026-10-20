@@ -309,7 +309,7 @@ export function OrderingDrawer({
                     value={automaticDeliverySlotId}
                   />
                   <p className={styles.info}>
-                    A previsão da entrega será organizada pela marmitaria.
+                    A previsão da entrega será organizada pelo Pote Mix.
                   </p>
                 </>
               )}

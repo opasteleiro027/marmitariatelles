@@ -142,11 +142,11 @@ export async function createMarmitaSize(input: {
   await withTransaction(async (sql) => {
     const categoryRows = await sql.unsafe<Array<{ id: string }>>(
       `SELECT id FROM categories
-       WHERE LOWER(name) = LOWER('Marmitas') AND active = TRUE
+       WHERE LOWER(name) = LOWER('Monte seu pote') AND active = TRUE
        ORDER BY display_order LIMIT 1`,
     );
     const categoryId = categoryRows[0]?.id;
-    if (!categoryId) throw new Error("A categoria Marmitas não foi encontrada.");
+    if (!categoryId) throw new Error("A categoria Monte seu pote não foi encontrada.");
 
     const id = crypto.randomUUID();
     const timestamp = new Date().toISOString();

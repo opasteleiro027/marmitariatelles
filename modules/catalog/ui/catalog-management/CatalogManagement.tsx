@@ -19,7 +19,7 @@ export function CatalogManagement({
 }) {
   const regularProducts = products.filter((product) => !product.builderEnabled);
   const regularCategories = categories.filter(
-    (category) => category.name.toLocaleLowerCase("pt-BR") !== "marmitas",
+    (category) => category.name.toLocaleLowerCase("pt-BR") !== "monte seu pote",
   );
 
   return (
@@ -27,7 +27,7 @@ export function CatalogManagement({
       <div className={styles.heading}>
         <div>
           <p>Cardápio</p>
-          <h2>Bebidas, sobremesas e outros</h2>
+          <h2>Receitas prontas, saladas e outros</h2>
         </div>
         <span>{regularProducts.length} produtos cadastrados</span>
       </div>

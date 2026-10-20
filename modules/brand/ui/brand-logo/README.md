@@ -2,7 +2,7 @@
 
 ## Responsabilidade
 
-Exibe a marca quadrada da Marmitaria Telles em espaços compactos do aplicativo.
+Exibe a marca compacta do Pote Mix em espaços reduzidos do aplicativo.
 A imagem deriva da arte oficial enviada pelo estabelecimento.
 
 ## Entradas e saída

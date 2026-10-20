@@ -14,12 +14,12 @@ export default async function AdminLoginPage({
       <section className={styles.card}>
         <Link href="/" className={styles.brand}>
           <BrandLogo priority size={72} />
-          Marmitaria Telles
+          Pote Mix
         </Link>
         <p className={styles.eyebrow}>Área administrativa</p>
         <h1>Entre para cuidar da operação.</h1>
         <p className={styles.intro}>
-          Acesso exclusivo para o responsável pela Marmitaria Telles.
+          Acesso exclusivo para a equipe responsável pelo Pote Mix.
         </p>
         {error ? (
           <p className={styles.error} role="alert">

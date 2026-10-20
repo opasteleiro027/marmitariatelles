@@ -146,7 +146,7 @@ export function MarmitaSummary({
       <header>
         <span aria-hidden="true">▰</span>
         <div>
-          <h2>Sua marmita</h2>
+          <h2>Seu pote</h2>
           <p>Personalização em tempo real</p>
         </div>
       </header>
@@ -179,7 +179,7 @@ export function MarmitaSummary({
         );
       })}
       <div className={styles.total}>
-        <span>Total da marmita</span>
+        <span>Total do pote</span>
         <strong>{formatMoney(total)}</strong>
       </div>
       <button
@@ -194,7 +194,7 @@ export function MarmitaSummary({
             ? "CONTINUAR COMPRANDO"
           : complete
             ? "Adicionar ao carrinho"
-            : "Complete sua marmita"}
+            : "Complete seu pote"}
       </button>
     </aside>
   );

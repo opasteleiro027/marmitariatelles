@@ -4,34 +4,34 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.APP_URL ?? "http://localhost:3000"),
   title: {
-    default: "Marmitaria Telles",
-    template: "%s | Marmitaria Telles",
+    default: "Pote Mix",
+    template: "%s | Pote Mix",
   },
   description:
-    "Comida caseira feita com carinho para deixar o seu domingo mais gostoso.",
+    "Monte seu macarrão, escolha uma receita pronta ou peça uma salada fresquinha.",
   icons: {
-    icon: "/brand/marmitaria-telles-mark.png",
-    apple: "/brand/marmitaria-telles-mark.png",
+    icon: "/brand/pote-mix-mark.webp",
+    apple: "/brand/pote-mix-mark.webp",
   },
   openGraph: {
-    title: "Marmitaria Telles",
-    description: "Escolha sua marmita e receba o almoço de domingo em casa.",
+    title: "Pote Mix",
+    description: "Você escolhe. Você monta. A gente prepara.",
     locale: "pt_BR",
     type: "website",
     images: [
       {
-        url: "/og.png",
+        url: "/og-pote-mix.webp",
         width: 1200,
         height: 630,
-        alt: "Marmitaria Telles — comida com gosto de casa",
+        alt: "Pote Mix — seu sabor favorito, no pote perfeito",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Marmitaria Telles",
-    description: "Escolha sua marmita e receba o almoço de domingo em casa.",
-    images: ["/og.png"],
+    title: "Pote Mix",
+    description: "Você escolhe. Você monta. A gente prepara.",
+    images: ["/og-pote-mix.webp"],
   },
 };
 

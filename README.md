@@ -1,10 +1,11 @@
-# Marmitaria Telles
+# Pote Mix
 
-Aplicação web mobile-first para receber e administrar pedidos de marmitas aos
-domingos. O pedido é gravado no banco antes de qualquer contato por WhatsApp.
+Aplicação web mobile-first para receber e administrar pedidos de massas
+personalizadas, receitas prontas e saladas. O pedido é gravado no banco antes
+de qualquer contato por WhatsApp.
 
 A identidade visual usa a logo oficial com a cozinheira e o prato da
-Marmitaria Telles, em versões otimizadas para cabeçalhos, ícones e
+Pote Mix, em versões otimizadas para cabeçalhos, ícones e
 compartilhamento.
 
 ## Produção
@@ -42,7 +43,7 @@ até o administrador cadastrar bairros e taxas, apenas retirada fica disponível
 
 ## Dados do estabelecimento
 
-- Nome: Marmitaria Telles
+- Nome: Pote Mix
 - Administradores: `abraaofcjunior@gmail.com` e `padariateles10@gmail.com`
 - WhatsApp: `+55 27 98844-6510`
 - Endereço: Av. Bartolomeu de Las Casa, nº 16, Quadra 17, Cidade Continental,

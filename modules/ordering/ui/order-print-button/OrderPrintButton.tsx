@@ -171,7 +171,7 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
         ref={receiptRef}
       >
         <header>
-          <h1>Marmitaria Telles</h1>
+          <h1>Pote Mix</h1>
           <h2>COMANDA #{order.orderNumber}</h2>
           <p>{formatDateTime(order.createdAt)}</p>
           <strong>{ORDER_STATUS_LABELS[order.status]}</strong>

@@ -1,14 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { formatMoney } from "../domain/format-money";
 import type { StorefrontProduct } from "../domain/storefront.types";
 import styles from "./product-card.module.css";
-
-const categoryVisual: Record<string, string> = {
-  Marmitas: "🍲",
-  Bebidas: "🥤",
-  Sobremesas: "🍮",
-};
 
 export function ProductCard({
   product,
@@ -24,8 +19,15 @@ export function ProductCard({
 
   return (
     <article className={styles.productCard}>
-      <div className={styles.productVisual} aria-hidden="true">
-        {categoryVisual[product.category] ?? "🍽️"}
+      <div className={styles.productVisual}>
+        {product.imageUrl ? (
+          <Image
+            alt={product.name}
+            fill
+            sizes="(max-width: 700px) 38vw, (max-width: 1100px) 40vw, 280px"
+            src={product.imageUrl}
+          />
+        ) : <span aria-hidden="true">🍝</span>}
       </div>
       <div className={styles.productContent}>
         <div className={styles.productHeading}>
@@ -48,7 +50,9 @@ export function ProductCard({
             {!orderingEnabled
               ? "Site desligado"
               : product.available
-                ? "Adicionar"
+                ? product.customizationGroups.length
+                  ? "Personalizar"
+                  : "Adicionar"
                 : "Esgotado"}
           </button>
         </div>

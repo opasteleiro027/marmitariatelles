@@ -2,6 +2,7 @@ import seedData from "@/db/seed-data.json";
 import { getDatabase } from "@/db";
 import { siteAcceptsOrders } from "@/modules/establishment/domain/site-availability";
 import type {
+  StorefrontCustomizationGroup,
   StorefrontMarmitaGroup,
   StorefrontMarmitaSize,
   StorefrontProduct,
@@ -31,6 +32,7 @@ type ProductRow = {
   active: boolean;
   sold_out: boolean;
   category_name: string;
+  image_url: string | null;
 };
 
 type DeliveryAreaRow = {
@@ -59,7 +61,7 @@ type SalesMenuRow = {
 
 type BuilderGroupRow = {
   id: string;
-  builder_role: StorefrontMarmitaGroup["role"];
+  builder_role: StorefrontMarmitaGroup["role"] | null;
   name: string;
   selection_type: StorefrontMarmitaGroup["selectionType"];
 };
@@ -78,12 +80,17 @@ type BuilderLinkRow = {
   group_id: string;
   minimum_selections: number;
   maximum_selections: number;
+  display_order: number;
 };
 
 function previewProducts(): StorefrontProduct[] {
   const categoryNames = new Map(
     seedData.categories.map((category) => [category.id, category.name]),
   );
+  const optionGroups = [
+    ...seedData.marmitaBuilder.groups,
+    ...seedData.customizationGroups,
+  ];
   return seedData.products.map((product) => ({
     id: product.id,
     name: product.name,
@@ -93,6 +100,16 @@ function previewProducts(): StorefrontProduct[] {
     category: categoryNames.get(product.categoryId) ?? "Cardápio",
     featured: product.featured,
     available: true,
+    imageUrl: product.imagePath,
+    customizationGroups: seedData.productAddonGroups
+      .filter((link) => link.productId === product.id)
+      .sort((left, right) => left.displayOrder - right.displayOrder)
+      .flatMap((link) => {
+        const group = optionGroups.find((candidate) => candidate.id === link.groupId);
+        return group && !("role" in group)
+          ? [previewCustomizationGroup(group, link)]
+          : [];
+      }),
   }));
 }
 
@@ -101,7 +118,7 @@ function safePreviewSnapshot(): StorefrontSnapshot {
   return {
     businessName: seedData.settings.businessName,
     welcomeMessage: seedData.settings.welcomeMessage,
-    ordersOpen: false,
+    ordersOpen: process.env.NODE_ENV === "development",
     deliveryWindowLabel: seedData.settings.deliveryWindowLabel,
     minimumOrderInCents: seedData.settings.minimumOrderCents,
     notice: seedData.settings.notice,
@@ -146,7 +163,9 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
       database.prepare(
         `SELECT p.id, p.name, p.description, p.price_cents,
           p.promotional_price_cents, p.featured, p.active, p.sold_out,
-          c.name AS category_name
+          c.name AS category_name,
+          (SELECT pi.storage_key FROM product_images pi
+            WHERE pi.product_id = p.id ORDER BY pi.display_order LIMIT 1) AS image_url
         FROM products p
         JOIN categories c ON c.id = p.category_id
         WHERE p.active = TRUE AND c.active = TRUE
@@ -174,7 +193,7 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
       database.prepare(
         `SELECT id, builder_role, name, selection_type
          FROM addon_groups
-         WHERE builder_role IS NOT NULL AND active = TRUE
+         WHERE active = TRUE
          ORDER BY CASE builder_role
            WHEN 'base' THEN 1 WHEN 'beans' THEN 2 WHEN 'protein' THEN 3
            WHEN 'side' THEN 4 ELSE 5 END`,
@@ -184,18 +203,18 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
                 ao.active, ao.sold_out
          FROM addon_options ao
          JOIN addon_groups ag ON ag.id = ao.group_id
-         WHERE ag.builder_role IS NOT NULL
+         WHERE ag.active = TRUE
          ORDER BY ao.display_order, ao.name`,
       ).all<BuilderOptionRow>(),
       database.prepare(
-        `SELECT pag.product_id, pag.group_id,
+         `SELECT pag.product_id, pag.group_id, pag.display_order,
                 COALESCE(pag.minimum_selections, ag.minimum_selections)
                   AS minimum_selections,
                 COALESCE(pag.maximum_selections, ag.maximum_selections)
                   AS maximum_selections
          FROM product_addon_groups pag
          JOIN addon_groups ag ON ag.id = pag.group_id
-         WHERE ag.builder_role IS NOT NULL AND ag.active = TRUE`,
+         WHERE ag.active = TRUE`,
       ).all<BuilderLinkRow>(),
     ]);
 
@@ -210,6 +229,13 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
       category: row.category_name,
       featured: row.featured,
       available: row.active && !row.sold_out,
+      imageUrl: row.image_url,
+      customizationGroups: buildProductCustomizationGroups(
+        row.id,
+        builderGroups.results,
+        builderOptions.results,
+        builderLinks.results,
+      ),
     }));
 
     return {
@@ -265,13 +291,17 @@ function buildMarmitaBuilder(
   optionRows: BuilderOptionRow[],
   linkRows: BuilderLinkRow[],
 ) {
-  const linkedProductIds = new Set(linkRows.map((link) => link.product_id));
+  const builderGroupIds = new Set(
+    groupRows.filter((group) => group.builder_role).map((group) => group.id),
+  );
+  const builderLinks = linkRows.filter((link) => builderGroupIds.has(link.group_id));
+  const linkedProductIds = new Set(builderLinks.map((link) => link.product_id));
   const sizes: StorefrontMarmitaSize[] = products
     .filter((product) => linkedProductIds.has(product.id))
     .map((product) => ({
       ...product,
       limits: Object.fromEntries(
-        linkRows
+        builderLinks
           .filter((link) => link.product_id === product.id)
           .map((link) => [
             link.group_id,
@@ -282,9 +312,11 @@ function buildMarmitaBuilder(
           ]),
       ),
     }));
-  const groups: StorefrontMarmitaGroup[] = groupRows.map((group) => ({
+  const groups: StorefrontMarmitaGroup[] = groupRows
+    .filter((group) => group.builder_role)
+    .map((group) => ({
     id: group.id,
-    role: group.builder_role,
+    role: group.builder_role as StorefrontMarmitaGroup["role"],
     name: group.name,
     selectionType: group.selection_type,
     options: optionRows
@@ -299,12 +331,65 @@ function buildMarmitaBuilder(
   return { sizes, groups };
 }
 
+function buildProductCustomizationGroups(
+  productId: string,
+  groupRows: BuilderGroupRow[],
+  optionRows: BuilderOptionRow[],
+  linkRows: BuilderLinkRow[],
+): StorefrontCustomizationGroup[] {
+  return linkRows
+    .filter((link) => link.product_id === productId)
+    .sort((left, right) => left.display_order - right.display_order)
+    .flatMap((link) => {
+      const group = groupRows.find(
+        (candidate) => candidate.id === link.group_id && !candidate.builder_role,
+      );
+      if (!group) return [];
+      return [{
+        id: group.id,
+        name: group.name,
+        selectionType: group.selection_type,
+        minimumSelections: link.minimum_selections,
+        maximumSelections: link.maximum_selections,
+        options: optionRows
+          .filter((option) => option.group_id === group.id)
+          .map((option) => ({
+            id: option.id,
+            name: option.name,
+            additionalPriceInCents: option.additional_price_cents,
+            available: option.active && !option.sold_out,
+          })),
+      }];
+    });
+}
+
+function previewCustomizationGroup(
+  group: (typeof seedData.customizationGroups)[number],
+  link: (typeof seedData.productAddonGroups)[number],
+): StorefrontCustomizationGroup {
+  return {
+    id: group.id,
+    name: group.name,
+    selectionType: group.selectionType as "single" | "multiple",
+    minimumSelections: link.minimumSelections,
+    maximumSelections: link.maximumSelections,
+    options: group.options.map((option) => ({
+      id: option.id,
+      name: option.name,
+      additionalPriceInCents: option.additionalPriceCents,
+      available: true,
+    })),
+  };
+}
+
 function previewMarmitaBuilder(products: StorefrontProduct[]) {
   const groups = seedData.marmitaBuilder.groups.map((group) => ({
     id: group.id,
     role: group.role as StorefrontMarmitaGroup["role"],
     name: group.name,
     selectionType: group.selectionType as StorefrontMarmitaGroup["selectionType"],
+    minimumSelections: group.minimumSelections,
+    maximumSelections: group.maximumSelections,
     options: group.options.map((option) => ({
       id: option.id,
       name: option.name,
@@ -325,15 +410,13 @@ function previewMarmitaBuilder(products: StorefrontProduct[]) {
           groups.map((group) => [
             group.id,
             {
-              minimum: group.role === "extra" ? 0 : 1,
+              minimum: group.minimumSelections,
               maximum:
                 group.role === "protein"
                   ? sizeLimits.protein
                   : group.role === "side"
                     ? sizeLimits.side
-                    : group.role === "extra"
-                      ? 10
-                      : 1,
+                    : group.maximumSelections,
             },
           ]),
         ),

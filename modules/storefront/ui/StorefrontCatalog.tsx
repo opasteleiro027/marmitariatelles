@@ -28,7 +28,7 @@ export function StorefrontCatalog({
     const hydration = window.setTimeout(() => {
     try {
       const stored = JSON.parse(
-        window.localStorage.getItem("marmitaria-telles-cart") ?? "[]",
+        window.localStorage.getItem("pote-mix-cart-legacy") ?? "[]",
       ) as Array<{ productId: string; quantity: number }>;
       setItems(
         stored.flatMap((entry) => {
@@ -48,7 +48,7 @@ export function StorefrontCatalog({
         }),
       );
     } catch {
-      window.localStorage.removeItem("marmitaria-telles-cart");
+      window.localStorage.removeItem("pote-mix-cart-legacy");
     } finally {
       setCartLoaded(true);
     }
@@ -59,7 +59,7 @@ export function StorefrontCatalog({
   useEffect(() => {
     if (!cartLoaded) return;
     window.localStorage.setItem(
-      "marmitaria-telles-cart",
+      "pote-mix-cart-legacy",
       JSON.stringify(
         items.map((item) => ({
           productId: item.product.id,

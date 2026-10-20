@@ -188,7 +188,7 @@ export function MarmitaConfigurator({
               disabled={addedToCart}
               maxLength={150}
               onChange={(event) => setNotes(event.target.value)}
-              placeholder="Ex.: Tirar a cebola, arroz bem soltinho..."
+              placeholder="Ex.: Pouco molho, sem cebola..."
               value={notes}
             />
             <small>{notes.length}/150</small>

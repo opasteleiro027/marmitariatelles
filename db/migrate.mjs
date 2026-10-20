@@ -126,7 +126,79 @@ async function seedFoundation(database) {
             ${product.description}, ${product.priceCents},
             ${product.promotionalPriceCents}, ${product.featured}, TRUE, FALSE,
             TRUE, ${product.displayOrder}, ${timestamp}, ${timestamp})
-        ON CONFLICT (id) DO NOTHING
+        ON CONFLICT (id) DO UPDATE SET
+          category_id = EXCLUDED.category_id,
+          name = EXCLUDED.name,
+          description = EXCLUDED.description,
+          price_cents = EXCLUDED.price_cents,
+          promotional_price_cents = EXCLUDED.promotional_price_cents,
+          featured = EXCLUDED.featured,
+          active = TRUE,
+          display_order = EXCLUDED.display_order,
+          updated_at = EXCLUDED.updated_at
+      `;
+
+      await transaction`
+        INSERT INTO product_images
+          (id, product_id, storage_key, alt_text, display_order)
+        VALUES
+          (${`${product.id}-image`}, ${product.id}, ${product.imagePath},
+            ${product.name}, 1)
+        ON CONFLICT (id) DO UPDATE SET
+          storage_key = EXCLUDED.storage_key,
+          alt_text = EXCLUDED.alt_text
+      `;
+    }
+
+    for (const group of seedData.customizationGroups) {
+      await transaction`
+        INSERT INTO addon_groups
+          (id, name, builder_role, required, minimum_selections,
+            maximum_selections, selection_type, active)
+        VALUES
+          (${group.id}, ${group.name}, NULL, ${group.required},
+            ${group.minimumSelections}, ${group.maximumSelections},
+            ${group.selectionType}, TRUE)
+        ON CONFLICT (id) DO UPDATE SET
+          name = EXCLUDED.name,
+          builder_role = NULL,
+          required = EXCLUDED.required,
+          minimum_selections = EXCLUDED.minimum_selections,
+          maximum_selections = EXCLUDED.maximum_selections,
+          selection_type = EXCLUDED.selection_type,
+          active = TRUE
+      `;
+
+      for (const option of group.options) {
+        await transaction`
+          INSERT INTO addon_options
+            (id, group_id, name, additional_price_cents, active, sold_out,
+              display_order)
+          VALUES
+            (${option.id}, ${group.id}, ${option.name},
+              ${option.additionalPriceCents}, TRUE, FALSE,
+              ${option.displayOrder})
+          ON CONFLICT (id) DO UPDATE SET
+            name = EXCLUDED.name,
+            additional_price_cents = EXCLUDED.additional_price_cents,
+            active = TRUE,
+            display_order = EXCLUDED.display_order
+        `;
+      }
+    }
+
+    for (const link of seedData.productAddonGroups) {
+      await transaction`
+        INSERT INTO product_addon_groups
+          (product_id, group_id, minimum_selections, maximum_selections,
+            display_order)
+        VALUES
+          (${link.productId}, ${link.groupId}, ${link.minimumSelections},
+            ${link.maximumSelections}, ${link.displayOrder})
+        ON CONFLICT (product_id, group_id) DO UPDATE SET
+          minimum_selections = EXCLUDED.minimum_selections,
+          maximum_selections = EXCLUDED.maximum_selections,
+          display_order = EXCLUDED.display_order
       `;
     }
 

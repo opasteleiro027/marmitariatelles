@@ -12,12 +12,13 @@ import type {
 } from "../../domain/storefront.types";
 import { formatMoney } from "../../domain/format-money";
 import { MarmitaConfigurator } from "../marmita-configurator/MarmitaConfigurator";
-import { MenuCategory } from "../menu-category/MenuCategory";
 import { MenuOrderSummary } from "../menu-order-summary/MenuOrderSummary";
+import { ProductCard } from "../ProductCard";
+import { ProductCustomizer } from "../product-customizer/ProductCustomizer";
 import { SiteHeader } from "../site-header/SiteHeader";
 import styles from "./menu-builder.module.css";
 
-const CART_KEY = "marmitaria-telles-cart-v2";
+const CART_KEY = "pote-mix-cart-v1";
 
 type StoredCartItem = {
   lineId: string;
@@ -31,6 +32,7 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
   const [items, setItems] = useState<CartItem[]>([]);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [cartLoaded, setCartLoaded] = useState(false);
+  const [customizerProduct, setCustomizerProduct] = useState<StorefrontProduct | null>(null);
   const sizeIds = useMemo(
     () => new Set(snapshot.marmitaBuilder.sizes.map((size) => size.id)),
     [snapshot.marmitaBuilder.sizes],
@@ -42,15 +44,6 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
   const categories = useMemo(
     () => Array.from(new Set(regularProducts.map((product) => product.category))),
     [regularProducts],
-  );
-  const quantities = useMemo(
-    () =>
-      new Map(
-        items
-          .filter((item) => !item.selections.length)
-          .map((item) => [item.product.id, item.quantity]),
-      ),
-    [items],
   );
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
   const subtotal = items.reduce(
@@ -97,17 +90,18 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
     );
   }, [cartLoaded, items]);
 
-  function changeRegularQuantity(product: StorefrontProduct, quantity: number) {
+  function addRegularProduct(product: StorefrontProduct) {
+    if (product.customizationGroups.length) {
+      setCustomizerProduct(product);
+      return;
+    }
     setItems((current) => {
       const lineId = `product:${product.id}`;
-      if (quantity < 1) {
-        return current.filter((item) => item.lineId !== lineId);
-      }
-      const existing = current.some((item) => item.lineId === lineId);
+      const existing = current.find((item) => item.lineId === lineId);
       return existing
         ? current.map((item) =>
             item.lineId === lineId
-              ? { ...item, quantity: Math.min(quantity, 99) }
+              ? { ...item, quantity: Math.min(item.quantity + 1, 99) }
               : item,
           )
         : [
@@ -147,11 +141,11 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
         <div className={styles.heroImage} aria-hidden="true" />
         <div className={styles.heroShade} />
         <div className={styles.heroCopy}>
-          <span>Cardápio de domingo</span>
-          <h1>Monte sua marmita do seu jeito</h1>
+          <span>Pote Mix · pedido on-line</span>
+          <h1>Seu sabor favorito, no pote perfeito.</h1>
           <p>
-            Escolha cada ingrediente com carinho para o seu almoço de domingo.
-            Ingredientes frescos e tempero caseiro.
+            Monte seu macarrão, escolha uma receita pronta ou peça uma salada
+            fresquinha. Tudo preparado na hora, do seu jeito.
           </p>
           <div>
             <small>{snapshot.deliveryWindowLabel}</small>
@@ -167,7 +161,18 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
         </div>
       ) : null}
 
-      <section className={styles.builderArea}>
+      <nav className={styles.categoryNav} aria-label="Categorias do cardápio">
+        <a href="#monte-seu-pote"><span>01</span><strong>Monte seu pote</strong><small>Massa, molho e complementos</small></a>
+        <a href="#receitas-prontas"><span>02</span><strong>Receitas prontas</strong><small>Combinações especiais</small></a>
+        <a href="#saladas"><span>03</span><strong>Saladas</strong><small>Frescas e feitas na hora</small></a>
+      </nav>
+
+      <section className={styles.builderArea} id="monte-seu-pote">
+        <div className={styles.sectionIntro}>
+          <span>01 · Monte seu pote</span>
+          <h2>Você escolhe. A gente prepara.</h2>
+          <p>Comece pelo tamanho e monte sua combinação favorita etapa por etapa.</p>
+        </div>
         <MarmitaConfigurator
           builder={snapshot.marmitaBuilder}
           onAdd={(item) => setItems((current) => [...current, item])}
@@ -177,24 +182,32 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
 
       {categories.length ? (
         <section className={styles.otherProducts}>
-          <div className={styles.otherHeading}>
-            <span>Também disponíveis</span>
-            <h2>Bebidas e acompanhamentos extras</h2>
-          </div>
           <div className={styles.otherLayout}>
             <div>
               {categories.map((category, index) => (
-                <MenuCategory
-                  index={snapshot.marmitaBuilder.groups.length + index + 3}
+                <section
+                  className={styles.productSection}
+                  id={category === "Receitas prontas" ? "receitas-prontas" : "saladas"}
                   key={category}
-                  name={category}
-                  onQuantityChange={changeRegularQuantity}
-                  orderingEnabled={snapshot.ordersOpen}
-                  products={regularProducts.filter(
-                    (product) => product.category === category,
-                  )}
-                  quantities={quantities}
-                />
+                >
+                  <div className={styles.sectionIntro}>
+                    <span>0{index + 2} · {category}</span>
+                    <h2>{category === "Saladas" ? "Leves, frescas e cheias de sabor." : "Escolha e peça sem precisar montar."}</h2>
+                    <p>{category === "Saladas" ? "Todas acompanham croutons. Personalize com adicionais se quiser." : "Combinações já pensadas para você aproveitar."}</p>
+                  </div>
+                  <div className={styles.productGrid}>
+                    {regularProducts
+                      .filter((product) => product.category === category)
+                      .map((product) => (
+                        <ProductCard
+                          key={product.id}
+                          onAdd={addRegularProduct}
+                          orderingEnabled={snapshot.ordersOpen}
+                          product={product}
+                        />
+                      ))}
+                  </div>
+                </section>
               ))}
             </div>
             <MenuOrderSummary
@@ -240,6 +253,17 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
           snapshot={snapshot}
         />
       ) : null}
+
+      {customizerProduct ? (
+        <ProductCustomizer
+          onAdd={(item) => {
+            setItems((current) => [...current, item]);
+            setCustomizerProduct(null);
+          }}
+          onClose={() => setCustomizerProduct(null)}
+          product={customizerProduct}
+        />
+      ) : null}
     </main>
   );
 }
@@ -256,7 +280,11 @@ function restoreCart(
       return [];
     }
     const selections = (entry.selections ?? []).flatMap((storedSelection) => {
-      const group = snapshot.marmitaBuilder.groups.find((candidate) =>
+      const groups = [
+        ...snapshot.marmitaBuilder.groups,
+        ...product.customizationGroups,
+      ];
+      const group = groups.find((candidate) =>
         candidate.options.some(
           (option) =>
             option.id === storedSelection.optionId && option.available,

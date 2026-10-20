@@ -1,5 +1,5 @@
 # Dependências
 
 - `next/image`.
-- `public/brand/marmitaria-telles-mark.png`.
+- `public/brand/pote-mix-mark.webp`.
 - CSS Module local.

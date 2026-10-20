@@ -18,7 +18,7 @@ export function BrandLogo({
       height={512}
       priority={priority}
       sizes={`${size}px`}
-      src="/brand/marmitaria-telles-mark.png"
+      src="/brand/pote-mix-mark.webp"
       style={{ width: size, height: size }}
       width={512}
     />

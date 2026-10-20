@@ -61,6 +61,7 @@ de restauração de estoque e exclusão dos dados transacionais de teste.
 | `modules/storefront/ui/site-header/` | navegação entre telas públicas | Next Link |
 | `modules/storefront/ui/menu-builder/` | estado e composição do montador | category, summary, ordering |
 | `modules/storefront/ui/marmita-configurator/` | tamanho, ingredientes, limites, observação e total ao vivo | snapshot, cart items |
+| `modules/storefront/ui/product-customizer/` | adicionais opcionais de receitas e saladas | snapshot, cart items |
 | `modules/storefront/ui/menu-category/` | etapa e controles de produtos | snapshot, moeda |
 | `modules/storefront/ui/menu-order-summary/` | resumo fixo e pedido mínimo | cart items, moeda |
 | `modules/storefront/ui/public-content-page/` | shell das telas informativas | site-header |

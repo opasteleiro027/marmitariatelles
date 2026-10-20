@@ -218,13 +218,13 @@ test("uses the official optimized logo across the application", async () => {
     await Promise.all([
       readFile(
         new URL(
-          "../public/brand/marmitaria-telles-mark.png",
+          "../public/brand/pote-mix-mark.webp",
           import.meta.url,
         ),
       ),
       readFile(
         new URL(
-          "../public/brand/marmitaria-telles-logo.png",
+          "../public/brand/pote-mix-logo.webp",
           import.meta.url,
         ),
       ),
@@ -255,9 +255,9 @@ test("uses the official optimized logo across the application", async () => {
         "utf8",
       ),
     ]);
-  assert.ok(mark.length > 50_000 && mark.length < 200_000);
-  assert.ok(logo.length > 50_000 && logo.length < 200_000);
-  assert.match(brandComponent, /marmitaria-telles-mark\.png/);
+  assert.ok(mark.length > 5_000 && mark.length < 100_000);
+  assert.ok(logo.length > 20_000 && logo.length < 200_000);
+  assert.match(brandComponent, /pote-mix-mark\.webp/);
   for (const surface of [publicHeader, adminShell, login, tracking]) {
     assert.match(surface, /BrandLogo/);
     assert.doesNotMatch(surface, />MT</);
@@ -339,10 +339,10 @@ test("public navigation keeps the ordering journey focused", async () => {
   assert.doesNotMatch(navigation, /href:\s*["']#/);
 });
 
-test("ships the Stitch menu hero and the seven-step marmita builder", async () => {
-  const [hero, builder, configurator, configuratorParts] = await Promise.all([
+test("ships the Pote Mix menu and its configurable products", async () => {
+  const [hero, builder, configurator, configuratorParts, customizer] = await Promise.all([
     readFile(
-      new URL("../public/images/menu-builder-hero.png", import.meta.url),
+      new URL("../public/images/pote-mix/monte-seu-pote.webp", import.meta.url),
     ),
     readFile(
       new URL(
@@ -365,8 +365,15 @@ test("ships the Stitch menu hero and the seven-step marmita builder", async () =
       ),
       "utf8",
     ),
+    readFile(
+      new URL(
+        "../modules/storefront/ui/product-customizer/ProductCustomizer.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
   ]);
-  assert.ok(hero.length > 1_000_000);
+  assert.ok(hero.length > 100_000);
   assert.match(builder, /categories\.map/);
   assert.match(builder, /MarmitaConfigurator/);
   assert.match(builder, /FINALIZAR PEDIDO/);
@@ -377,10 +384,12 @@ test("ships the Stitch menu hero and the seven-step marmita builder", async () =
   assert.match(configurator, /function continueShopping/);
   assert.match(configurator, /setSizeId\(""\)/);
   assert.match(configuratorParts, /CONTINUAR COMPRANDO/);
-  assert.match(configuratorParts, /Complete sua marmita/);
+  assert.match(configuratorParts, /Complete seu pote/);
   assert.match(configuratorParts, /group\.role === "base"/);
   assert.match(configuratorParts, /group\.role === "beans"/);
   assert.match(configuratorParts, /selected \? "✓" : "\+"/);
+  assert.match(customizer, /Personalize seu pedido/);
+  assert.match(customizer, /customizationGroups/);
 });
 
 test("uses only the site switch to release or block orders", () => {

@@ -73,7 +73,7 @@ export async function priceOrderItems(
        FROM product_addon_groups pag
        JOIN addon_groups ag ON ag.id = pag.group_id
        WHERE pag.product_id = ANY($1::TEXT[])
-         AND ag.builder_role IS NOT NULL AND ag.active = TRUE`,
+         AND ag.active = TRUE`,
       [productIds],
     ),
     optionIds.length
@@ -145,7 +145,7 @@ export async function priceOrderItems(
         : null;
       if (!option || !link) {
         throw new OrderRequestError(
-          "Uma das opções não pertence a esta marmita.",
+          "Uma das opções não pertence a este produto.",
           409,
         );
       }

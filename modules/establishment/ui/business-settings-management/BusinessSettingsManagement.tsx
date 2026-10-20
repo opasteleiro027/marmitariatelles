@@ -12,7 +12,7 @@ export function BusinessSettingsManagement({
       <div className={styles.heading}>
         <div>
           <p>Dados públicos</p>
-          <h2>Marmitaria Telles</h2>
+          <h2>Pote Mix</h2>
         </div>
         <span>
           {settings.ordersPaused ? "Site desligado" : "Site ligado"}

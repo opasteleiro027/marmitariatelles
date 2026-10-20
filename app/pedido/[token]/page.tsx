@@ -43,7 +43,7 @@ export default async function TrackingPage({
     <main className={styles.page}>
       <Link className={styles.brand} href="/">
         <BrandLogo priority size={54} />
-        Marmitaria Telles
+        Pote Mix
       </Link>
       <section className={styles.card}>
         <header>

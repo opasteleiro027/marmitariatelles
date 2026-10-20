@@ -1,6 +1,6 @@
 # Marca
 
-Centraliza os recursos visuais oficiais da Marmitaria Telles.
+Centraliza os recursos visuais oficiais do Pote Mix.
 
 A versão `mark` atende ícones e cabeçalhos compactos. A versão `logo` preserva
 o retrato, o nome e o lettering completo para apresentações e compartilhamento.

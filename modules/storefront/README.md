@@ -9,7 +9,7 @@ menu and begin an order while the site is enabled.
 
 - Read a server-authoritative storefront snapshot.
 - Present independent Home, Cardápio, Como funciona and Contato screens.
-- Build the numbered marmita flow from the administrator's sizes and option
+- Build the numbered Pote Mix flow from the administrator's sizes and option
   groups: size, base, beans, protein, sides, extras and observation.
 - Present the enabled/disabled status, delivery information and products.
 - Disable ordering controls while the administrator has the site turned off.

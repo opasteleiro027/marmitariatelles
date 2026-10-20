@@ -3,7 +3,7 @@
   top: 0;
   z-index: 30;
   border-bottom: 1px solid rgb(140 113 102 / 16%);
-  background: rgb(255 248 246 / 94%);
+  background: rgb(255 253 248 / 94%);
   box-shadow: 0 2px 16px rgb(62 39 35 / 5%);
   backdrop-filter: blur(16px);
 }
@@ -48,8 +48,8 @@
 }
 
 .inner nav a[aria-current="page"] {
-  border-bottom-color: #9e3d00;
-  color: #7c2e00;
+  border-bottom-color: var(--pote-orange);
+  color: var(--pote-red);
 }
 
 .actions {
@@ -62,8 +62,8 @@
 .closed {
   padding: 6px 10px;
   border-radius: 999px;
-  background: #d2eca2;
-  color: #394d14;
+  background: #e5f0df;
+  color: #426b46;
   font-size: 11px;
   font-weight: 800;
 }
@@ -84,7 +84,7 @@
   border: 1px solid #e0c0b2;
   border-radius: 999px;
   background: white;
-  color: #7c2e00;
+  color: var(--pote-red);
   cursor: pointer;
   font: inherit;
   font-size: 11px;
@@ -96,7 +96,7 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: #9e3d00;
+  background: var(--pote-red);
   color: white;
   font-size: 10px;
 }
@@ -110,7 +110,6 @@
     gap: 4px 12px;
   }
 
-  .brand strong,
   .actions > span {
     display: none;
   }

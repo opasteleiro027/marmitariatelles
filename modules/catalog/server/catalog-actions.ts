@@ -56,7 +56,7 @@ export async function createMarmitaSizeAction(formData: FormData) {
     name: required(formData, "name"),
     description: required(formData, "description"),
     priceInCents: parsePriceToCents(required(formData, "price")),
-    proteinLimit: selectionLimit(formData, "proteinLimit", 2),
+    proteinLimit: selectionLimit(formData, "proteinLimit", 8),
     sideLimit: selectionLimit(formData, "sideLimit", 6),
   });
   refreshCatalog();
@@ -69,7 +69,7 @@ export async function updateMarmitaSizeAction(formData: FormData) {
     name: required(formData, "name"),
     description: required(formData, "description"),
     priceInCents: parsePriceToCents(required(formData, "price")),
-    proteinLimit: selectionLimit(formData, "proteinLimit", 2),
+    proteinLimit: selectionLimit(formData, "proteinLimit", 8),
     sideLimit: selectionLimit(formData, "sideLimit", 6),
     active: formData.get("active") === "on",
     soldOut: formData.get("soldOut") === "on",
@@ -120,7 +120,7 @@ function selectionLimit(formData: FormData, field: string, maximum: number) {
 function builderRole(formData: FormData): MarmitaGroupRole {
   const value = required(formData, "role");
   if (!MARMITA_GROUP_ROLES.includes(value as MarmitaGroupRole)) {
-    throw new Error("Etapa da marmita inválida.");
+    throw new Error("Etapa de montagem inválida.");
   }
   return value as MarmitaGroupRole;
 }

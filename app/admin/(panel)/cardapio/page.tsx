@@ -16,7 +16,7 @@ export default async function AdminCatalogPage() {
       <AdminPageHeader
         eyebrow="Produtos"
         title="Cardápio"
-        description="Configure tamanhos, bases, feijões, proteínas, acompanhamentos e adicionais da montagem."
+        description="Configure tamanhos, massas, molhos, complementos, finalizações e adicionais do Pote Mix."
       />
       <MarmitaManagement configuration={marmitaConfiguration} />
       <CatalogManagement

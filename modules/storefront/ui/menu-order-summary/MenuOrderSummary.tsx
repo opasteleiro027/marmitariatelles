@@ -27,7 +27,7 @@ export function MenuOrderSummary({
     <aside className={styles.summary} aria-label="Resumo do pedido">
       <header>
         <div>
-          <h2>Sua marmita</h2>
+          <h2>Seu pedido</h2>
           <p>Resumo atualizado em tempo real</p>
         </div>
         <span>{items.reduce((total, item) => total + item.quantity, 0)}</span>
