@@ -56,11 +56,15 @@ export async function getAdminOrderPulse(): Promise<OrderPulse> {
     Array<{
       total_orders: number;
       latest_order_id: string | null;
+      pending_acceptance_count: number;
       latest_updated_at: string;
     }>
   >(
     `SELECT
        COUNT(*)::INT AS total_orders,
+       COUNT(*) FILTER (
+         WHERE status IN ('received', 'awaiting_confirmation')
+       )::INT AS pending_acceptance_count,
        (
          SELECT id
          FROM orders
@@ -73,11 +77,13 @@ export async function getAdminOrderPulse(): Promise<OrderPulse> {
   const pulse = rows[0] ?? {
     total_orders: 0,
     latest_order_id: null,
+    pending_acceptance_count: 0,
     latest_updated_at: "",
   };
   return {
     totalOrders: pulse.total_orders,
     latestOrderId: pulse.latest_order_id,
+    pendingAcceptanceCount: pulse.pending_acceptance_count,
     version: `${pulse.total_orders}:${pulse.latest_updated_at}`,
   };
 }

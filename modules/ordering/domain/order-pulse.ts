@@ -1,6 +1,7 @@
 export type OrderPulse = {
   totalOrders: number;
   latestOrderId: string | null;
+  pendingAcceptanceCount: number;
   version: string;
 };
 
@@ -17,4 +18,8 @@ export function classifyOrderPulse(
     return "new-order";
   }
   return next.version !== previous.version ? "changed" : "unchanged";
+}
+
+export function hasOrdersAwaitingAcceptance(pulse: OrderPulse) {
+  return pulse.pendingAcceptanceCount > 0;
 }

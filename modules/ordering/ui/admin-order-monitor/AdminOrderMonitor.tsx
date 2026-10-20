@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import {
   classifyOrderPulse,
+  hasOrdersAwaitingAcceptance,
   type OrderPulse,
 } from "../../domain/order-pulse";
 import styles from "./admin-order-monitor.module.css";
@@ -95,7 +96,18 @@ export function AdminOrderMonitor() {
     };
   }, []);
 
-  const playAlert = useCallback(async () => {
+  const stopAlert = useCallback(() => {
+    const source = audioSourceRef.current;
+    audioSourceRef.current = null;
+    if (!source) return;
+    try {
+      source.stop();
+    } catch {
+      // A fonte já terminou.
+    }
+  }, []);
+
+  const playAlert = useCallback(async (loop = false) => {
     if (!soundEnabledRef.current) return;
     const context = audioContextRef.current;
     const buffer = audioBufferRef.current;
@@ -105,6 +117,7 @@ export function AdminOrderMonitor() {
     }
 
     try {
+      if (loop && audioSourceRef.current) return;
       await context.resume();
       if (context.state !== "running") {
         setAudioState("waiting");
@@ -114,14 +127,11 @@ export function AdminOrderMonitor() {
         return;
       }
 
-      try {
-        audioSourceRef.current?.stop();
-      } catch {
-        // A fonte anterior já terminou.
-      }
+      stopAlert();
       const source = context.createBufferSource();
       const gain = context.createGain();
       source.buffer = buffer;
+      source.loop = loop;
       gain.gain.value = volumeRef.current / 100;
       source.connect(gain);
       gain.connect(context.destination);
@@ -137,23 +147,19 @@ export function AdminOrderMonitor() {
       setAudioState("waiting");
       setNotification("Clique no painel e teste o som novamente.");
     }
-  }, []);
+  }, [stopAlert]);
 
   const toggleSound = useCallback(() => {
     const nextEnabled = !soundEnabledRef.current;
     soundEnabledRef.current = nextEnabled;
     setSoundEnabled(nextEnabled);
     if (!nextEnabled) {
-      try {
-        audioSourceRef.current?.stop();
-      } catch {
-        // O áudio já terminou.
-      }
+      stopAlert();
       setNotification("Alerta sonoro silenciado.");
       return;
     }
     setNotification("Alerta sonoro ativo.");
-  }, []);
+  }, [stopAlert]);
 
   function updateVolume(nextValue: number) {
     const nextVolume = Math.min(100, Math.max(0, nextValue));
@@ -174,13 +180,32 @@ export function AdminOrderMonitor() {
         const nextPulse = (await response.json()) as OrderPulse;
         const previousPulse = pulseRef.current;
         pulseRef.current = nextPulse;
+        const hasPendingOrders = hasOrdersAwaitingAcceptance(nextPulse);
+
+        if (!hasPendingOrders) {
+          const alertWasPlaying = audioSourceRef.current !== null;
+          stopAlert();
+          if (
+            alertWasPlaying ||
+            (previousPulse?.pendingAcceptanceCount ?? 0) > 0
+          ) {
+            setNotification("Todos os pedidos foram aceitos. Campainha parada.");
+          }
+        } else if (soundEnabledRef.current) {
+          setNotification(
+            `${nextPulse.pendingAcceptanceCount} pedido${
+              nextPulse.pendingAcceptanceCount === 1 ? "" : "s"
+            } aguardando aceite.`,
+          );
+          await playAlert(true);
+        }
+
         if (!previousPulse) return;
         const change = classifyOrderPulse(previousPulse, nextPulse);
         if (change === "unchanged") return;
 
         if (change === "new-order") {
           setNotification("Novo pedido recebido. Lista atualizada.");
-          await playAlert();
         }
         if (pathname === "/admin" || pathname === "/admin/pedidos") {
           router.refresh();
@@ -205,7 +230,7 @@ export function AdminOrderMonitor() {
       window.clearInterval(intervalId);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [pathname, playAlert, router]);
+  }, [pathname, playAlert, router, stopAlert]);
 
   const soundStatus =
     audioState === "unavailable"
@@ -237,7 +262,7 @@ export function AdminOrderMonitor() {
         </label>
         <button
           disabled={!soundEnabled || audioState === "unavailable"}
-          onClick={() => void playAlert()}
+          onClick={() => void playAlert(false)}
           type="button"
         >
           Testar som

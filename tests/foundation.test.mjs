@@ -25,7 +25,10 @@ import {
   getOrderStatusLabel,
   getOrderStatusTransitions,
 } from "../modules/ordering/application/order-status.ts";
-import { classifyOrderPulse } from "../modules/ordering/domain/order-pulse.ts";
+import {
+  classifyOrderPulse,
+  hasOrdersAwaitingAcceptance,
+} from "../modules/ordering/domain/order-pulse.ts";
 import {
   getOrderReportDateRange,
   parseOrderReportPeriod,
@@ -134,12 +137,14 @@ test("detects a new order separately from other panel changes", () => {
   const previous = {
     totalOrders: 4,
     latestOrderId: "order-4",
+    pendingAcceptanceCount: 0,
     version: "4:2026-07-28T12:00:00.000Z",
   };
   assert.equal(
     classifyOrderPulse(previous, {
       totalOrders: 5,
       latestOrderId: "order-5",
+      pendingAcceptanceCount: 1,
       version: "5:2026-07-28T12:01:00.000Z",
     }),
     "new-order",
@@ -152,6 +157,49 @@ test("detects a new order separately from other panel changes", () => {
     "changed",
   );
   assert.equal(classifyOrderPulse(previous, previous), "unchanged");
+});
+
+test("rings only while an order is waiting for acceptance", async () => {
+  assert.equal(
+    hasOrdersAwaitingAcceptance({
+      totalOrders: 3,
+      latestOrderId: "order-3",
+      pendingAcceptanceCount: 1,
+      version: "3:waiting",
+    }),
+    true,
+  );
+  assert.equal(
+    hasOrdersAwaitingAcceptance({
+      totalOrders: 3,
+      latestOrderId: "order-3",
+      pendingAcceptanceCount: 0,
+      version: "3:accepted",
+    }),
+    false,
+  );
+
+  const [monitor, adminOrders] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/ordering/ui/admin-order-monitor/AdminOrderMonitor.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/application/admin-orders.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+  assert.match(monitor, /source\.loop = loop/);
+  assert.match(monitor, /if \(!hasPendingOrders\)/);
+  assert.match(monitor, /stopAlert\(\)/);
+  assert.match(adminOrders, /pending_acceptance_count/);
+  assert.match(adminOrders, /'received', 'awaiting_confirmation'/);
 });
 
 test("refreshes active customer order tracking every five seconds", async () => {
