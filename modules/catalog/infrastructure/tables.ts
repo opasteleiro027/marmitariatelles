@@ -1,5 +1,6 @@
 import {
   boolean,
+  customType,
   index,
   integer,
   pgTable,
@@ -53,6 +54,10 @@ export const productImages = pgTable(
     storageKey: text("storage_key").notNull(),
     altText: text("alt_text").notNull(),
     displayOrder: integer("display_order").notNull().default(0),
+    imageData: customType<{ data: Buffer; driverData: Buffer }>({
+      dataType: () => "bytea",
+    })("image_data"),
+    contentType: text("content_type"),
   },
   (table) => [index("product_images_product_idx").on(table.productId)],
 );

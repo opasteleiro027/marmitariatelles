@@ -125,6 +125,25 @@
   font: inherit;
 }
 
+.productForm input[type="file"] {
+  padding: 6px;
+  font-size: 12px;
+}
+
+.imageEditor {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.imageEditor img {
+  width: 132px;
+  height: 88px;
+  border-radius: 10px;
+  background: #f2e9dc;
+  object-fit: cover;
+}
+
 .productForm .wide {
   grid-column: 1 / -1;
 }

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type {
   AdminCatalogProduct,
@@ -36,7 +37,7 @@ export function CatalogManagement({
 
       <details className={styles.createPanel}>
         <summary>Cadastrar novo produto</summary>
-        <form action={createProductAction} className={styles.productForm}>
+        <form action={createProductAction} className={styles.productForm} encType="multipart/form-data">
           <label>
             Nome
             <input name="name" required maxLength={100} />
@@ -59,6 +60,10 @@ export function CatalogManagement({
             Preço
             <input name="price" inputMode="decimal" placeholder="28,00" required />
           </label>
+          <label>
+            Imagem do produto <small>(opcional · JPG, PNG ou WebP · até 4 MB)</small>
+            <input name="image" type="file" accept="image/jpeg,image/png,image/webp" />
+          </label>
           <button type="submit">Cadastrar produto</button>
         </form>
       </details>
@@ -78,7 +83,7 @@ export function CatalogManagement({
                 <span className={styles.editAction}>Editar</span>
               </span>
             </summary>
-            <form action={updateProductAction} className={styles.productForm}>
+            <form action={updateProductAction} className={styles.productForm} encType="multipart/form-data">
               <input type="hidden" name="id" value={product.id} />
               <label>
                 Nome
@@ -114,6 +119,25 @@ export function CatalogManagement({
                   required
                 />
               </label>
+              <label>
+                {product.imageUrl ? "Substituir imagem" : "Adicionar imagem"}
+                <small>JPG, PNG ou WebP · até 4 MB</small>
+                <input name="image" type="file" accept="image/jpeg,image/png,image/webp" />
+              </label>
+              {product.imageUrl ? (
+                <div className={styles.imageEditor}>
+                  <Image
+                    alt={`Imagem atual de ${product.name}`}
+                    height={88}
+                    src={product.imageUrl}
+                    width={132}
+                  />
+                  <label className={styles.check}>
+                    <input type="checkbox" name="removeImage" />
+                    Remover imagem atual
+                  </label>
+                </div>
+              ) : null}
               <label className={styles.check}>
                 <input
                   type="checkbox"

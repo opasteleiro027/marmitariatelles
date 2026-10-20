@@ -17,6 +17,7 @@ export type AdminCatalogProduct = {
   soldOut: boolean;
   featured: boolean;
   builderEnabled: boolean;
+  imageUrl: string | null;
 };
 
 export async function getAdminCatalog() {
@@ -40,6 +41,8 @@ export async function getAdminCatalog() {
         p.active,
         p.sold_out AS "soldOut",
         p.featured,
+        (SELECT pi.storage_key FROM product_images pi
+          WHERE pi.product_id = p.id ORDER BY pi.display_order LIMIT 1) AS "imageUrl",
         EXISTS (
           SELECT 1
           FROM product_addon_groups pag
@@ -64,6 +67,7 @@ export async function createCatalogProduct(input: {
   name: string;
   description: string;
   priceInCents: number;
+  image?: UploadedProductImage | null;
 }) {
   const database = getPostgresClient();
   const id = crypto.randomUUID();
@@ -78,6 +82,7 @@ export async function createCatalogProduct(input: {
         ${input.priceInCents}, FALSE, TRUE, FALSE, TRUE, 999,
         ${timestamp}, ${timestamp})
   `;
+  if (input.image) await saveProductImage(id, input.name, input.image);
 }
 
 export async function updateCatalogProduct(input: {
@@ -87,6 +92,8 @@ export async function updateCatalogProduct(input: {
   description: string;
   priceInCents: number;
   active: boolean;
+  image?: UploadedProductImage | null;
+  removeImage?: boolean;
 }) {
   const database = getPostgresClient();
   await database`
@@ -100,6 +107,45 @@ export async function updateCatalogProduct(input: {
       updated_at = ${new Date().toISOString()}
     WHERE id = ${input.id} AND deleted_at IS NULL
   `;
+  if (input.image) {
+    await saveProductImage(input.id, input.name, input.image);
+  } else if (input.removeImage) {
+    await database`
+      DELETE FROM product_images
+      WHERE product_id = ${input.id} AND display_order = 1
+    `;
+  }
+}
+
+export type UploadedProductImage = {
+  data: Buffer;
+  contentType: "image/jpeg" | "image/png" | "image/webp";
+};
+
+async function saveProductImage(
+  productId: string,
+  productName: string,
+  image: UploadedProductImage,
+) {
+  const database = getPostgresClient();
+  const imageId = crypto.randomUUID();
+  const cacheVersion = Date.now();
+  const imageUrl = `/api/catalog/products/${encodeURIComponent(productId)}/image?v=${cacheVersion}`;
+
+  await database.begin(async (transaction) => {
+    await transaction`
+      DELETE FROM product_images
+      WHERE product_id = ${productId} AND display_order = 1
+    `;
+    await transaction`
+      INSERT INTO product_images
+        (id, product_id, storage_key, alt_text, display_order,
+         image_data, content_type)
+      VALUES
+        (${imageId}, ${productId}, ${imageUrl}, ${productName}, 1,
+         ${image.data}, ${image.contentType})
+    `;
+  });
 }
 
 export async function setProductSoldOut(id: string, soldOut: boolean) {

@@ -8,6 +8,7 @@ import {
   deleteCatalogProduct,
   setProductSoldOut,
   updateCatalogProduct,
+  type UploadedProductImage,
 } from "../application/catalog-admin";
 import {
   createMarmitaOption,
@@ -29,6 +30,7 @@ export async function createProductAction(formData: FormData) {
         name: required(formData, "name"),
         description: required(formData, "description"),
         priceInCents: parsePriceToCents(required(formData, "price")),
+        image: await productImage(formData),
       });
       refreshCatalog();
     },
@@ -48,6 +50,8 @@ export async function updateProductAction(formData: FormData) {
         description: required(formData, "description"),
         priceInCents: parsePriceToCents(required(formData, "price")),
         active: formData.get("active") === "on",
+        image: await productImage(formData),
+        removeImage: formData.get("removeImage") === "on",
       });
       refreshCatalog();
     },
@@ -195,6 +199,46 @@ function required(formData: FormData, field: string): string {
   const value = String(formData.get(field) ?? "").trim();
   if (!value) throw new Error(`Campo obrigatório: ${field}`);
   return value;
+}
+
+async function productImage(
+  formData: FormData,
+): Promise<UploadedProductImage | null> {
+  const value = formData.get("image");
+  if (!(value instanceof File) || value.size === 0) return null;
+  if (value.size > 4 * 1024 * 1024) {
+    throw new Error("A imagem deve ter no máximo 4 MB.");
+  }
+
+  const contentType = value.type;
+  if (
+    contentType !== "image/jpeg" &&
+    contentType !== "image/png" &&
+    contentType !== "image/webp"
+  ) {
+    throw new Error("Use uma imagem JPG, PNG ou WebP.");
+  }
+
+  const data = Buffer.from(await value.arrayBuffer());
+  const isJpeg = data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff;
+  const isPng = data.subarray(0, 8).equals(
+    Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]),
+  );
+  const isWebp =
+    data.toString("ascii", 0, 4) === "RIFF" &&
+    data.toString("ascii", 8, 12) === "WEBP";
+  if (
+    !(contentType === "image/jpeg" && isJpeg) &&
+    !(contentType === "image/png" && isPng) &&
+    !(contentType === "image/webp" && isWebp)
+  ) {
+    throw new Error("O arquivo não parece ser uma imagem válida.");
+  }
+
+  return {
+    data,
+    contentType: contentType as UploadedProductImage["contentType"],
+  };
 }
 
 function selectionLimit(formData: FormData, field: string, maximum: number) {
