@@ -15,7 +15,8 @@
   "categories": [
     { "id": "pote-mix-monte", "name": "Monte seu pote", "displayOrder": 1 },
     { "id": "pote-mix-receitas", "name": "Receitas prontas", "displayOrder": 2 },
-    { "id": "pote-mix-saladas", "name": "Saladas", "displayOrder": 3 }
+    { "id": "pote-mix-saladas", "name": "Saladas", "displayOrder": 3 },
+    { "id": "pote-mix-bebidas", "name": "Bebidas", "displayOrder": 4 }
   ],
   "products": [
     { "id": "pote-mix-350", "categoryId": "pote-mix-monte", "name": "Pote 350 g", "description": "Escolha a massa, o molho, os complementos e a finalização.", "priceCents": 1590, "promotionalPriceCents": null, "featured": false, "displayOrder": 1, "imagePath": "/images/pote-mix/real/pote-bacon.webp" },

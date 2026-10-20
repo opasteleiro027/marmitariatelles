@@ -69,6 +69,9 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
     () => Array.from(new Set(regularProducts.map((product) => product.category))),
     [regularProducts],
   );
+  const beverageCategory = categories.find((category) =>
+    category.toLocaleLowerCase("pt-BR").includes("bebida"),
+  );
   const itemCount = items.reduce((total, item) => total + item.quantity, 0);
   const subtotal = items.reduce(
     (total, item) => total + cartItemUnitPrice(item) * item.quantity,
@@ -189,6 +192,9 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
         <a href="#monte-seu-pote"><span>01</span><strong>Monte seu pote</strong><small>Massa, molho e complementos</small></a>
         <a href="#receitas-prontas"><span>02</span><strong>Receitas prontas</strong><small>Combinações especiais</small></a>
         <a href="#saladas"><span>03</span><strong>Saladas</strong><small>Frescas e feitas na hora</small></a>
+        {beverageCategory ? (
+          <a href="#bebidas"><span>04</span><strong>Bebidas</strong><small>Escolha para acompanhar</small></a>
+        ) : null}
       </nav>
 
       <section className={styles.builderArea} id="monte-seu-pote">
@@ -232,13 +238,13 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
               {categories.map((category, index) => (
                 <section
                   className={styles.productSection}
-                  id={category === "Receitas prontas" ? "receitas-prontas" : "saladas"}
+                  id={getCategoryId(category)}
                   key={category}
                 >
                   <div className={styles.sectionIntro}>
                     <span>0{index + 2} · {category}</span>
-                    <h2>{category === "Saladas" ? "Leves, frescas e cheias de sabor." : "Escolha e peça sem precisar montar."}</h2>
-                    <p>{category === "Saladas" ? "Todas acompanham croutons. Personalize com adicionais se quiser." : "Combinações já pensadas para você aproveitar."}</p>
+                    <h2>{getCategoryHeading(category)}</h2>
+                    <p>{getCategoryDescription(category)}</p>
                   </div>
                   <div className={styles.productGrid}>
                     {regularProducts
@@ -311,6 +317,28 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
       ) : null}
     </main>
   );
+}
+
+function getCategoryId(category: string) {
+  const normalized = category.toLocaleLowerCase("pt-BR");
+  if (normalized.includes("receita")) return "receitas-prontas";
+  if (normalized.includes("salada")) return "saladas";
+  if (normalized.includes("bebida")) return "bebidas";
+  return `categoria-${normalized.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-")}`;
+}
+
+function getCategoryHeading(category: string) {
+  const normalized = category.toLocaleLowerCase("pt-BR");
+  if (normalized.includes("salada")) return "Leves, frescas e cheias de sabor.";
+  if (normalized.includes("bebida")) return "Escolha sua bebida favorita.";
+  return "Escolha e peça sem precisar montar.";
+}
+
+function getCategoryDescription(category: string) {
+  const normalized = category.toLocaleLowerCase("pt-BR");
+  if (normalized.includes("salada")) return "Todas acompanham croutons. Personalize com adicionais se quiser.";
+  if (normalized.includes("bebida")) return "Adicione uma bebida ao pedido como qualquer outro produto do cardápio.";
+  return "Combinações já pensadas para você aproveitar.";
 }
 
 function restoreCart(

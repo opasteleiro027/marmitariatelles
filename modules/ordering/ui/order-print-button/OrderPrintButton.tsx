@@ -231,9 +231,11 @@ export const OrderPrintButton = forwardRef<
           </ul>
         </section>
 
-        <section>
-          <p><strong>BEBIDAS:</strong> {order.beverages ?? "Sem bebida"}</p>
-        </section>
+        {order.beverages ? (
+          <section>
+            <p><strong>BEBIDAS (PEDIDO ANTIGO):</strong> {order.beverages}</p>
+          </section>
+        ) : null}
 
         <section>
           <dl>
