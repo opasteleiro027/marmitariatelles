@@ -136,6 +136,7 @@ async function seedFoundation(database) {
           active = TRUE,
           display_order = EXCLUDED.display_order,
           updated_at = EXCLUDED.updated_at
+        WHERE products.deleted_at IS NULL
       `;
 
       await transaction`
@@ -183,6 +184,7 @@ async function seedFoundation(database) {
             additional_price_cents = EXCLUDED.additional_price_cents,
             active = TRUE,
             display_order = EXCLUDED.display_order
+          WHERE addon_options.deleted_at IS NULL
         `;
       }
     }

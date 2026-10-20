@@ -84,6 +84,7 @@ export const addonOptions = pgTable(
     active: boolean("active").notNull().default(true),
     soldOut: boolean("sold_out").notNull().default(false),
     displayOrder: integer("display_order").notNull().default(0),
+    deletedAt: text("deleted_at"),
   },
   (table) => [index("addon_options_group_idx").on(table.groupId)],
 );

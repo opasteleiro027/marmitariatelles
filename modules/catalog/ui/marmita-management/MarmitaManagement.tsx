@@ -1,14 +1,18 @@
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type {
   AdminMarmitaConfiguration,
+  AdminMarmitaOption,
   MarmitaGroupRole,
 } from "../../application/marmita-admin";
 import {
   createMarmitaOptionAction,
   createMarmitaSizeAction,
+  deleteMarmitaOptionAction,
+  deleteMarmitaSizeAction,
   updateMarmitaOptionAction,
   updateMarmitaSizeAction,
 } from "../../server/catalog-actions";
+import { CatalogDeleteControl } from "../catalog-delete-control/CatalogDeleteControl";
 import styles from "./marmita-management.module.css";
 
 const GROUP_DESCRIPTIONS: Record<
@@ -100,7 +104,10 @@ export function MarmitaManagement({
                     {size.proteinLimit} complemento(s) · {size.sideLimit} finalização(ões)
                   </small>
                 </span>
-                <b>{size.soldOut ? "Esgotada" : formatMoney(size.priceInCents)}</b>
+                <span className={styles.cardActions}>
+                  <b>{size.soldOut ? "Esgotada" : formatMoney(size.priceInCents)}</b>
+                  <span className={styles.editAction}>Editar</span>
+                </span>
               </summary>
               <form action={updateMarmitaSizeAction} className={styles.form}>
                 <input type="hidden" name="id" value={size.id} />
@@ -149,8 +156,16 @@ export function MarmitaManagement({
                   <input name="soldOut" type="checkbox" defaultChecked={size.soldOut} />
                   Marcar como esgotada
                 </label>
-                <button type="submit">Salvar tamanho</button>
+                <button type="submit">Salvar edição</button>
               </form>
+              <div className={styles.deleteArea}>
+                <CatalogDeleteControl
+                  action={deleteMarmitaSizeAction}
+                  id={size.id}
+                  itemName={size.name}
+                  itemType="tamanho"
+                />
+              </div>
             </details>
           ))}
         </div>
@@ -170,7 +185,7 @@ export function MarmitaManagement({
             <details className={styles.createPanel}>
               <summary>Adicionar opção</summary>
               <form action={createMarmitaOptionAction} className={styles.optionForm}>
-                <input type="hidden" name="role" value={group.role} />
+                <input type="hidden" name="groupId" value={group.id} />
                 <label>
                   Nome
                   <input name="name" placeholder="Nome da opção" required />
@@ -189,43 +204,94 @@ export function MarmitaManagement({
               </form>
             </details>
             <div className={styles.optionList}>
-              {group.options.map((option) => (
-                <form
-                  action={updateMarmitaOptionAction}
-                  className={styles.optionRow}
-                  key={option.id}
-                >
-                  <input type="hidden" name="id" value={option.id} />
-                  <label>
-                    <span>Opção</span>
-                    <input name="name" defaultValue={option.name} required />
-                  </label>
-                  <label>
-                    <span>Acréscimo</span>
-                    <input
-                      name="additionalPrice"
-                      inputMode="decimal"
-                      defaultValue={(option.additionalPriceInCents / 100)
-                        .toFixed(2)
-                        .replace(".", ",")}
-                      required
-                    />
-                  </label>
-                  <label className={styles.check}>
-                    <input name="active" type="checkbox" defaultChecked={option.active} />
-                    Ativa
-                  </label>
-                  <label className={styles.check}>
-                    <input name="soldOut" type="checkbox" defaultChecked={option.soldOut} />
-                    Esgotada
-                  </label>
-                  <button type="submit">Salvar</button>
-                </form>
-              ))}
+              <OptionList options={group.options} />
             </div>
           </div>
         );
       })}
+
+      {configuration.customizationGroups.length > 0 ? (
+        <div className={styles.step}>
+          <div className={styles.stepTitle}>
+            <span>+</span>
+            <div>
+              <h3>Adicionais de receitas e saladas</h3>
+              <p>Edite ou exclua os adicionais ligados a produtos prontos.</p>
+            </div>
+          </div>
+          {configuration.customizationGroups.map((group) => (
+            <div className={styles.customizationGroup} key={group.id}>
+              <h4>{group.name}</h4>
+              <details className={styles.createPanel}>
+                <summary>Adicionar opção</summary>
+                <form action={createMarmitaOptionAction} className={styles.optionForm}>
+                  <input type="hidden" name="groupId" value={group.id} />
+                  <label>
+                    Nome
+                    <input name="name" placeholder="Nome da opção" required />
+                  </label>
+                  <label>
+                    Acréscimo
+                    <input
+                      name="additionalPrice"
+                      inputMode="decimal"
+                      placeholder="0,00"
+                      defaultValue="0,00"
+                      required
+                    />
+                  </label>
+                  <button type="submit">Adicionar</button>
+                </form>
+              </details>
+              <div className={styles.optionList}>
+                <OptionList options={group.options} />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </section>
   );
+}
+
+function OptionList({ options }: { options: AdminMarmitaOption[] }) {
+  return options.map((option) => (
+    <div className={styles.optionCard} key={option.id}>
+      <form action={updateMarmitaOptionAction} className={styles.optionRow}>
+        <input type="hidden" name="id" value={option.id} />
+        <label>
+          <span>Opção</span>
+          <input name="name" defaultValue={option.name} required />
+        </label>
+        <label>
+          <span>Acréscimo</span>
+          <input
+            name="additionalPrice"
+            inputMode="decimal"
+            defaultValue={(option.additionalPriceInCents / 100)
+              .toFixed(2)
+              .replace(".", ",")}
+            required
+          />
+        </label>
+        <label className={styles.check}>
+          <input name="active" type="checkbox" defaultChecked={option.active} />
+          Ativa
+        </label>
+        <label className={styles.check}>
+          <input name="soldOut" type="checkbox" defaultChecked={option.soldOut} />
+          Esgotada
+        </label>
+        <button type="submit">Salvar edição</button>
+      </form>
+      <div className={styles.optionDelete}>
+        <CatalogDeleteControl
+          action={deleteMarmitaOptionAction}
+          id={option.id}
+          itemName={option.name}
+          itemType="ingrediente"
+        />
+      </div>
+    </div>
+  ));
 }

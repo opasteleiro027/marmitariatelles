@@ -12,51 +12,56 @@ type Feedback = {
 
 export function AdminFeedbackToast() {
   const searchParams = useSearchParams();
-  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const kind = searchParams.get("feedback");
+  const message = searchParams.get("feedbackMessage")?.trim();
+  const feedback: Feedback | null =
+    (kind === "success" || kind === "error") && message
+      ? { kind, message }
+      : null;
+  const feedbackKey = feedback
+    ? `${feedback.kind}:${feedback.message}`
+    : null;
+  const [dismissedKey, setDismissedKey] = useState<string | null>(null);
+  const visibleFeedback =
+    feedback && feedbackKey !== dismissedKey ? feedback : null;
+  const visibleKind = visibleFeedback?.kind;
 
   useEffect(() => {
-    const kind = searchParams.get("feedback");
-    const message = searchParams.get("feedbackMessage")?.trim();
-    if ((kind !== "success" && kind !== "error") || !message) {
-      setFeedback(null);
-      return;
-    }
-
-    setFeedback({ kind, message });
+    if (!visibleKind || !feedbackKey) return;
 
     const timeout = window.setTimeout(
       () => {
-        setFeedback(null);
+        setDismissedKey(feedbackKey);
         clearFeedbackParameters();
       },
-      kind === "success" ? 5000 : 8000,
+      visibleKind === "success" ? 5000 : 8000,
     );
     return () => window.clearTimeout(timeout);
-  }, [searchParams]);
+  }, [feedbackKey, visibleKind]);
 
-  if (!feedback) return null;
+  if (!visibleFeedback) return null;
 
   return (
     <aside
       aria-atomic="true"
-      className={`${styles.toast} ${styles[feedback.kind]}`}
-      role={feedback.kind === "error" ? "alert" : "status"}
+      className={`${styles.toast} ${styles[visibleFeedback.kind]}`}
+      role={visibleFeedback.kind === "error" ? "alert" : "status"}
     >
       <span aria-hidden="true" className={styles.icon}>
-        {feedback.kind === "success" ? "✓" : "!"}
+        {visibleFeedback.kind === "success" ? "✓" : "!"}
       </span>
       <div>
         <strong>
-          {feedback.kind === "success"
+          {visibleFeedback.kind === "success"
             ? "Alteração salva"
             : "Não foi possível salvar"}
         </strong>
-        <p>{feedback.message}</p>
+        <p>{visibleFeedback.message}</p>
       </div>
       <button
         aria-label="Fechar aviso"
         onClick={() => {
-          setFeedback(null);
+          setDismissedKey(feedbackKey);
           clearFeedbackParameters();
         }}
         type="button"

@@ -80,7 +80,7 @@ export async function priceOrderItems(
       ? sql.unsafe<OptionRow[]>(
           `SELECT id, group_id, name, additional_price_cents, active, sold_out
            FROM addon_options
-           WHERE id = ANY($1::TEXT[])`,
+           WHERE id = ANY($1::TEXT[]) AND deleted_at IS NULL`,
           [optionIds],
         )
       : Promise.resolve([]),

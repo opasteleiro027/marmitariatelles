@@ -1,4 +1,4 @@
-import { getPostgresClient } from "@/db";
+import { getPostgresClient, withTransaction } from "@/db";
 
 export type AdminCategory = {
   id: string;
@@ -109,4 +109,26 @@ export async function setProductSoldOut(id: string, soldOut: boolean) {
     SET sold_out = ${soldOut}, updated_at = ${new Date().toISOString()}
     WHERE id = ${id} AND deleted_at IS NULL
   `;
+}
+
+export async function deleteCatalogProduct(id: string) {
+  return withTransaction(async (sql) => {
+    const timestamp = new Date().toISOString();
+    const products = await sql.unsafe<Array<{ id: string }>>(
+      `UPDATE products
+       SET active = FALSE, sold_out = TRUE, deleted_at = $1, updated_at = $1
+       WHERE id = $2 AND deleted_at IS NULL
+       RETURNING id`,
+      [timestamp, id],
+    );
+    if (!products[0]) return false;
+
+    await sql.unsafe(
+      `UPDATE sales_menu_items
+       SET active = FALSE
+       WHERE product_id = $1`,
+      [id],
+    );
+    return true;
+  });
 }

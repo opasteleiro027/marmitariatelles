@@ -12,6 +12,9 @@ const SAFE_ERROR_PREFIXES = [
   "A categoria Monte seu pote não foi encontrada.",
   "Atualização de pedido inválida.",
   "Pedido não encontrado.",
+  "Produto não encontrado.",
+  "Tamanho não encontrado.",
+  "Ingrediente não encontrado.",
   "Esta mudança de status não é permitida.",
   "Digite a confirmação exatamente como solicitado.",
 ] as const;

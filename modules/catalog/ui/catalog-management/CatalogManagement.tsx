@@ -5,9 +5,11 @@ import type {
 } from "../../application/catalog-admin";
 import {
   createProductAction,
+  deleteProductAction,
   toggleSoldOutAction,
   updateProductAction,
 } from "../../server/catalog-actions";
+import { CatalogDeleteControl } from "../catalog-delete-control/CatalogDeleteControl";
 import styles from "./catalog-management.module.css";
 
 export function CatalogManagement({
@@ -69,8 +71,11 @@ export function CatalogManagement({
                 <strong>{product.name}</strong>
                 <small>{product.categoryName}</small>
               </span>
-              <span className={product.soldOut ? styles.soldOut : styles.available}>
-                {product.soldOut ? "Esgotado" : formatMoney(product.priceInCents)}
+              <span className={styles.summaryActions}>
+                <span className={product.soldOut ? styles.soldOut : styles.available}>
+                  {product.soldOut ? "Esgotado" : formatMoney(product.priceInCents)}
+                </span>
+                <span className={styles.editAction}>Editar</span>
               </span>
             </summary>
             <form action={updateProductAction} className={styles.productForm}>
@@ -117,7 +122,7 @@ export function CatalogManagement({
                 />
                 Produto ativo
               </label>
-              <button type="submit">Salvar alterações</button>
+              <button type="submit">Salvar edição</button>
             </form>
             <form action={toggleSoldOutAction} className={styles.soldOutForm}>
               <input type="hidden" name="id" value={product.id} />
@@ -130,6 +135,14 @@ export function CatalogManagement({
                 {product.soldOut ? "Voltar a vender" : "Marcar como esgotado"}
               </button>
             </form>
+            <div className={styles.deleteArea}>
+              <CatalogDeleteControl
+                action={deleteProductAction}
+                id={product.id}
+                itemName={product.name}
+                itemType="produto"
+              />
+            </div>
           </details>
         ))}
       </div>

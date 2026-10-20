@@ -316,6 +316,12 @@ test("admin feedback explains safe failures without leaking database details", (
     adminActionErrorMessage(new Error("relation business_settings does not exist")),
     "Ocorreu um erro inesperado ao salvar. Tente novamente.",
   );
+  assert.equal(
+    adminActionErrorMessage(
+      new Error("Ingrediente não encontrado. Atualize a página e tente novamente."),
+    ),
+    "Ingrediente não encontrado. Atualize a página e tente novamente.",
+  );
 });
 
 test("all administrative mutations show global success or error feedback", async () => {
@@ -358,11 +364,77 @@ test("all administrative mutations show global success or error feedback", async
   ]);
 
   assert.match(shell, /<AdminFeedbackToast/);
-  assert.match(toast, /role=\{feedback\.kind === "error" \? "alert" : "status"\}/);
+  assert.match(
+    toast,
+    /role=\{visibleFeedback\.kind === "error" \? "alert" : "status"\}/,
+  );
   assert.match(toast, /feedbackMessage/);
   assert.equal((establishment.match(/runAdminMutation\(/g) ?? []).length, 5);
-  assert.equal((catalog.match(/runAdminMutation\(/g) ?? []).length, 7);
+  assert.equal((catalog.match(/runAdminMutation\(/g) ?? []).length, 10);
   assert.equal((orders.match(/runAdminMutation\(/g) ?? []).length, 2);
+});
+
+test("admin can edit and safely delete products, sizes and ingredients", async () => {
+  const [
+    actions,
+    catalogManagement,
+    marmitaManagement,
+    deleteControl,
+    migration,
+    seed,
+  ] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/catalog/server/catalog-actions.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/catalog/ui/catalog-management/CatalogManagement.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/catalog/ui/marmita-management/MarmitaManagement.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/catalog/ui/catalog-delete-control/CatalogDeleteControl.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../drizzle-postgres/0007_catalog_soft_delete.sql",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(new URL("../db/migrate.mjs", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(actions, /export async function deleteProductAction/);
+  assert.match(actions, /export async function deleteMarmitaSizeAction/);
+  assert.match(actions, /export async function deleteMarmitaOptionAction/);
+  assert.match(catalogManagement, /itemType="produto"/);
+  assert.match(catalogManagement, />Salvar edição</);
+  assert.match(marmitaManagement, /itemType="tamanho"/);
+  assert.match(marmitaManagement, /itemType="ingrediente"/);
+  assert.match(marmitaManagement, /Adicionais de receitas e saladas/);
+  assert.match(marmitaManagement, /name="groupId"/);
+  assert.match(deleteControl, /Confirmar exclusão/);
+  assert.match(deleteControl, /pedidos antigos serão preservados/);
+  assert.match(migration, /ADD COLUMN IF NOT EXISTS "deleted_at" text/);
+  assert.match(seed, /WHERE products\.deleted_at IS NULL/);
+  assert.match(seed, /WHERE addon_options\.deleted_at IS NULL/);
 });
 
 test("admin can edit the storefront operating-hours label", async () => {

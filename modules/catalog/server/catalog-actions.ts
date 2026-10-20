@@ -5,16 +5,16 @@ import { runAdminMutation } from "@/modules/admin/server/admin-feedback";
 import { revalidatePath } from "next/cache";
 import {
   createCatalogProduct,
+  deleteCatalogProduct,
   setProductSoldOut,
   updateCatalogProduct,
 } from "../application/catalog-admin";
 import {
-  MARMITA_GROUP_ROLES,
   createMarmitaOption,
   createMarmitaSize,
+  deleteMarmitaOption,
   updateMarmitaOption,
   updateMarmitaSize,
-  type MarmitaGroupRole,
 } from "../application/marmita-admin";
 import { parsePriceToCents } from "../domain/parse-price";
 
@@ -49,6 +49,21 @@ export async function updateProductAction(formData: FormData) {
         priceInCents: parsePriceToCents(required(formData, "price")),
         active: formData.get("active") === "on",
       });
+      refreshCatalog();
+    },
+  );
+}
+
+export async function deleteProductAction(formData: FormData) {
+  await requireAdmin();
+  return runAdminMutation(
+    "/admin/cardapio",
+    "Produto excluído do cardápio com sucesso.",
+    async () => {
+      const deleted = await deleteCatalogProduct(required(formData, "id"));
+      if (!deleted) {
+        throw new Error("Produto não encontrado. Atualize a página e tente novamente.");
+      }
       refreshCatalog();
     },
   );
@@ -108,6 +123,21 @@ export async function updateMarmitaSizeAction(formData: FormData) {
   );
 }
 
+export async function deleteMarmitaSizeAction(formData: FormData) {
+  await requireAdmin();
+  return runAdminMutation(
+    "/admin/cardapio",
+    "Tamanho excluído com sucesso.",
+    async () => {
+      const deleted = await deleteCatalogProduct(required(formData, "id"));
+      if (!deleted) {
+        throw new Error("Tamanho não encontrado. Atualize a página e tente novamente.");
+      }
+      refreshCatalog();
+    },
+  );
+}
+
 export async function createMarmitaOptionAction(formData: FormData) {
   await requireAdmin();
   return runAdminMutation(
@@ -115,7 +145,7 @@ export async function createMarmitaOptionAction(formData: FormData) {
     "Ingrediente adicionado com sucesso.",
     async () => {
       await createMarmitaOption({
-        role: builderRole(formData),
+        groupId: required(formData, "groupId"),
         name: required(formData, "name"),
         additionalPriceInCents: parsePriceToCents(
           String(formData.get("additionalPrice") ?? "0"),
@@ -146,6 +176,21 @@ export async function updateMarmitaOptionAction(formData: FormData) {
   );
 }
 
+export async function deleteMarmitaOptionAction(formData: FormData) {
+  await requireAdmin();
+  return runAdminMutation(
+    "/admin/cardapio",
+    "Ingrediente excluído com sucesso.",
+    async () => {
+      const deleted = await deleteMarmitaOption(required(formData, "id"));
+      if (!deleted) {
+        throw new Error("Ingrediente não encontrado. Atualize a página e tente novamente.");
+      }
+      refreshCatalog();
+    },
+  );
+}
+
 function required(formData: FormData, field: string): string {
   const value = String(formData.get(field) ?? "").trim();
   if (!value) throw new Error(`Campo obrigatório: ${field}`);
@@ -158,14 +203,6 @@ function selectionLimit(formData: FormData, field: string, maximum: number) {
     throw new Error(`Limite inválido: ${field}`);
   }
   return value;
-}
-
-function builderRole(formData: FormData): MarmitaGroupRole {
-  const value = required(formData, "role");
-  if (!MARMITA_GROUP_ROLES.includes(value as MarmitaGroupRole)) {
-    throw new Error("Etapa de montagem inválida.");
-  }
-  return value as MarmitaGroupRole;
 }
 
 function refreshCatalog() {

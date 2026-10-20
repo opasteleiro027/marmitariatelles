@@ -23,7 +23,7 @@ export type AdminMarmitaSize = {
 
 export type AdminMarmitaOption = {
   id: string;
-  role: MarmitaGroupRole;
+  role: MarmitaGroupRole | null;
   name: string;
   additionalPriceInCents: number;
   active: boolean;
@@ -37,14 +37,21 @@ export type AdminMarmitaGroup = {
   options: AdminMarmitaOption[];
 };
 
+export type AdminCustomizationGroup = {
+  id: string;
+  name: string;
+  options: AdminMarmitaOption[];
+};
+
 export type AdminMarmitaConfiguration = {
   sizes: AdminMarmitaSize[];
   groups: AdminMarmitaGroup[];
+  customizationGroups: AdminCustomizationGroup[];
 };
 
 export async function getAdminMarmitaConfiguration(): Promise<AdminMarmitaConfiguration> {
   const sql = getPostgresClient();
-  const [sizes, groups, options] = await Promise.all([
+  const [sizes, groups, customizationGroups, options] = await Promise.all([
     sql.unsafe<
       Array<{
         id: string;
@@ -82,22 +89,29 @@ export async function getAdminMarmitaConfiguration(): Promise<AdminMarmitaConfig
          WHEN 'base' THEN 1 WHEN 'beans' THEN 2 WHEN 'protein' THEN 3
          WHEN 'side' THEN 4 ELSE 5 END`,
     ),
+    sql.unsafe<Array<{ id: string; name: string }>>(
+      `SELECT id, name
+       FROM addon_groups
+       WHERE builder_role IS NULL AND active = TRUE
+       ORDER BY name`,
+    ),
     sql.unsafe<
       Array<{
         id: string;
-        role: MarmitaGroupRole;
+        group_id: string;
+        role: MarmitaGroupRole | null;
         name: string;
         additional_price_in_cents: number;
         active: boolean;
         sold_out: boolean;
       }>
     >(
-      `SELECT ao.id, ag.builder_role AS role, ao.name,
+      `SELECT ao.id, ao.group_id, ag.builder_role AS role, ao.name,
               ao.additional_price_cents AS additional_price_in_cents,
               ao.active, ao.sold_out
        FROM addon_options ao
        JOIN addon_groups ag ON ag.id = ao.group_id
-       WHERE ag.builder_role IS NOT NULL
+       WHERE ag.active = TRUE AND ao.deleted_at IS NULL
        ORDER BY CASE ag.builder_role
          WHEN 'base' THEN 1 WHEN 'beans' THEN 2 WHEN 'protein' THEN 3
          WHEN 'side' THEN 4 ELSE 5 END,
@@ -120,6 +134,19 @@ export async function getAdminMarmitaConfiguration(): Promise<AdminMarmitaConfig
       ...group,
       options: options
         .filter((option) => option.role === group.role)
+        .map((option) => ({
+          id: option.id,
+          role: option.role,
+          name: option.name,
+          additionalPriceInCents: option.additional_price_in_cents,
+          active: option.active,
+          soldOut: option.sold_out,
+        })),
+    })),
+    customizationGroups: customizationGroups.map((group) => ({
+      ...group,
+      options: options
+        .filter((option) => option.group_id === group.id)
         .map((option) => ({
           id: option.id,
           role: option.role,
@@ -241,7 +268,7 @@ export async function updateMarmitaSize(input: {
 }
 
 export async function createMarmitaOption(input: {
-  role: MarmitaGroupRole;
+  groupId: string;
   name: string;
   additionalPriceInCents: number;
 }) {
@@ -254,8 +281,8 @@ export async function createMarmitaOption(input: {
        COALESCE((SELECT MAX(display_order) + 1 FROM addon_options
          WHERE group_id = ag.id), 1)
      FROM addon_groups ag
-     WHERE ag.builder_role = $4 AND ag.active = TRUE`,
-    [crypto.randomUUID(), input.name, input.additionalPriceInCents, input.role],
+     WHERE ag.id = $4 AND ag.active = TRUE`,
+    [crypto.randomUUID(), input.name, input.additionalPriceInCents, input.groupId],
   );
 }
 
@@ -270,7 +297,7 @@ export async function updateMarmitaOption(input: {
   await sql.unsafe(
     `UPDATE addon_options
      SET name = $1, additional_price_cents = $2, active = $3, sold_out = $4
-     WHERE id = $5`,
+     WHERE id = $5 AND deleted_at IS NULL`,
     [
       input.name,
       input.additionalPriceInCents,
@@ -279,6 +306,18 @@ export async function updateMarmitaOption(input: {
       input.id,
     ],
   );
+}
+
+export async function deleteMarmitaOption(id: string) {
+  const sql = getPostgresClient();
+  const options = await sql.unsafe<Array<{ id: string }>>(
+    `UPDATE addon_options
+     SET active = FALSE, sold_out = TRUE, deleted_at = $1
+     WHERE id = $2 AND deleted_at IS NULL
+     RETURNING id`,
+    [new Date().toISOString(), id],
+  );
+  return Boolean(options[0]);
 }
 
 function limitForRole(

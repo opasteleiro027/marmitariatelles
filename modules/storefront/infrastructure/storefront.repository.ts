@@ -168,7 +168,7 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
             WHERE pi.product_id = p.id ORDER BY pi.display_order LIMIT 1) AS image_url
         FROM products p
         JOIN categories c ON c.id = p.category_id
-        WHERE p.active = TRUE AND c.active = TRUE
+        WHERE p.active = TRUE AND p.deleted_at IS NULL AND c.active = TRUE
         ORDER BY c.display_order, p.display_order`,
       ).all<ProductRow>(),
       database.prepare(
@@ -203,7 +203,7 @@ export async function getStorefrontSnapshot(): Promise<StorefrontSnapshot> {
                 ao.active, ao.sold_out
          FROM addon_options ao
          JOIN addon_groups ag ON ag.id = ao.group_id
-         WHERE ag.active = TRUE
+         WHERE ag.active = TRUE AND ao.deleted_at IS NULL
          ORDER BY ao.display_order, ao.name`,
       ).all<BuilderOptionRow>(),
       database.prepare(

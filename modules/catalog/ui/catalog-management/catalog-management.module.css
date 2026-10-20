@@ -67,6 +67,22 @@
   font-weight: 600;
 }
 
+.summaryActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.editAction {
+  padding: 6px 10px;
+  border: 1px solid #d9cbbd;
+  border-radius: 9px;
+  background: white;
+  color: var(--brown-950);
+  font-size: 12px;
+  font-weight: 850;
+}
+
 .available,
 .soldOut {
   padding: 6px 9px;
@@ -138,9 +154,19 @@
 }
 
 .soldOutForm {
+  padding: 0 18px 10px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.deleteArea {
   padding: 0 18px 18px;
   display: flex;
   justify-content: flex-end;
+}
+
+.deleteArea > * {
+  max-width: 560px;
 }
 
 .soldOutForm button {
@@ -161,5 +187,10 @@
 
   .productForm .wide {
     grid-column: auto;
+  }
+
+  .summaryActions {
+    align-items: flex-end;
+    flex-direction: column;
   }
 }
