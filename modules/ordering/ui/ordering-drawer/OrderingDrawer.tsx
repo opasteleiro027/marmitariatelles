@@ -79,7 +79,6 @@ export function OrderingDrawer({
           customer: {
             name: String(form.get("name") ?? ""),
             phone: String(form.get("phone") ?? ""),
-            email: String(form.get("email") ?? ""),
           },
           fulfillment,
           deliveryAreaId:
@@ -253,10 +252,6 @@ export function OrderingDrawer({
                   placeholder="(27) 99999-9999"
                   required
                 />
-              </label>
-              <label>
-                E-mail <small>(opcional)</small>
-                <input name="email" type="email" autoComplete="email" />
               </label>
             </fieldset>
 

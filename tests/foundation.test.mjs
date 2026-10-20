@@ -914,7 +914,6 @@ test("normalizes checkout input and combines repeated products", () => {
     customer: {
       name: "Cliente Teste",
       phone: "(27) 99999-9999",
-      email: "",
     },
     fulfillment: "pickup",
     deliverySlotId: "slot-1",
@@ -927,6 +926,7 @@ test("normalizes checkout input and combines repeated products", () => {
     ],
   });
   assert.equal(request.customer.phone, "27999999999");
+  assert.equal(request.customer.email, null);
   assert.deepEqual(request.items, [
     {
       productId: "marmita",
@@ -1061,6 +1061,8 @@ test("checkout starts with no fulfillment selected and shows three choices", asy
   assert.match(checkout, />Retirada</);
   assert.match(checkout, />Receber em casa</);
   assert.match(checkout, /!fulfillment/);
+  assert.doesNotMatch(checkout, /name="email"/);
+  assert.doesNotMatch(checkout, /form\.get\("email"\)/);
 });
 
 test("daily report separates dine-in orders", async () => {
