@@ -32,25 +32,26 @@ export function AdminShell({
           <strong>Pote Mix</strong>
         </Link>
         <AdminNavigation />
-        <form action={logoutAction} className={styles.signOutForm}>
-          <button className={styles.signOut} type="submit">
-            Sair
-          </button>
-        </form>
+        <div className={styles.sidebarFooter}>
+          <div className={styles.account}>
+            <small>Administrador</small>
+            <strong title={userName}>{userName}</strong>
+          </div>
+          <Link className={styles.storeLink} href="/cardapio" target="_blank">
+            <span aria-hidden="true">↗</span>
+            Ver loja
+          </Link>
+          <form action={logoutAction} className={styles.signOutForm}>
+            <button className={styles.signOut} type="submit">
+              Sair
+            </button>
+          </form>
+        </div>
       </aside>
 
       <section className={styles.content}>
-        <header className={styles.header}>
-          <div>
-            <p>Painel administrativo</p>
-            <strong>{userName}</strong>
-          </div>
-          <Link href="/cardapio" target="_blank">
-            Ver loja ↗
-          </Link>
-        </header>
-        <AdminOrderMonitor />
         {children}
+        <AdminOrderMonitor />
       </section>
     </main>
   );

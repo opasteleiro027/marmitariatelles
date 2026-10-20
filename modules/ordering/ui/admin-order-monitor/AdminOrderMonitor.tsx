@@ -243,47 +243,58 @@ export function AdminOrderMonitor() {
         ? `Som ativo · ${volume}%`
         : "Som ativo · aguardando interação";
 
+  if (pathname !== "/admin/configuracoes") return null;
+
   return (
-    <div className={styles.liveControls}>
-      <div className={styles.liveStatus}>
-        <span aria-hidden="true" />
-        <span>Atualização automática · 5s</span>
+    <section className={styles.liveControls}>
+      <div className={styles.heading}>
+        <div>
+          <p>Operação</p>
+          <h2>Atualização e alertas</h2>
+        </div>
+        <span>Preferências deste computador</span>
       </div>
-      <div className={styles.soundControls}>
-        <span className={styles.soundStatus}>{soundStatus}</span>
-        <label className={styles.volumeControl}>
-          <span>Volume</span>
-          <input
-            aria-label="Volume do alerta de novo pedido"
+      <div className={styles.controlsRow}>
+        <div className={styles.liveStatus}>
+          <span aria-hidden="true" />
+          <span>Atualização automática dos pedidos a cada 5 segundos</span>
+        </div>
+        <div className={styles.soundControls}>
+          <span className={styles.soundStatus}>{soundStatus}</span>
+          <label className={styles.volumeControl}>
+            <span>Volume</span>
+            <input
+              aria-label="Volume do alerta de novo pedido"
+              disabled={!soundEnabled || audioState === "unavailable"}
+              max="100"
+              min="0"
+              onChange={(event) => updateVolume(Number(event.target.value))}
+              type="range"
+              value={volume}
+            />
+            <output>{volume}%</output>
+          </label>
+          <button
             disabled={!soundEnabled || audioState === "unavailable"}
-            max="100"
-            min="0"
-            onChange={(event) => updateVolume(Number(event.target.value))}
-            type="range"
-            value={volume}
-          />
-          <output>{volume}%</output>
-        </label>
-        <button
-          disabled={!soundEnabled || audioState === "unavailable"}
-          onClick={() => void playAlert(false)}
-          type="button"
-        >
-          Testar som
-        </button>
-        <button
-          aria-pressed={soundEnabled}
-          className={soundEnabled ? styles.soundEnabled : undefined}
-          onClick={toggleSound}
-          type="button"
-        >
-          <span aria-hidden="true">{soundEnabled ? "🔊" : "🔕"}</span>
-          {soundEnabled ? "Silenciar" : "Ativar som"}
-        </button>
+            onClick={() => void playAlert(false)}
+            type="button"
+          >
+            Testar som
+          </button>
+          <button
+            aria-pressed={soundEnabled}
+            className={soundEnabled ? styles.soundEnabled : undefined}
+            onClick={toggleSound}
+            type="button"
+          >
+            <span aria-hidden="true">{soundEnabled ? "🔊" : "🔕"}</span>
+            {soundEnabled ? "Silenciar" : "Ativar som"}
+          </button>
+        </div>
       </div>
       <p aria-live="polite" className={styles.liveAnnouncement}>
         {notification}
       </p>
-    </div>
+    </section>
   );
 }

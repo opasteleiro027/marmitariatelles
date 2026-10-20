@@ -23,24 +23,64 @@
   text-decoration: none;
 }
 
-.signOutForm {
+.sidebarFooter {
   margin-top: auto;
+  display: grid;
+  gap: 6px;
 }
 
+.account {
+  min-width: 0;
+  margin-bottom: 6px;
+  padding: 12px 13px;
+  border-top: 1px solid rgb(255 255 255 / 12%);
+  color: #d9ccc3;
+}
+
+.account small,
+.account strong {
+  display: block;
+}
+
+.account small {
+  margin-bottom: 4px;
+  color: #aa998e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.account strong {
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.storeLink,
 .signOut {
   width: 100%;
   min-height: 46px;
   padding: 0 13px;
-  border: 0;
+  display: flex;
+  align-items: center;
+  gap: 13px;
   border-radius: 11px;
-  background: transparent;
   color: #d9ccc3;
+  font-weight: 750;
+  text-decoration: none;
+}
+
+.signOut {
+  border: 0;
+  background: transparent;
   cursor: pointer;
   font: inherit;
-  font-weight: 750;
   text-align: left;
 }
 
+.storeLink:hover,
 .signOut:hover {
   background: rgb(255 255 255 / 9%);
   color: white;
@@ -49,40 +89,6 @@
 .content {
   min-width: 0;
   padding: 30px clamp(22px, 5vw, 68px) 60px;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.header p {
-  margin: 0 0 3px;
-  color: #7c6b60;
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-
-.header strong {
-  color: var(--brown-950);
-  font-size: 14px;
-}
-
-.header a {
-  min-height: 42px;
-  padding: 0 15px;
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid #d9cdbd;
-  border-radius: 12px;
-  color: var(--brown-950);
-  font-weight: 850;
-  text-decoration: none;
-  white-space: nowrap;
 }
 
 @media (max-width: 760px) {
@@ -110,13 +116,26 @@
     display: none;
   }
 
-  .signOutForm {
+  .sidebarFooter {
     margin: 0;
+    display: flex;
+    gap: 3px;
+  }
+
+  .account {
+    display: none;
+  }
+
+  .storeLink,
+  .signOut {
+    width: auto;
+    min-height: 38px;
+    padding: 0 10px;
+    gap: 5px;
+    font-size: 12px;
   }
 
   .signOut {
-    min-height: 38px;
-    padding: 0 10px;
     text-align: center;
   }
 

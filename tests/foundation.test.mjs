@@ -472,6 +472,41 @@ test("admin navigation uses dedicated routes instead of page anchors", async () 
   assert.doesNotMatch(navigation, /href:\s*["']#/);
 });
 
+test("keeps order screens compact and moves panel controls to settings", async () => {
+  const [shell, monitor, pageHeaderStyles] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/admin/ui/admin-shell/AdminShell.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/ui/admin-order-monitor/AdminOrderMonitor.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/admin/ui/admin-page-header/admin-page-header.module.css",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+
+  assert.doesNotMatch(shell, /className=\{styles\.header\}/);
+  assert.match(shell, /className=\{styles\.account\}/);
+  assert.match(shell, /className=\{styles\.storeLink\}/);
+  assert.match(shell, /\{children\}[\s\S]*<AdminOrderMonitor/);
+  assert.match(monitor, /pathname !== "\/admin\/configuracoes"/);
+  assert.match(monitor, /Atualização e alertas/);
+  assert.match(monitor, /Atualização automática dos pedidos a cada 5 segundos/);
+  assert.match(pageHeaderStyles, /margin:\s*0 0 22px/);
+});
+
 test("admin feedback URLs preserve the destination and encode messages", () => {
   assert.equal(
     buildAdminFeedbackUrl(
