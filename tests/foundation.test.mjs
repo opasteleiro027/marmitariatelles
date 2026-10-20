@@ -650,6 +650,9 @@ test("ships the Pote Mix menu and its configurable products", async () => {
   assert.match(configurator, /const \[sizeId, setSizeId\] = useState\(""\)/);
   assert.match(configurator, /sizeId === candidate\.id \? "✔️" : "▤"/);
   assert.match(configurator, /function continueShopping/);
+  assert.match(configurator, /scrollToStep/);
+  assert.match(configurator, /scrollIntoView/);
+  assert.match(configurator, /shouldAdvanceMarmitaStep/);
   assert.match(configurator, /setSizeId\(""\)/);
   assert.match(configuratorParts, /CONTINUAR COMPRANDO/);
   assert.match(configuratorParts, /Complete seu pote/);

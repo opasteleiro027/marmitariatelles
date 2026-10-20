@@ -11,6 +11,7 @@
 
 .step {
   padding: 30px 0;
+  scroll-margin-top: 82px;
   border-bottom: 1px solid #f0ddd6;
 }
 
@@ -359,6 +360,12 @@
 
   .summary {
     position: static;
+  }
+}
+
+@media (max-width: 780px) {
+  .step {
+    scroll-margin-top: 112px;
   }
 }
 

@@ -1,8 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { CartItem } from "@/modules/ordering/ui/ordering-drawer/ordering.types";
 import { formatMoney } from "../../domain/format-money";
+import {
+  changeMarmitaOptionQuantity,
+  shouldAdvanceMarmitaStep,
+} from "../../domain/marmita-configurator-flow";
 import type {
   StorefrontMarmitaGroup,
   StorefrontSnapshot,
@@ -28,6 +32,8 @@ export function MarmitaConfigurator({
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [notes, setNotes] = useState("");
   const [addedToCart, setAddedToCart] = useState(false);
+  const groupStepRefs = useRef<Record<string, HTMLElement | null>>({});
+  const notesStepRef = useRef<HTMLElement | null>(null);
   const size = builder.sizes.find((candidate) => candidate.id === sizeId);
 
   const selections = useMemo(
@@ -77,6 +83,7 @@ export function MarmitaConfigurator({
     setQuantities((current) =>
       clampSelections(current, builder.groups, nextSize.limits),
     );
+    scrollToStep(groupStepRefs.current[builder.groups[0]?.id]);
   }
 
   function changeOption(
@@ -88,18 +95,33 @@ export function MarmitaConfigurator({
     const option = group.options.find((candidate) => candidate.id === optionId);
     if (!option?.available) return;
     const maximum = size.limits[group.id]?.maximum ?? 99;
-    setQuantities((current) => {
-      if (group.selectionType === "single") {
-        const cleared = { ...current };
-        for (const candidate of group.options) delete cleared[candidate.id];
-        return { ...cleared, [optionId]: 1 };
-      }
-      const groupTotal = selectionCount(group, current);
-      const currentValue = current[optionId] ?? 0;
-      const nextValue = Math.max(0, currentValue + delta);
-      if (delta > 0 && groupTotal >= maximum) return current;
-      return { ...current, [optionId]: nextValue };
+    const nextQuantities = changeMarmitaOptionQuantity({
+      current: quantities,
+      delta,
+      group,
+      maximum,
+      optionId,
     });
+    const changed = nextQuantities !== quantities;
+    setQuantities(nextQuantities);
+
+    if (
+      shouldAdvanceMarmitaStep({
+        changed,
+        delta,
+        group,
+        maximum,
+        quantities: nextQuantities,
+      })
+    ) {
+      const groupIndex = builder.groups.findIndex(
+        (candidate) => candidate.id === group.id,
+      );
+      const nextGroup = builder.groups[groupIndex + 1];
+      scrollToStep(
+        nextGroup ? groupStepRefs.current[nextGroup.id] : notesStepRef.current,
+      );
+    }
   }
 
   function addToCart() {
@@ -177,11 +199,14 @@ export function MarmitaConfigurator({
             onChange={changeOption}
             orderingEnabled={orderingEnabled}
             quantities={quantities}
+            sectionRef={(node) => {
+              groupStepRefs.current[group.id] = node;
+            }}
             size={size}
           />
         ))}
 
-        <section className={styles.step}>
+        <section className={styles.step} ref={notesStepRef}>
           <StepTitle number={builder.groups.length + 2} title="Alguma observação?" />
           <div className={styles.notes}>
             <textarea
@@ -209,6 +234,21 @@ export function MarmitaConfigurator({
       />
     </div>
   );
+}
+
+function scrollToStep(target: HTMLElement | null | undefined) {
+  if (!target || typeof window === "undefined") return;
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => {
+      const reduceMotion = window.matchMedia?.(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      target.scrollIntoView({
+        behavior: reduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    });
+  });
 }
 
 function clampSelections(

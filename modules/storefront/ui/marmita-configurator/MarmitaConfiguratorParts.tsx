@@ -23,6 +23,7 @@ export function MarmitaGroupStep({
   quantities,
   orderingEnabled,
   onChange,
+  sectionRef,
 }: {
   group: StorefrontMarmitaGroup;
   locked: boolean;
@@ -31,11 +32,12 @@ export function MarmitaGroupStep({
   quantities: Record<string, number>;
   orderingEnabled: boolean;
   onChange: (group: StorefrontMarmitaGroup, optionId: string, delta: number) => void;
+  sectionRef?: (node: HTMLElement | null) => void;
 }) {
   const count = selectionCount(group, quantities);
   const limit = size?.limits[group.id];
   return (
-    <section className={styles.step}>
+    <section className={styles.step} ref={sectionRef}>
       <StepTitle number={number} title={group.name} />
       <p className={styles.limit}>
         {group.role === "extra"
