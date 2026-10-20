@@ -497,10 +497,18 @@ test("public navigation keeps the ordering journey focused", async () => {
 });
 
 test("ships the Pote Mix menu and its configurable products", async () => {
-  const [hero, builder, configurator, configuratorParts, customizer] = await Promise.all([
-    readFile(
-      new URL("../public/images/pote-mix/monte-seu-pote.webp", import.meta.url),
-    ),
+  const realPhotoNames = [
+    "mac-cheese.webp",
+    "penne-camarao-1.webp",
+    "penne-camarao-2.webp",
+    "pote-bacon.webp",
+    "preparo-pote.webp",
+    "salada-brocolis.webp",
+    "salada-camarao.webp",
+    "salada-completa.webp",
+    "salada-embalada.webp",
+  ];
+  const [builder, configurator, configuratorParts, customizer, realPhotos] = await Promise.all([
     readFile(
       new URL(
         "../modules/storefront/ui/menu-builder/MenuBuilder.tsx",
@@ -529,10 +537,20 @@ test("ships the Pote Mix menu and its configurable products", async () => {
       ),
       "utf8",
     ),
+    Promise.all(
+      realPhotoNames.map((name) =>
+        readFile(
+          new URL(`../public/images/pote-mix/real/${name}`, import.meta.url),
+        ),
+      ),
+    ),
   ]);
-  assert.ok(hero.length > 100_000);
+  assert.equal(realPhotos.length, 9);
+  assert.ok(realPhotos.every((photo) => photo.length > 50_000));
   assert.match(builder, /categories\.map/);
   assert.match(builder, /MarmitaConfigurator/);
+  assert.match(builder, /Comida de verdade, feita na hora/);
+  assert.match(builder, /REAL_FOOD_GALLERY/);
   assert.match(builder, /FINALIZAR PEDIDO/);
   assert.match(configurator, /Escolha o tamanho/);
   assert.match(configurator, /Alguma observação/);

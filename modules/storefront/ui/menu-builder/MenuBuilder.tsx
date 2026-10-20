@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { OrderingDrawer } from "@/modules/ordering/ui/ordering-drawer/OrderingDrawer";
 import {
@@ -19,6 +20,29 @@ import { SiteHeader } from "../site-header/SiteHeader";
 import styles from "./menu-builder.module.css";
 
 const CART_KEY = "pote-mix-cart-v1";
+
+const REAL_FOOD_GALLERY = [
+  {
+    src: "/images/pote-mix/real/pote-bacon.webp",
+    alt: "Pote de massa do Pote Mix com bacon, queijo e cheiro-verde",
+    label: "Monte do seu jeito",
+  },
+  {
+    src: "/images/pote-mix/real/salada-camarao.webp",
+    alt: "Salada fresca do Pote Mix com camarões e frutas",
+    label: "Saladas frescas",
+  },
+  {
+    src: "/images/pote-mix/real/salada-brocolis.webp",
+    alt: "Salada do Pote Mix com brócolis, tomate e bacon",
+    label: "Ingredientes de verdade",
+  },
+  {
+    src: "/images/pote-mix/real/penne-camarao-2.webp",
+    alt: "Penne cremoso com camarão preparado no Pote Mix",
+    label: "Preparado na hora",
+  },
+] as const;
 
 type StoredCartItem = {
   lineId: string;
@@ -178,6 +202,27 @@ export function MenuBuilder({ snapshot }: { snapshot: StorefrontSnapshot }) {
           onAdd={(item) => setItems((current) => [...current, item])}
           orderingEnabled={snapshot.ordersOpen}
         />
+      </section>
+
+      <section className={styles.realFood} aria-labelledby="real-food-title">
+        <div className={styles.realFoodIntro}>
+          <span>Da nossa cozinha</span>
+          <h2 id="real-food-title">Comida de verdade, feita na hora.</h2>
+          <p>Fotos reais dos pratos e ingredientes preparados pelo Pote Mix.</p>
+        </div>
+        <div className={styles.realFoodGrid}>
+          {REAL_FOOD_GALLERY.map((photo, index) => (
+            <figure className={index === 0 ? styles.galleryFeatured : undefined} key={photo.src}>
+              <Image
+                alt={photo.alt}
+                fill
+                sizes={index === 0 ? "(max-width: 720px) 100vw, 55vw" : "(max-width: 720px) 100vw, 24vw"}
+                src={photo.src}
+              />
+              <figcaption>{photo.label}</figcaption>
+            </figure>
+          ))}
+        </div>
       </section>
 
       {categories.length ? (
