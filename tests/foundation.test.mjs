@@ -567,7 +567,7 @@ test("ships the Pote Mix menu and its configurable products", async () => {
   assert.match(customizer, /customizationGroups/);
 });
 
-test("keeps the Caesar bowl centered and fully visible on mobile", async () => {
+test("keeps the Caesar photo zoomed and centered on mobile", async () => {
   const [productCard, productCardStyles] = await Promise.all([
     readFile(
       new URL(
@@ -587,8 +587,8 @@ test("keeps the Caesar bowl centered and fully visible on mobile", async () => {
 
   assert.match(productCard, /product\.id === "salada-caesar"/);
   assert.match(productCardStyles, /img\.caesarImage/);
-  assert.match(productCardStyles, /object-fit:\s*contain/);
-  assert.match(productCardStyles, /object-position:\s*center/);
+  assert.match(productCardStyles, /object-fit:\s*cover/);
+  assert.match(productCardStyles, /object-position:\s*50% 60%/);
 });
 
 test("uses only the site switch to release or block orders", () => {
