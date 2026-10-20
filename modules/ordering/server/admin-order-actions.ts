@@ -5,6 +5,10 @@ import { requireAdmin } from "@/modules/admin-auth/server/admin-session";
 import { adminActionErrorMessage } from "@/modules/admin/domain/admin-feedback";
 import { runAdminMutation } from "@/modules/admin/server/admin-feedback";
 import { updateOrderStatus } from "../application/admin-orders";
+import {
+  addTableConsumption,
+  closeTableTab,
+} from "../application/table-tabs";
 import { resetTestOrderHistory } from "../application/test-order-history-reset/reset-test-order-history";
 
 export async function updateOrderStatusAction(formData: FormData) {
@@ -20,6 +24,7 @@ export async function updateOrderStatusAction(formData: FormData) {
       );
       revalidatePath("/admin");
       revalidatePath("/admin/pedidos");
+      revalidatePath("/admin/comandas-mesa");
     },
   );
 }
@@ -38,6 +43,7 @@ export async function updateOrderStatusInlineAction(
     await updateOrderStatus(orderId, status, admin.email);
     revalidatePath("/admin");
     revalidatePath("/admin/pedidos");
+    revalidatePath("/admin/comandas-mesa");
 
     return {
       ok: true,
@@ -48,6 +54,38 @@ export async function updateOrderStatusInlineAction(
       ok: false,
       message: adminActionErrorMessage(reason),
     };
+  }
+}
+
+export async function addTableConsumptionInlineAction(input: {
+  orderId: string;
+  name: string;
+  quantity: number;
+  unitPriceInCents: number;
+  notes: string | null;
+}): Promise<UpdateOrderStatusResult> {
+  await requireAdmin();
+  try {
+    await addTableConsumption(input);
+    revalidatePath("/admin");
+    revalidatePath("/admin/comandas-mesa");
+    return { ok: true, message: "Novo consumo adicionado à comanda." };
+  } catch (reason) {
+    return { ok: false, message: adminActionErrorMessage(reason) };
+  }
+}
+
+export async function closeTableTabInlineAction(
+  orderId: string,
+): Promise<UpdateOrderStatusResult> {
+  const admin = await requireAdmin();
+  try {
+    await closeTableTab(orderId, admin.email);
+    revalidatePath("/admin");
+    revalidatePath("/admin/comandas-mesa");
+    return { ok: true, message: "Pagamento confirmado e comanda fechada." };
+  } catch (reason) {
+    return { ok: false, message: adminActionErrorMessage(reason) };
   }
 }
 

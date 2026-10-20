@@ -47,7 +47,7 @@ const ORDER_BOARD_COLUMNS: Array<{
   {
     id: "ready",
     title: "Prontos",
-    description: "Retirada ou consumo no local",
+    description: "Aguardando retirada",
     tone: "ready",
     statuses: ["ready_for_pickup"],
   },

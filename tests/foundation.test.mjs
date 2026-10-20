@@ -306,6 +306,91 @@ test("manages orders in operational columns and can print when accepting", async
   assert.match(orderActions, /adminActionErrorMessage/);
 });
 
+test("separates dine-in tabs from pickup and delivery orders", async () => {
+  const [
+    tableTabs,
+    tableActions,
+    adminOrders,
+    tablePage,
+    externalPage,
+    navigation,
+    monitor,
+  ] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/ordering/ui/table-tabs/TableTabs.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/application/table-tabs.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/application/admin-orders.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../app/admin/(panel)/comandas-mesa/page.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../app/admin/(panel)/pedidos/page.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/admin/ui/admin-navigation/AdminNavigation.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/ui/admin-order-monitor/AdminOrderMonitor.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+
+  for (const column of [
+    "Novas comandas",
+    "Em preparo",
+    "Aguardando pagamento",
+    "Fechadas",
+  ]) {
+    assert.match(tableTabs, new RegExp(column));
+  }
+  assert.match(tableTabs, /Adicionar consumo/);
+  assert.match(tableTabs, /Confirmar pagamento e fechar/);
+  assert.match(tableTabs, /Marcar como servido/);
+  assert.match(tableTabs, /addTableConsumptionInlineAction/);
+  assert.match(tableTabs, /closeTableTabInlineAction/);
+  assert.match(tableActions, /addTableConsumption/);
+  assert.match(tableActions, /closeTableTab/);
+  assert.match(tableActions, /amount_cents = amount_cents \+ \$1/);
+  assert.match(tableActions, /status = 'confirmed'/);
+  assert.match(adminOrders, /order\.fulfillment_type !== "dine_in"/);
+  assert.match(tablePage, /getAdminOrders\(\["dine_in"\]\)/);
+  assert.match(externalPage, /getAdminOrders\(\["pickup", "delivery"\]\)/);
+  assert.match(navigation, /Comandas de mesa/);
+  assert.match(monitor, /\/admin\/comandas-mesa/);
+});
+
 test("ships the selected MP3 used by the new-order alert", async () => {
   const audio = await readFile(
     new URL("../public/audio/new-order.mp3", import.meta.url),
@@ -377,6 +462,7 @@ test("admin navigation uses dedicated routes instead of page anchors", async () 
   for (const route of [
     'href: "/admin"',
     'href: "/admin/pedidos"',
+    'href: "/admin/comandas-mesa"',
     'href: "/admin/cardapio"',
     'href: "/admin/areas-entrega"',
     'href: "/admin/configuracoes"',

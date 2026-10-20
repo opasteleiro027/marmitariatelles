@@ -6,7 +6,8 @@ import styles from "./admin-navigation.module.css";
 
 const navigation = [
   { icon: "⌂", label: "Visão geral", href: "/admin" },
-  { icon: "▤", label: "Pedidos", href: "/admin/pedidos" },
+  { icon: "▤", label: "Retirada e delivery", href: "/admin/pedidos" },
+  { icon: "▦", label: "Comandas de mesa", href: "/admin/comandas-mesa" },
   { icon: "◫", label: "Cardápio", href: "/admin/cardapio" },
   { icon: "◎", label: "Áreas de entrega", href: "/admin/areas-entrega" },
   { icon: "⚙", label: "Configurações", href: "/admin/configuracoes" },

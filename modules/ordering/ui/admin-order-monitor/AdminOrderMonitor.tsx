@@ -207,7 +207,11 @@ export function AdminOrderMonitor() {
         if (change === "new-order") {
           setNotification("Novo pedido recebido. Lista atualizada.");
         }
-        if (pathname === "/admin" || pathname === "/admin/pedidos") {
+        if (
+          pathname === "/admin" ||
+          pathname === "/admin/pedidos" ||
+          pathname === "/admin/comandas-mesa"
+        ) {
           router.refresh();
         }
       } catch {

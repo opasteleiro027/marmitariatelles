@@ -25,6 +25,7 @@ export type AdminOrder = {
   itemCount: number;
   paymentLabel: string;
   changeForInCents: number | null;
+  paymentStatus: "pending" | "confirmed" | "cancelled";
   items: Array<{
     id: string;
     name: string;
@@ -89,8 +90,16 @@ export async function getAdminOrderPulse(): Promise<OrderPulse> {
   };
 }
 
-export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
+export async function getAdminOrders(
+  fulfillmentTypes?: FulfillmentType[],
+): Promise<AdminOrderSnapshot> {
   const sql = getPostgresClient();
+  const fulfillmentFilter = fulfillmentTypes?.length
+    ? "WHERE o.fulfillment_type = ANY($1::TEXT[])"
+    : "";
+  const fulfillmentParameters = fulfillmentTypes?.length
+    ? [fulfillmentTypes]
+    : [];
   const [orders, metrics] = await Promise.all([
     sql.unsafe<
       Array<{
@@ -109,6 +118,7 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
         created_at: string;
         item_count: number;
         payment_label: string;
+        payment_status: "pending" | "confirmed" | "cancelled";
         change_for_cents: number | null;
       }>
     >(
@@ -118,14 +128,17 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
               o.delivery_fee_cents, o.discount_cents, o.total_cents,
               o.created_at,
               COALESCE(SUM(oi.quantity), 0)::INT AS item_count,
-              pm.label AS payment_label, py.change_for_cents
+              pm.label AS payment_label, py.status AS payment_status,
+              py.change_for_cents
        FROM orders o
        JOIN order_items oi ON oi.order_id = o.id
        JOIN payments py ON py.order_id = o.id
        JOIN payment_methods pm ON pm.id = py.payment_method_id
-       GROUP BY o.id, pm.label, py.change_for_cents
+       ${fulfillmentFilter}
+       GROUP BY o.id, pm.label, py.status, py.change_for_cents
        ORDER BY o.created_at DESC
        LIMIT 100`,
+      fulfillmentParameters,
     ),
     getAdminOrderMetrics(),
   ]);
@@ -183,6 +196,7 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
       createdAt: order.created_at,
       itemCount: order.item_count,
       paymentLabel: order.payment_label,
+      paymentStatus: order.payment_status,
       changeForInCents: order.change_for_cents,
       items: itemRows
         .filter((item) => item.order_id === order.id)
@@ -297,7 +311,10 @@ export async function updateOrderStatus(
         [orderId],
       );
     }
-    if (nextStatusValue === "confirmed") {
+    if (
+      nextStatusValue === "confirmed" &&
+      order.fulfillment_type !== "dine_in"
+    ) {
       await sql.unsafe(
         `UPDATE payments SET status = 'confirmed' WHERE order_id = $1`,
         [orderId],
