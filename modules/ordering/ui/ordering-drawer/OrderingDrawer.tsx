@@ -33,6 +33,9 @@ export function OrderingDrawer({
   const [paymentMethodId, setPaymentMethodId] = useState(
     snapshot.paymentMethods[0]?.id ?? "",
   );
+  const [beverageChoice, setBeverageChoice] = useState<
+    "" | "none" | "custom"
+  >("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<OrderSuccess | null>(null);
@@ -89,6 +92,10 @@ export function OrderingDrawer({
               : String(form.get("deliverySlotId") ?? "") || null,
           paymentMethodId,
           changeFor: String(form.get("changeFor") ?? "") || null,
+          beverages:
+            beverageChoice === "custom"
+              ? String(form.get("beverages") ?? "")
+              : null,
           notes: orderNotes,
           address:
             fulfillment === "delivery"
@@ -347,6 +354,60 @@ export function OrderingDrawer({
             </fieldset>
 
             <fieldset>
+              <legend>Bebidas</legend>
+              <p className={styles.choiceHint}>
+                Escolha se deseja incluir bebidas no pedido.
+              </p>
+              <div className={`${styles.radioGroup} ${styles.beverageChoices}`}>
+                <label>
+                  <input
+                    type="radio"
+                    name="beverageChoice"
+                    required
+                    checked={beverageChoice === "none"}
+                    onChange={() => setBeverageChoice("none")}
+                  />
+                  <span aria-hidden="true">○</span>
+                  <span>
+                    <strong>Sem bebida</strong>
+                    <small>Não quero adicionar bebida.</small>
+                  </span>
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="beverageChoice"
+                    checked={beverageChoice === "custom"}
+                    onChange={() => setBeverageChoice("custom")}
+                  />
+                  <span aria-hidden="true">🥤</span>
+                  <span>
+                    <strong>Quero adicionar bebida</strong>
+                    <small>Vou informar as bebidas e quantidades.</small>
+                  </span>
+                </label>
+              </div>
+              {beverageChoice === "custom" ? (
+                <label>
+                  Quais bebidas você deseja?
+                  <textarea
+                    name="beverages"
+                    maxLength={240}
+                    placeholder="Ex.: 2 Coca-Cola lata e 1 água sem gás"
+                    required
+                  />
+                  <small>
+                    O valor e a disponibilidade serão confirmados pela loja.
+                  </small>
+                </label>
+              ) : !beverageChoice ? (
+                <p className={styles.pendingChoice} role="status">
+                  Nenhuma opção selecionada.
+                </p>
+              ) : null}
+            </fieldset>
+
+            <fieldset>
               <legend>Pagamento</legend>
               <label>
                 Forma de pagamento
@@ -385,6 +446,7 @@ export function OrderingDrawer({
                 submitting ||
                 !snapshot.ordersOpen ||
                 !fulfillment ||
+                !beverageChoice ||
                 (fulfillment !== "dine_in" && !automaticDeliverySlotId) ||
                 (fulfillment === "delivery" && !deliveryAreaId)
               }

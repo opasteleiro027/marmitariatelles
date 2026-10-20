@@ -69,6 +69,7 @@ export const orders = pgTable(
     customerNameSnapshot: text("customer_name_snapshot").notNull(),
     customerPhoneSnapshot: text("customer_phone_snapshot").notNull(),
     addressSnapshot: text("address_snapshot"),
+    beverages: text("beverages"),
     subtotalCents: integer("subtotal_cents").notNull(),
     deliveryFeeCents: integer("delivery_fee_cents").notNull().default(0),
     discountCents: integer("discount_cents").notNull().default(0),

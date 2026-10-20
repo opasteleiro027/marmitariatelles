@@ -187,12 +187,12 @@ export async function confirmOrder(
       `INSERT INTO orders
         (id, friendly_number, tracking_token_hash, customer_id, address_id,
          menu_id, delivery_area_id, delivery_slot_id, fulfillment_type, status,
-         customer_name_snapshot, customer_phone_snapshot, address_snapshot,
+         customer_name_snapshot, customer_phone_snapshot, address_snapshot, beverages,
          subtotal_cents, delivery_fee_cents, discount_cents, total_cents,
          created_at, updated_at)
        VALUES
         ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'awaiting_confirmation',
-         $10, $11, $12, $13, $14, 0, $15, $16, $16)`,
+         $10, $11, $12, $13, $14, $15, 0, $16, $17, $17)`,
       [
         orderId,
         orderNumber,
@@ -206,6 +206,7 @@ export async function confirmOrder(
         request.customer.name,
         request.customer.phone,
         addressSnapshot(request),
+        request.beverages,
         total.subtotalInCents,
         total.deliveryFeeInCents,
         total.totalInCents,

@@ -122,7 +122,8 @@
 }
 
 .drawer input,
-.drawer select {
+.drawer select,
+.drawer textarea {
   width: 100%;
   min-height: 47px;
   padding: 0 12px;
@@ -133,10 +134,20 @@
   font: inherit;
 }
 
+.drawer textarea {
+  min-height: 92px;
+  padding: 12px;
+  resize: vertical;
+}
+
 .radioGroup {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+}
+
+.beverageChoices {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .radioGroup label {

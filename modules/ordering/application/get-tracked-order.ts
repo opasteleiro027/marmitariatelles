@@ -9,6 +9,7 @@ export type TrackedOrder = {
   customerName: string;
   fulfillment: FulfillmentType;
   address: string | null;
+  beverages: string | null;
   subtotalInCents: number;
   deliveryFeeInCents: number;
   totalInCents: number;
@@ -39,6 +40,7 @@ export async function getTrackedOrder(
       customer_name_snapshot: string;
       fulfillment_type: FulfillmentType;
       address_snapshot: string | null;
+      beverages: string | null;
       subtotal_cents: number;
       delivery_fee_cents: number;
       total_cents: number;
@@ -47,7 +49,7 @@ export async function getTrackedOrder(
     }>
   >(
     `SELECT o.id, o.friendly_number, o.status, o.customer_name_snapshot,
-            o.fulfillment_type, o.address_snapshot, o.subtotal_cents,
+            o.fulfillment_type, o.address_snapshot, o.beverages, o.subtotal_cents,
             o.delivery_fee_cents, o.total_cents, o.created_at,
             pm.label AS payment_label
      FROM orders o
@@ -93,6 +95,7 @@ export async function getTrackedOrder(
     customerName: order.customer_name_snapshot,
     fulfillment: order.fulfillment_type,
     address: order.address_snapshot,
+    beverages: order.beverages,
     subtotalInCents: order.subtotal_cents,
     deliveryFeeInCents: order.delivery_fee_cents,
     totalInCents: order.total_cents,

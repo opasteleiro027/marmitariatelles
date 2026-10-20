@@ -16,6 +16,7 @@ export type AdminOrder = {
   customerPhone: string;
   fulfillment: FulfillmentType;
   address: string | null;
+  beverages: string | null;
   subtotalInCents: number;
   deliveryFeeInCents: number;
   discountInCents: number;
@@ -100,6 +101,7 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
         customer_phone_snapshot: string;
         fulfillment_type: FulfillmentType;
         address_snapshot: string | null;
+        beverages: string | null;
         subtotal_cents: number;
         delivery_fee_cents: number;
         discount_cents: number;
@@ -112,7 +114,7 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
     >(
       `SELECT o.id, o.friendly_number, o.status,
               o.customer_name_snapshot, o.customer_phone_snapshot,
-              o.fulfillment_type, o.address_snapshot, o.subtotal_cents,
+              o.fulfillment_type, o.address_snapshot, o.beverages, o.subtotal_cents,
               o.delivery_fee_cents, o.discount_cents, o.total_cents,
               o.created_at,
               COALESCE(SUM(oi.quantity), 0)::INT AS item_count,
@@ -173,6 +175,7 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
       customerPhone: order.customer_phone_snapshot,
       fulfillment: order.fulfillment_type,
       address: order.address_snapshot,
+      beverages: order.beverages,
       subtotalInCents: order.subtotal_cents,
       deliveryFeeInCents: order.delivery_fee_cents,
       discountInCents: order.discount_cents,

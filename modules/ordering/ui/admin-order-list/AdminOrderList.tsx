@@ -356,6 +356,12 @@ function OrderCard({
               {item.notes ? <p>Obs.: {item.notes}</p> : null}
             </section>
           ))}
+          <section>
+            <header>
+              <strong>Bebidas</strong>
+            </header>
+            <p>{order.beverages ?? "Sem bebida"}</p>
+          </section>
         </div>
       </details>
 

@@ -93,6 +93,9 @@ export default async function TrackingPage({
                 </li>
               ))}
             </ul>
+            <p>
+              <strong>Bebidas:</strong> {order.beverages ?? "Sem bebida"}
+            </p>
             <div className={styles.total}>
               <span>Subtotal <strong>{formatMoney(order.subtotalInCents)}</strong></span>
               <span>Taxa <strong>{formatMoney(order.deliveryFeeInCents)}</strong></span>

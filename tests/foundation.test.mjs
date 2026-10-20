@@ -253,6 +253,7 @@ test("ships an 80 mm browser-printable administrative order slip", async () => {
   assert.match(printButton, /printWindow\.print\(\)/);
   assert.match(printButton, /Imprimir comanda/);
   assert.match(printButton, /Troco para/);
+  assert.match(printButton, /BEBIDAS:/);
   assert.match(printButton, /<section[\s\S]*data-receipt/);
   assert.doesNotMatch(printButton, /\{addon\.groupName\}:/);
   assert.match(printButton, /\{addon\.name\}/);
@@ -919,6 +920,7 @@ test("normalizes checkout input and combines repeated products", () => {
     deliverySlotId: "slot-1",
     paymentMethodId: "cash",
     changeFor: "50,00",
+    beverages: " 2 Coca-Cola lata e 1 água sem gás ",
     notes: "Sem cebola, por favor.",
     items: [
       { productId: "marmita", quantity: 1 },
@@ -936,6 +938,7 @@ test("normalizes checkout input and combines repeated products", () => {
     },
   ]);
   assert.equal(request.changeForInCents, 5000);
+  assert.equal(request.beverages, "2 Coca-Cola lata e 1 água sem gás");
   assert.equal(request.notes, "Sem cebola, por favor.");
 });
 
@@ -983,6 +986,22 @@ test("limits the customer order observation to 500 characters", () => {
         paymentMethodId: "cash",
         notes: "x".repeat(501),
         items: [{ productId: "marmita", quantity: 1 }],
+      }),
+    OrderRequestError,
+  );
+});
+
+test("limits the beverage request to 240 characters", () => {
+  assert.throws(
+    () =>
+      parseOrderRequest({
+        idempotencyKey: "tentativa-bebida-longa",
+        customer: { name: "Cliente", phone: "27999999999" },
+        fulfillment: "pickup",
+        deliverySlotId: "slot-1",
+        paymentMethodId: "cash",
+        beverages: "x".repeat(241),
+        items: [{ productId: "pote-mix-350", quantity: 1 }],
       }),
     OrderRequestError,
   );
@@ -1060,6 +1079,10 @@ test("checkout starts with no fulfillment selected and shows three choices", asy
   assert.match(checkout, />Comer na loja</);
   assert.match(checkout, />Retirada</);
   assert.match(checkout, />Receber em casa</);
+  assert.match(checkout, />Sem bebida</);
+  assert.match(checkout, />Quero adicionar bebida</);
+  assert.match(checkout, /name="beverages"/);
+  assert.match(checkout, /beverageChoice/);
   assert.match(checkout, /!fulfillment/);
   assert.doesNotMatch(checkout, /name="email"/);
   assert.doesNotMatch(checkout, /form\.get\("email"\)/);

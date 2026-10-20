@@ -232,6 +232,10 @@ export const OrderPrintButton = forwardRef<
         </section>
 
         <section>
+          <p><strong>BEBIDAS:</strong> {order.beverages ?? "Sem bebida"}</p>
+        </section>
+
+        <section>
           <dl>
             <div>
               <dt>Subtotal</dt>
