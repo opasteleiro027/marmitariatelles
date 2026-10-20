@@ -2,6 +2,10 @@ import assert from "node:assert/strict";
 import { scryptSync } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import {
+  adminActionErrorMessage,
+  buildAdminFeedbackUrl,
+} from "../modules/admin/domain/admin-feedback.ts";
 import { adminPasswordMatches } from "../modules/admin-auth/domain/password-credential.ts";
 import {
   createSessionToken,
@@ -286,6 +290,79 @@ test("admin navigation uses dedicated routes instead of page anchors", async () 
     assert.match(navigation, new RegExp(route.replaceAll("/", "\\/")));
   }
   assert.doesNotMatch(navigation, /href:\s*["']#/);
+});
+
+test("admin feedback URLs preserve the destination and encode messages", () => {
+  assert.equal(
+    buildAdminFeedbackUrl(
+      "/admin?periodo=week",
+      "success",
+      "Endereço salvo com sucesso.",
+    ),
+    "/admin?periodo=week&feedback=success&feedbackMessage=Endere%C3%A7o+salvo+com+sucesso.",
+  );
+});
+
+test("admin feedback explains safe failures without leaking database details", () => {
+  assert.equal(
+    adminActionErrorMessage(new Error("Campo obrigatório: address")),
+    "Campo obrigatório: address",
+  );
+  assert.equal(
+    adminActionErrorMessage(new Error("duplicate key value violates constraint")),
+    "Já existe um registro com esses dados.",
+  );
+  assert.equal(
+    adminActionErrorMessage(new Error("relation business_settings does not exist")),
+    "Ocorreu um erro inesperado ao salvar. Tente novamente.",
+  );
+});
+
+test("all administrative mutations show global success or error feedback", async () => {
+  const [shell, toast, establishment, catalog, orders] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/admin/ui/admin-shell/AdminShell.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/admin/ui/admin-feedback-toast/AdminFeedbackToast.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/establishment/server/establishment-actions.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/catalog/server/catalog-actions.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/server/admin-order-actions.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+
+  assert.match(shell, /<AdminFeedbackToast/);
+  assert.match(toast, /role=\{feedback\.kind === "error" \? "alert" : "status"\}/);
+  assert.match(toast, /feedbackMessage/);
+  assert.equal((establishment.match(/runAdminMutation\(/g) ?? []).length, 5);
+  assert.equal((catalog.match(/runAdminMutation\(/g) ?? []).length, 7);
+  assert.equal((orders.match(/runAdminMutation\(/g) ?? []).length, 2);
 });
 
 test("admin can edit the storefront operating-hours label", async () => {

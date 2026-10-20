@@ -12,6 +12,8 @@ Protected operational surface for the merchant.
 - Compose a persistent shell around dedicated administrative routes.
 - Highlight the current destination and keep navigation available on mobile.
 - Present the operational overview without owning domain business rules.
+- Display a global success or error toast after every administrative mutation,
+  with safe and useful failure reasons.
 
 ## Routes
 

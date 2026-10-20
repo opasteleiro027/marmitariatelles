@@ -1,9 +1,10 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { clearAdminSession } from "@/modules/admin-auth/server/admin-session";
 import { BrandLogo } from "@/modules/brand/ui/brand-logo/BrandLogo";
 import { AdminOrderMonitor } from "@/modules/ordering/ui/admin-order-monitor/AdminOrderMonitor";
+import { AdminFeedbackToast } from "../admin-feedback-toast/AdminFeedbackToast";
 import { AdminNavigation } from "../admin-navigation/AdminNavigation";
 import styles from "./admin-shell.module.css";
 
@@ -22,6 +23,9 @@ export function AdminShell({
 }) {
   return (
     <main className={styles.shell}>
+      <Suspense fallback={null}>
+        <AdminFeedbackToast />
+      </Suspense>
       <aside className={styles.sidebar}>
         <Link className={styles.brand} href="/admin">
           <BrandLogo priority size={48} />
