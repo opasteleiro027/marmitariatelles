@@ -17,6 +17,22 @@ const SAFE_ERROR_PREFIXES = [
   "Ingrediente não encontrado.",
   "Esta mudança de status não é permitida.",
   "Digite a confirmação exatamente como solicitado.",
+  "Abra o caixa antes de registrar pagamentos ou movimentações.",
+  "Informe o motivo da movimentação",
+  "Informe um valor válido para o caixa.",
+  "Informe um valor válido.",
+  "A observação deve ter no máximo 500 caracteres.",
+  "Administrador ativo não encontrado.",
+  "A forma de pagamento selecionada não está disponível.",
+  "Selecione o pedido e a forma de pagamento.",
+  "Este pedido já teve o pagamento processado.",
+  "Pedido não encontrado ou cancelado.",
+  "Comanda ou forma de pagamento inválida.",
+  "Comanda inválida.",
+  "Esta comanda já foi encerrada.",
+  "Marque o pedido como servido antes de fechar a comanda.",
+  "Aceite o pedido antes de adicionar novos consumos.",
+  "Esta comanda já foi paga ou cancelada.",
 ] as const;
 
 export function buildAdminFeedbackUrl(

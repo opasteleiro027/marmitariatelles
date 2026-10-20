@@ -7,6 +7,8 @@ import {
 } from "./order-status";
 import type { OrderPulse } from "../domain/order-pulse";
 import type { FulfillmentType } from "../domain/fulfillment";
+import { registerRefundForPaidOrder } from "./cash-register";
+import type { CashPaymentMethod } from "./cash-register";
 
 export type AdminOrder = {
   id: string;
@@ -26,6 +28,7 @@ export type AdminOrder = {
   paymentLabel: string;
   changeForInCents: number | null;
   paymentStatus: "pending" | "confirmed" | "cancelled";
+  paymentMethodId: string;
   items: Array<{
     id: string;
     name: string;
@@ -43,6 +46,7 @@ export type AdminOrder = {
 export type AdminOrderSnapshot = {
   orders: AdminOrder[];
   metrics: AdminOrderMetrics;
+  paymentMethods: CashPaymentMethod[];
 };
 
 export type AdminOrderMetrics = {
@@ -100,7 +104,7 @@ export async function getAdminOrders(
   const fulfillmentParameters = fulfillmentTypes?.length
     ? [fulfillmentTypes]
     : [];
-  const [orders, metrics] = await Promise.all([
+  const [orders, metrics, paymentMethods] = await Promise.all([
     sql.unsafe<
       Array<{
         id: string;
@@ -119,6 +123,7 @@ export async function getAdminOrders(
         item_count: number;
         payment_label: string;
         payment_status: "pending" | "confirmed" | "cancelled";
+        payment_method_id: string;
         change_for_cents: number | null;
       }>
     >(
@@ -129,18 +134,22 @@ export async function getAdminOrders(
               o.created_at,
               COALESCE(SUM(oi.quantity), 0)::INT AS item_count,
               pm.label AS payment_label, py.status AS payment_status,
+              py.payment_method_id,
               py.change_for_cents
        FROM orders o
        JOIN order_items oi ON oi.order_id = o.id
        JOIN payments py ON py.order_id = o.id
        JOIN payment_methods pm ON pm.id = py.payment_method_id
        ${fulfillmentFilter}
-       GROUP BY o.id, pm.label, py.status, py.change_for_cents
+       GROUP BY o.id, pm.label, py.status, py.payment_method_id, py.change_for_cents
        ORDER BY o.created_at DESC
        LIMIT 100`,
       fulfillmentParameters,
     ),
     getAdminOrderMetrics(),
+    sql.unsafe<CashPaymentMethod[]>(
+      `SELECT id, code, label FROM payment_methods WHERE active = TRUE AND code <> 'pay_on_pickup' ORDER BY display_order, label`,
+    ),
   ]);
   const itemRows = orders.length
     ? await sql.unsafe<
@@ -197,6 +206,7 @@ export async function getAdminOrders(
       itemCount: order.item_count,
       paymentLabel: order.payment_label,
       paymentStatus: order.payment_status,
+      paymentMethodId: order.payment_method_id,
       changeForInCents: order.change_for_cents,
       items: itemRows
         .filter((item) => item.order_id === order.id)
@@ -210,6 +220,7 @@ export async function getAdminOrders(
         })),
     })),
     metrics,
+    paymentMethods,
   };
 }
 
@@ -262,12 +273,19 @@ export async function updateOrderStatus(
         status: OrderStatus;
         fulfillment_type: FulfillmentType;
         delivery_slot_id: string | null;
+        friendly_number: number;
+        payment_id: string;
+        payment_status: "pending" | "confirmed" | "cancelled";
+        amount_cents: number;
+        payment_method_id: string;
       }>
     >(
-      `SELECT id, status, fulfillment_type, delivery_slot_id
-       FROM orders
-       WHERE id = $1
-       FOR UPDATE`,
+      `SELECT o.id, o.status, o.fulfillment_type, o.delivery_slot_id,
+              o.friendly_number, py.id AS payment_id, py.status AS payment_status,
+              py.amount_cents, py.payment_method_id
+       FROM orders o JOIN payments py ON py.order_id = o.id
+       WHERE o.id = $1
+       FOR UPDATE OF o, py`,
       [orderId],
     );
     const order = orderRows[0];
@@ -306,21 +324,21 @@ export async function updateOrderStatus(
           [item.quantity, timestamp, item.product_id],
         );
       }
+      if (order.payment_status === "confirmed") {
+        await registerRefundForPaidOrder(sql, {
+          orderId,
+          orderNumber: order.friendly_number,
+          paymentId: order.payment_id,
+          paymentMethodId: order.payment_method_id,
+          amountCents: order.amount_cents,
+          adminEmail,
+        });
+      }
       await sql.unsafe(
         `UPDATE payments SET status = 'cancelled' WHERE order_id = $1`,
         [orderId],
       );
     }
-    if (
-      nextStatusValue === "confirmed" &&
-      order.fulfillment_type !== "dine_in"
-    ) {
-      await sql.unsafe(
-        `UPDATE payments SET status = 'confirmed' WHERE order_id = $1`,
-        [orderId],
-      );
-    }
-
     await sql.unsafe(
       `UPDATE orders SET status = $1, updated_at = $2 WHERE id = $3`,
       [nextStatusValue, timestamp, orderId],

@@ -456,6 +456,45 @@
   gap: 6px;
 }
 
+.paymentConfirm {
+  padding: 9px;
+  display: grid;
+  gap: 7px;
+  border: 1px solid #e7d6c6;
+  border-radius: 9px;
+  background: #fff9f1;
+}
+
+.paymentConfirm label {
+  display: grid;
+  gap: 4px;
+  color: #72543d;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.paymentConfirm select {
+  min-height: 34px;
+  padding: 0 8px;
+  border: 1px solid #dfcbbb;
+  border-radius: 7px;
+  background: white;
+  font: inherit;
+  font-size: 11px;
+}
+
+.paymentConfirm button {
+  min-height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: #23864d;
+  color: white;
+  cursor: pointer;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 850;
+}
+
 .actions button {
   min-height: 38px;
   border-radius: 9px;

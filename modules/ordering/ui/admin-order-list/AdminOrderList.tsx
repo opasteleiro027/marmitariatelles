@@ -13,7 +13,7 @@ import {
   type OrderStatus,
 } from "../../application/order-status";
 import { FULFILLMENT_LABELS } from "../../domain/fulfillment";
-import { updateOrderStatusInlineAction } from "../../server/admin-order-actions";
+import { confirmOrderPaymentInlineAction, updateOrderStatusInlineAction } from "../../server/admin-order-actions";
 import {
   OrderPrintButton,
   printPreparedOrderWindow,
@@ -163,6 +163,15 @@ export function AdminOrderList({
     router.refresh();
   }
 
+  async function confirmPayment(orderId: string, paymentMethodId: string) {
+    setPendingOrderId(orderId);
+    setFeedback(null);
+    const result = await confirmOrderPaymentInlineAction(orderId, paymentMethodId);
+    setPendingOrderId(null);
+    setFeedback({ type: result.ok ? "success" : "error", message: result.message });
+    if (result.ok) router.refresh();
+  }
+
   return (
     <section className={styles.panel}>
       {feedback ? (
@@ -249,8 +258,10 @@ export function AdminOrderList({
                       <OrderCard
                         key={order.id}
                         order={order}
+                        paymentMethods={snapshot.paymentMethods}
                         pending={pendingOrderId === order.id}
                         onStatusChange={changeOrderStatus}
+                        onConfirmPayment={confirmPayment}
                       />
                     ))
                   ) : (
@@ -271,18 +282,27 @@ export function AdminOrderList({
 
 function OrderCard({
   order,
+  paymentMethods,
   pending,
   onStatusChange,
+  onConfirmPayment,
 }: {
   order: AdminOrder;
+  paymentMethods: AdminOrderSnapshot["paymentMethods"];
   pending: boolean;
   onStatusChange: (
     order: AdminOrder,
     status: OrderStatus,
     printControl: OrderPrintButtonHandle | null,
   ) => Promise<void>;
+  onConfirmPayment: (orderId: string, paymentMethodId: string) => Promise<void>;
 }) {
   const printControl = useRef<OrderPrintButtonHandle>(null);
+  const [paymentMethodId, setPaymentMethodId] = useState(
+    paymentMethods.some((method) => method.id === order.paymentMethodId)
+      ? order.paymentMethodId
+      : paymentMethods[0]?.id ?? "",
+  );
   const nextStatuses = getOrderStatusTransitions(
     order.status,
     order.fulfillment,
@@ -325,7 +345,7 @@ function OrderCard({
       ) : null}
 
       <div className={styles.total}>
-        <small>{order.paymentLabel}</small>
+        <small>{order.paymentStatus === "confirmed" ? `Pago · ${order.paymentLabel}` : order.paymentStatus === "cancelled" ? "Pagamento cancelado" : `Aguardando pagamento · ${order.paymentLabel}`}</small>
         <strong>{formatMoney(order.totalInCents)}</strong>
       </div>
 
@@ -392,6 +412,19 @@ function OrderCard({
               ? "Recusar"
               : "Cancelar"}
           </button>
+        ) : null}
+        {order.paymentStatus === "pending" && order.status !== "cancelled" ? (
+          <div className={styles.paymentConfirm}>
+            <label>
+              Forma recebida
+              <select value={paymentMethodId} onChange={(event) => setPaymentMethodId(event.target.value)}>
+                {paymentMethods.map((method) => <option key={method.id} value={method.id}>{method.label}</option>)}
+              </select>
+            </label>
+            <button disabled={pending || !paymentMethods.length} onClick={() => void onConfirmPayment(order.id, paymentMethodId)} type="button">
+              {pending ? "Registrando..." : "Confirmar pagamento"}
+            </button>
+          </div>
         ) : null}
         <OrderPrintButton order={order} ref={printControl} />
         {!nextStatuses.length ? (

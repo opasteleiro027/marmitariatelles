@@ -1,0 +1,148 @@
+.panel {
+  display: grid;
+  gap: 18px;
+}
+
+.statusBanner,
+.block,
+.history {
+  padding: clamp(16px, 2.5vw, 24px);
+  border: 1px solid #e5dbcf;
+  border-radius: 18px;
+  background: #fffdf9;
+}
+
+.statusBanner > div,
+.statusBanner > span {
+  color: #75502c;
+  font-weight: 900;
+}
+
+.statusBanner p { margin: 5px 0 0; color: #76685d; font-size: 13px; }
+.openDot { display: inline-block; width: 9px; height: 9px; margin-right: 8px; border-radius: 50%; background: #299958; box-shadow: 0 0 0 4px #e0f5e7; }
+.pendingNotice { padding: 12px 15px; border: 1px solid #e8d49e; border-radius: 12px; background: #fff8e8; color: #755418; font-size: 13px; font-weight: 700; }
+
+.openForm,
+.closeForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 14px;
+}
+
+.openForm label,
+.closeForm label,
+.movementForm label {
+  display: grid;
+  gap: 6px;
+  color: #59483b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.openForm input,
+.closeForm input,
+.movementForm input,
+.movementForm select {
+  width: 100%;
+  min-height: 43px;
+  padding: 0 12px;
+  border: 1px solid #ddcfc1;
+  border-radius: 10px;
+  background: white;
+  color: #34251b;
+  font: inherit;
+  font-size: 14px;
+}
+
+.openForm label > small,
+.closeForm label > small { color: #897b70; font-size: 11px; font-weight: 500; }
+.moneyInput { display: flex; align-items: center; border: 1px solid #ddcfc1; border-radius: 10px; background: white; }
+.moneyInput b { padding-left: 12px; color: #88776a; font-size: 13px; }
+.moneyInput input { border: 0; background: transparent; }
+.moneyInput:focus-within { outline: 3px solid rgb(226 116 40 / 18%); border-color: #c77838; }
+.primaryButton,
+.secondaryButton,
+.dangerButton,
+.printButton {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 850;
+}
+.primaryButton { border: 0; background: #874a27; color: white; }
+.secondaryButton { border: 1px solid #d7b99f; background: #fff8f0; color: #744323; }
+.dangerButton { border: 0; background: #a94132; color: white; }
+.printButton { min-height: 38px; border: 1px solid #d7b99f; background: white; color: #744323; }
+
+.summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.summaryCard { min-width: 0; padding: 17px; display: grid; align-content: start; gap: 6px; border: 1px solid #e5dbcf; border-radius: 14px; background: #fffdf9; }
+.summaryCard small { color: #7b6b5d; font-size: 11px; font-weight: 800; }
+.summaryCard strong { color: #38261a; font-family: var(--font-fraunces), serif; font-size: clamp(20px, 2.4vw, 29px); }
+.summaryCard span { color: #897a70; font-size: 10px; line-height: 1.45; }
+
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.block h2,
+.history h2 { margin: 0; color: #38261a; font-family: var(--font-fraunces), serif; font-size: 21px; }
+.help { margin: 5px 0 14px; color: #827369; font-size: 12px; line-height: 1.5; }
+.methodList { margin-top: 12px; display: grid; }
+.methodList > div { padding: 12px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #eee7e0; color: #46362a; font-size: 13px; }
+.methodList > div:last-child { border-bottom: 0; }
+.methodList span { display: grid; gap: 3px; font-weight: 750; }
+.methodList small { color: #8a7e75; font-size: 10px; font-weight: 500; }
+.methodList strong { white-space: nowrap; }
+.movementForm { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.movementForm label:last-of-type { grid-column: 1 / -1; }
+.movementForm .secondaryButton { grid-column: 1 / -1; }
+.blockHeading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.blockHeading .help { margin-bottom: 0; }
+.movementList { margin-top: 14px; display: grid; }
+.movementList article { padding: 11px 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; border-bottom: 1px solid #eee7e0; }
+.movementList article:last-child { border-bottom: 0; }
+.movementList article > div { min-width: 0; display: grid; gap: 4px; }
+.movementList strong { color: #443327; font-size: 12px; }
+.movementList small { color: #8a7e75; font-size: 10px; }
+.movementList article > span { white-space: nowrap; font-size: 12px; font-weight: 900; }
+.positive { color: #25824a; }
+.negative { color: #a43e32; }
+.expectedLine { margin: 15px 0; padding: 12px 14px; display: flex; justify-content: space-between; gap: 10px; border-radius: 10px; background: #f7f1e9; color: #60412b; font-size: 14px; }
+.expectedLine strong { font-size: 16px; }
+.closeBlock { border-color: #ddc6b4; }
+.empty { margin: 14px 0 0; color: #8a7e75; font-size: 12px; }
+.history { display: grid; gap: 10px; }
+.historyItem { border: 1px solid #e8e0d8; border-radius: 12px; background: #fff; }
+.historyItem summary { padding: 13px; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 14px; cursor: pointer; color: #59483b; font-size: 12px; }
+.historyItem summary strong { color: #39291e; font-size: 14px; white-space: nowrap; }
+.historyItem summary em { font-size: 10px; font-style: normal; font-weight: 850; white-space: nowrap; }
+.balanced { color: #29824c; }
+.difference { color: #a54437; }
+.historyDetails { padding: 0 13px 13px; display: grid; gap: 7px; color: #75665a; font-size: 11px; }
+.historyDetails p { margin: 3px 0; }
+.historyDetails .movementList { margin-top: 0; }
+
+@media (max-width: 900px) {
+  .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .columns { grid-template-columns: 1fr; }
+}
+@media (max-width: 620px) {
+  .openForm, .closeForm { grid-template-columns: 1fr; }
+  .movementForm { grid-template-columns: 1fr; }
+  .movementForm label:last-of-type, .movementForm .secondaryButton { grid-column: auto; }
+  .historyItem summary { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 10px; }
+  .historyItem summary em { grid-column: 1 / -1; }
+  .blockHeading { align-items: flex-start; }
+}
+
+@media print {
+  :global(body) { background: white !important; }
+  :global(aside), :global(button), .openForm, .closeForm, .movementForm, .pendingNotice { display: none !important; }
+  :global(main) { display: block !important; background: white !important; }
+  :global(section) { break-inside: avoid; }
+  .panel { gap: 8px; }
+  .statusBanner, .block, .history { padding: 12px; border-color: #bbb; }
+  .summaryCard { padding: 10px; }
+  .movementList article { padding: 6px 0; }
+}

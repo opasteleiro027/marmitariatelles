@@ -8,6 +8,7 @@ const navigation = [
   { icon: "⌂", label: "Visão geral", href: "/admin" },
   { icon: "▤", label: "Retirada e delivery", href: "/admin/pedidos" },
   { icon: "▦", label: "Comandas de mesa", href: "/admin/comandas-mesa" },
+  { icon: "$", label: "Caixa", href: "/admin/caixa" },
   { icon: "◫", label: "Cardápio", href: "/admin/cardapio" },
   { icon: "◎", label: "Áreas de entrega", href: "/admin/areas-entrega" },
   { icon: "⚙", label: "Configurações", href: "/admin/configuracoes" },

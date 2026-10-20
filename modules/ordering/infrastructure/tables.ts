@@ -6,6 +6,7 @@ import {
   text,
   uniqueIndex,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import { salesMenus } from "../../catalog/infrastructure/tables";
 import { deliveryAreas, deliverySlots, paymentMethods } from "../../establishment/infrastructure/tables";
 import { adminUsers, customerAddresses, customers } from "../../identity/infrastructure/tables";
@@ -138,6 +139,55 @@ export const payments = pgTable(
     createdAt: text("created_at").notNull(),
   },
   (table) => [index("payments_order_idx").on(table.orderId)],
+);
+
+export const cashRegisterSessions = pgTable(
+  "cash_register_sessions",
+  {
+    id: text("id").primaryKey(),
+    status: text("status", { enum: ["open", "closed"] })
+      .notNull()
+      .default("open"),
+    openingFloatCents: integer("opening_float_cents").notNull(),
+    countedCashCents: integer("counted_cash_cents"),
+    cashDifferenceCents: integer("cash_difference_cents"),
+    notes: text("notes"),
+    openedByAdminId: text("opened_by_admin_id")
+      .notNull()
+      .references(() => adminUsers.id),
+    closedByAdminId: text("closed_by_admin_id").references(() => adminUsers.id),
+    openedAt: text("opened_at").notNull(),
+    closedAt: text("closed_at"),
+  },
+  (table) => [index("cash_register_sessions_status_idx").on(table.status)],
+);
+
+export const cashRegisterMovements = pgTable(
+  "cash_register_movements",
+  {
+    id: text("id").primaryKey(),
+    sessionId: text("session_id")
+      .notNull()
+      .references(() => cashRegisterSessions.id),
+    kind: text("kind", {
+      enum: ["sale", "cash_in", "cash_out", "refund", "adjustment"],
+    }).notNull(),
+    amountCents: integer("amount_cents").notNull(),
+    paymentMethodId: text("payment_method_id").references(() => paymentMethods.id),
+    orderId: text("order_id").references(() => orders.id),
+    paymentId: text("payment_id").references(() => payments.id),
+    description: text("description").notNull(),
+    createdByAdminId: text("created_by_admin_id")
+      .notNull()
+      .references(() => adminUsers.id),
+    createdAt: text("created_at").notNull(),
+  },
+  (table) => [
+    index("cash_register_movements_session_idx").on(table.sessionId, table.createdAt),
+    uniqueIndex("cash_register_movements_sale_payment_unique")
+      .on(table.paymentId)
+      .where(sql`kind = 'sale'`),
+  ],
 );
 
 export const orderStatusHistory = pgTable(

@@ -5,6 +5,7 @@ import { requireAdmin } from "@/modules/admin-auth/server/admin-session";
 import { adminActionErrorMessage } from "@/modules/admin/domain/admin-feedback";
 import { runAdminMutation } from "@/modules/admin/server/admin-feedback";
 import { updateOrderStatus } from "../application/admin-orders";
+import { confirmOrderPayment } from "../application/cash-register";
 import {
   addTableConsumption,
   closeTableTab,
@@ -25,6 +26,7 @@ export async function updateOrderStatusAction(formData: FormData) {
       revalidatePath("/admin");
       revalidatePath("/admin/pedidos");
       revalidatePath("/admin/comandas-mesa");
+      revalidatePath("/admin/caixa");
     },
   );
 }
@@ -44,6 +46,7 @@ export async function updateOrderStatusInlineAction(
     revalidatePath("/admin");
     revalidatePath("/admin/pedidos");
     revalidatePath("/admin/comandas-mesa");
+    revalidatePath("/admin/caixa");
 
     return {
       ok: true,
@@ -69,6 +72,7 @@ export async function addTableConsumptionInlineAction(input: {
     await addTableConsumption(input);
     revalidatePath("/admin");
     revalidatePath("/admin/comandas-mesa");
+    revalidatePath("/admin/caixa");
     return { ok: true, message: "Novo consumo adicionado à comanda." };
   } catch (reason) {
     return { ok: false, message: adminActionErrorMessage(reason) };
@@ -77,13 +81,32 @@ export async function addTableConsumptionInlineAction(input: {
 
 export async function closeTableTabInlineAction(
   orderId: string,
+  paymentMethodId: string,
 ): Promise<UpdateOrderStatusResult> {
   const admin = await requireAdmin();
   try {
-    await closeTableTab(orderId, admin.email);
+    await closeTableTab(orderId, admin.email, paymentMethodId);
     revalidatePath("/admin");
     revalidatePath("/admin/comandas-mesa");
+    revalidatePath("/admin/caixa");
     return { ok: true, message: "Pagamento confirmado e comanda fechada." };
+  } catch (reason) {
+    return { ok: false, message: adminActionErrorMessage(reason) };
+  }
+}
+
+export async function confirmOrderPaymentInlineAction(
+  orderId: string,
+  paymentMethodId: string,
+): Promise<UpdateOrderStatusResult> {
+  const admin = await requireAdmin();
+  try {
+    await confirmOrderPayment(orderId, admin.email, paymentMethodId);
+    revalidatePath("/admin");
+    revalidatePath("/admin/pedidos");
+    revalidatePath("/admin/comandas-mesa");
+    revalidatePath("/admin/caixa");
+    return { ok: true, message: "Pagamento recebido e lançado no caixa." };
   } catch (reason) {
     return { ok: false, message: adminActionErrorMessage(reason) };
   }

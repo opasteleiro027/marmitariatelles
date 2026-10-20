@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { withTransaction } from "@/db";
 import type { FulfillmentType } from "../domain/fulfillment";
 import type { OrderStatus } from "./order-status";
+import { registerConfirmedPayment } from "./cash-register";
 
 export async function addTableConsumption({
   orderId,
@@ -103,8 +104,12 @@ export async function addTableConsumption({
   });
 }
 
-export async function closeTableTab(orderId: string, adminEmail: string) {
-  if (!orderId) throw new Error("Comanda inválida.");
+export async function closeTableTab(
+  orderId: string,
+  adminEmail: string,
+  paymentMethodId: string,
+) {
+  if (!orderId || !paymentMethodId) throw new Error("Comanda ou forma de pagamento inválida.");
 
   await withTransaction(async (sql) => {
     const rows = await sql.unsafe<
@@ -113,10 +118,13 @@ export async function closeTableTab(orderId: string, adminEmail: string) {
         status: OrderStatus;
         fulfillment_type: FulfillmentType;
         payment_status: "pending" | "confirmed" | "cancelled";
+        payment_id: string;
+        amount_cents: number;
+        friendly_number: number;
       }>
     >(
-      `SELECT o.id, o.status, o.fulfillment_type,
-              py.status AS payment_status
+      `SELECT o.id, o.status, o.fulfillment_type, o.friendly_number,
+              py.id AS payment_id, py.amount_cents, py.status AS payment_status
        FROM orders o
        JOIN payments py ON py.order_id = o.id
        WHERE o.id = $1
@@ -134,17 +142,15 @@ export async function closeTableTab(orderId: string, adminEmail: string) {
       throw new Error("Esta comanda já foi paga ou cancelada.");
     }
 
-    const adminRows = await sql.unsafe<Array<{ id: string }>>(
-      `SELECT id FROM admin_users
-       WHERE LOWER(email) = LOWER($1) AND active = TRUE
-       LIMIT 1`,
-      [adminEmail],
-    );
     const timestamp = new Date().toISOString();
-    await sql.unsafe(
-      `UPDATE payments SET status = 'confirmed' WHERE order_id = $1`,
-      [orderId],
-    );
+    await registerConfirmedPayment(sql, {
+      paymentId: order.payment_id,
+      orderId,
+      orderNumber: order.friendly_number,
+      amountCents: order.amount_cents,
+      paymentMethodId,
+      adminEmail,
+    });
     await sql.unsafe(
       `UPDATE orders SET status = 'delivered', updated_at = $1 WHERE id = $2`,
       [timestamp, orderId],
@@ -158,7 +164,10 @@ export async function closeTableTab(orderId: string, adminEmail: string) {
         randomUUID(),
         orderId,
         order.status,
-        adminRows[0]?.id ?? null,
+        (await sql.unsafe<Array<{ id: string }>>(
+          `SELECT id FROM admin_users WHERE LOWER(email) = LOWER($1) AND active = TRUE LIMIT 1`,
+          [adminEmail],
+        ))[0]?.id ?? null,
         timestamp,
       ],
     );

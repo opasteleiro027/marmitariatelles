@@ -173,10 +173,10 @@ export function TableTabs({ snapshot }: { snapshot: AdminOrderSnapshot }) {
     });
   }
 
-  async function closeTab(orderId: string) {
+  async function closeTab(orderId: string, paymentMethodId: string) {
     setPendingOrderId(orderId);
     setFeedback(null);
-    const result = await closeTableTabInlineAction(orderId);
+    const result = await closeTableTabInlineAction(orderId, paymentMethodId);
     showResult({
       type: result.ok ? "success" : "error",
       message: result.message,
@@ -268,6 +268,7 @@ export function TableTabs({ snapshot }: { snapshot: AdminOrderSnapshot }) {
                     <TableTabCard
                       key={order.id}
                       order={order}
+                      paymentMethods={snapshot.paymentMethods}
                       pending={pendingOrderId === order.id}
                       onAddConsumption={addConsumption}
                       onCloseTab={closeTab}
@@ -288,12 +289,14 @@ export function TableTabs({ snapshot }: { snapshot: AdminOrderSnapshot }) {
 
 function TableTabCard({
   order,
+  paymentMethods,
   pending,
   onStatusChange,
   onAddConsumption,
   onCloseTab,
 }: {
   order: AdminOrder;
+  paymentMethods: AdminOrderSnapshot["paymentMethods"];
   pending: boolean;
   onStatusChange: (
     order: AdminOrder,
@@ -304,9 +307,14 @@ function TableTabCard({
     event: FormEvent<HTMLFormElement>,
     orderId: string,
   ) => Promise<void>;
-  onCloseTab: (orderId: string) => Promise<void>;
+  onCloseTab: (orderId: string, paymentMethodId: string) => Promise<void>;
 }) {
   const printControl = useRef<OrderPrintButtonHandle>(null);
+  const [paymentMethodId, setPaymentMethodId] = useState(
+    paymentMethods.some((method) => method.id === order.paymentMethodId)
+      ? order.paymentMethodId
+      : paymentMethods[0]?.id ?? "",
+  );
   const primaryStatus = getPrimaryTableStatus(order.status);
   const canCancel = !["delivered", "cancelled"].includes(order.status);
   const canAddConsumption =
@@ -419,14 +427,21 @@ function TableTabCard({
           </button>
         ) : null}
         {waitingForPayment ? (
-          <button
-            className={styles.closeAction}
-            disabled={pending}
-            onClick={() => void onCloseTab(order.id)}
-            type="button"
-          >
-            {pending ? "Fechando..." : "Confirmar pagamento e fechar"}
-          </button>
+          <div className={styles.paymentForm}>
+            <label>Forma recebida
+              <select value={paymentMethodId} onChange={(event) => setPaymentMethodId(event.target.value)}>
+                {paymentMethods.map((method) => <option key={method.id} value={method.id}>{method.label}</option>)}
+              </select>
+            </label>
+            <button
+              className={styles.closeAction}
+              disabled={pending || !paymentMethods.length}
+              onClick={() => void onCloseTab(order.id, paymentMethodId)}
+              type="button"
+            >
+              {pending ? "Fechando..." : "Confirmar pagamento e fechar"}
+            </button>
+          </div>
         ) : null}
         {canCancel ? (
           <button
