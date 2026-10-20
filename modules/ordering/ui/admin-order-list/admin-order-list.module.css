@@ -452,7 +452,7 @@
 
 .actions {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr;
   gap: 6px;
 }
 
@@ -471,7 +471,6 @@
 }
 
 .primaryAction {
-  grid-column: 1 / -1;
   border: 0;
   padding: 0 12px;
   background: var(--column-color);
@@ -486,7 +485,6 @@
 }
 
 .finishedLabel {
-  grid-column: 1 / -1;
   color: #81746b;
   font-size: 10px;
   text-align: center;
@@ -534,6 +532,16 @@
   from {
     opacity: 0;
     transform: translateY(-8px);
+  }
+}
+
+@media (min-width: 1380px) {
+  .board {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .column {
+    min-width: 0;
   }
 }
 
