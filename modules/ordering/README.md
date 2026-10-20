@@ -9,7 +9,8 @@ For delivery, the selected area must match the normalized city and neighborhood
 from the confirmed address.
 
 Home delivery receives the first available operational slot automatically.
-Pickup keeps the slot as an explicit customer choice.
+Pickup keeps the slot as an explicit customer choice. Dine-in orders do not
+require an address or slot and are prepared for consumption in the store.
 
 General customer observations are limited to 500 characters. A configured
 marmita also carries its own observation of up to 150 characters. Every
@@ -24,8 +25,8 @@ The private customer tracking screen also refreshes its server data every five
 seconds while the order is active, and stops after delivery or cancellation.
 
 The administrative order list can open a dedicated 80 mm browser print view
-with customer, fulfillment, item customization, totals, payment and change
-details.
+with customer, fulfillment (dine-in, pickup or delivery), item customization,
+totals, payment and change details.
 
 The same protected screen has a maintenance control for erasing test order
 history. It requires an exact confirmation phrase, restores stock only for

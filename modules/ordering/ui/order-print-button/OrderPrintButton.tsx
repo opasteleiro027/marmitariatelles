@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type { AdminOrder } from "../../application/admin-orders";
-import { ORDER_STATUS_LABELS } from "../../application/order-status";
+import { getOrderStatusLabel } from "../../application/order-status";
+import { FULFILLMENT_LABELS } from "../../domain/fulfillment";
 import styles from "./order-print-button.module.css";
 
 const THERMAL_PRINT_CSS = `
@@ -174,7 +175,7 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
           <h1>Pote Mix</h1>
           <h2>COMANDA #{order.orderNumber}</h2>
           <p>{formatDateTime(order.createdAt)}</p>
-          <strong>{ORDER_STATUS_LABELS[order.status]}</strong>
+          <strong>{getOrderStatusLabel(order.status, order.fulfillment)}</strong>
         </header>
 
         <section>
@@ -182,7 +183,7 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
           <p><strong>Telefone:</strong> {order.customerPhone}</p>
           <p>
             <strong>Tipo:</strong>{" "}
-            {order.fulfillment === "delivery" ? "Entrega" : "Retirada"}
+            {FULFILLMENT_LABELS[order.fulfillment]}
           </p>
           {order.fulfillment === "delivery" && order.address ? (
             <p><strong>Endereço:</strong> {order.address}</p>

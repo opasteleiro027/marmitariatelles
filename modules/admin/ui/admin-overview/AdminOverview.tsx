@@ -67,7 +67,7 @@ export function AdminOverview({
         <article>
           <p>Pedidos concluídos</p>
           <strong>{orderMetrics.completed}</strong>
-          <small>entregues ou retirados</small>
+          <small>entregues, retirados ou servidos</small>
         </article>
         <article>
           <p>Faturamento previsto</p>
@@ -149,6 +149,10 @@ export function AdminOverview({
           <div>
             <span>Retiradas</span>
             <strong>{report.totals.pickups}</strong>
+          </div>
+          <div>
+            <span>Na loja</span>
+            <strong>{report.totals.dineIns}</strong>
           </div>
           <div>
             <span>Cancelados</span>

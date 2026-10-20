@@ -298,6 +298,10 @@ async function validateFulfillment(
   request: ConfirmOrderRequest,
   salesDate: string,
 ) {
+  if (request.fulfillment === "dine_in") {
+    return { feeInCents: 0, minimumOrderInCents: 0 };
+  }
+
   const slotRows = await sql.unsafe<
     Array<{ id: string }>
   >(

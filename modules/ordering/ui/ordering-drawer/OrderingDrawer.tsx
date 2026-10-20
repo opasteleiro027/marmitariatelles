@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import { AddressLocationFields } from "@/modules/address-location/ui/address-location-fields/AddressLocationFields";
+import type { FulfillmentType } from "@/modules/ordering/domain/fulfillment";
 import { selectAutomaticDeliverySlot } from "@/modules/ordering/domain/select-automatic-delivery-slot";
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type { StorefrontSnapshot } from "@/modules/storefront/domain/storefront.types";
@@ -27,9 +28,7 @@ export function OrderingDrawer({
   onOrderComplete: () => void;
   orderNotes?: string;
 }) {
-  const [fulfillment, setFulfillment] = useState<"pickup" | "delivery">(
-    "pickup",
-  );
+  const [fulfillment, setFulfillment] = useState<FulfillmentType | "">("");
   const [deliveryAreaId, setDeliveryAreaId] = useState("");
   const [paymentMethodId, setPaymentMethodId] = useState(
     snapshot.paymentMethods[0]?.id ?? "",
@@ -85,7 +84,10 @@ export function OrderingDrawer({
           fulfillment,
           deliveryAreaId:
             fulfillment === "delivery" ? deliveryAreaId : null,
-          deliverySlotId: String(form.get("deliverySlotId") ?? "") || null,
+          deliverySlotId:
+            fulfillment === "dine_in"
+              ? null
+              : String(form.get("deliverySlotId") ?? "") || null,
           paymentMethodId,
           changeFor: String(form.get("changeFor") ?? "") || null,
           notes: orderNotes,
@@ -259,8 +261,25 @@ export function OrderingDrawer({
             </fieldset>
 
             <fieldset>
-              <legend>Entrega ou retirada</legend>
+              <legend>Como você quer receber o pedido?</legend>
+              <p className={styles.choiceHint}>
+                Escolha uma opção para continuar.
+              </p>
               <div className={styles.radioGroup}>
+                <label>
+                  <input
+                    type="radio"
+                    name="fulfillment"
+                    required
+                    checked={fulfillment === "dine_in"}
+                    onChange={() => setFulfillment("dine_in")}
+                  />
+                  <span aria-hidden="true">🍽️</span>
+                  <span>
+                    <strong>Comer na loja</strong>
+                    <small>Vou consumir meu pedido aqui.</small>
+                  </span>
+                </label>
                 <label>
                   <input
                     type="radio"
@@ -268,7 +287,11 @@ export function OrderingDrawer({
                     checked={fulfillment === "pickup"}
                     onChange={() => setFulfillment("pickup")}
                   />
-                  Retirar no local
+                  <span aria-hidden="true">🛍️</span>
+                  <span>
+                    <strong>Retirada</strong>
+                    <small>Vou buscar e levar o pedido.</small>
+                  </span>
                 </label>
                 <label>
                   <input
@@ -278,10 +301,23 @@ export function OrderingDrawer({
                     disabled={!snapshot.deliveryAreas.length}
                     onChange={() => setFulfillment("delivery")}
                   />
-                  Receber em casa
+                  <span aria-hidden="true">🛵</span>
+                  <span>
+                    <strong>Receber em casa</strong>
+                    <small>Quero entrega no meu endereço.</small>
+                  </span>
                 </label>
               </div>
-              {fulfillment === "pickup" ? (
+              {!fulfillment ? (
+                <p className={styles.pendingChoice} role="status">
+                  Nenhuma opção selecionada.
+                </p>
+              ) : fulfillment === "dine_in" ? (
+                <p className={styles.info}>
+                  Seu pedido será preparado para consumo na loja. Aguarde a
+                  chamada pelo número do pedido.
+                </p>
+              ) : fulfillment === "pickup" ? (
                 <p className={styles.info}>{snapshot.address}</p>
               ) : (
                 <AddressLocationFields
@@ -301,7 +337,7 @@ export function OrderingDrawer({
                       ))}
                   </select>
                 </label>
-              ) : (
+              ) : fulfillment === "delivery" ? (
                 <>
                   <input
                     type="hidden"
@@ -312,7 +348,7 @@ export function OrderingDrawer({
                     A previsão da entrega será organizada pelo Pote Mix.
                   </p>
                 </>
-              )}
+              ) : null}
             </fieldset>
 
             <fieldset>
@@ -353,7 +389,8 @@ export function OrderingDrawer({
               disabled={
                 submitting ||
                 !snapshot.ordersOpen ||
-                !automaticDeliverySlotId ||
+                !fulfillment ||
+                (fulfillment !== "dine_in" && !automaticDeliverySlotId) ||
                 (fulfillment === "delivery" && !deliveryAreaId)
               }
             >

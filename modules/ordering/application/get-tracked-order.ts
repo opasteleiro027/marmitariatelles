@@ -1,12 +1,13 @@
 import { createHash } from "node:crypto";
 import { getPostgresClient } from "@/db";
+import type { FulfillmentType } from "../domain/fulfillment";
 import type { OrderStatus } from "./order-status";
 
 export type TrackedOrder = {
   orderNumber: number;
   status: OrderStatus;
   customerName: string;
-  fulfillment: "pickup" | "delivery";
+  fulfillment: FulfillmentType;
   address: string | null;
   subtotalInCents: number;
   deliveryFeeInCents: number;
@@ -36,7 +37,7 @@ export async function getTrackedOrder(
       friendly_number: number;
       status: OrderStatus;
       customer_name_snapshot: string;
-      fulfillment_type: "pickup" | "delivery";
+      fulfillment_type: FulfillmentType;
       address_snapshot: string | null;
       subtotal_cents: number;
       delivery_fee_cents: number;

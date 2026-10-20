@@ -17,6 +17,10 @@ import {
   parseOrderRequest,
 } from "../modules/ordering/domain/order-request.ts";
 import { selectAutomaticDeliverySlot } from "../modules/ordering/domain/select-automatic-delivery-slot.ts";
+import {
+  getOrderStatusLabel,
+  getOrderStatusTransitions,
+} from "../modules/ordering/application/order-status.ts";
 import { classifyOrderPulse } from "../modules/ordering/domain/order-pulse.ts";
 import {
   getOrderReportDateRange,
@@ -707,6 +711,77 @@ test("requires a delivery address for delivery orders", () => {
       }),
     OrderRequestError,
   );
+});
+
+test("accepts dine-in orders without address or delivery slot", () => {
+  const request = parseOrderRequest({
+    idempotencyKey: "tentativa-loja",
+    customer: { name: "Cliente na loja", phone: "27999999999" },
+    fulfillment: "dine_in",
+    paymentMethodId: "cash",
+    items: [{ productId: "pote-mix-350", quantity: 1 }],
+  });
+
+  assert.equal(request.fulfillment, "dine_in");
+  assert.equal(request.deliverySlotId, null);
+  assert.equal(request.deliveryAreaId, null);
+  assert.equal(request.address, null);
+});
+
+test("requires the customer to choose a fulfillment type", () => {
+  assert.throws(
+    () =>
+      parseOrderRequest({
+        idempotencyKey: "tentativa-sem-tipo",
+        customer: { name: "Cliente", phone: "27999999999" },
+        paymentMethodId: "cash",
+        items: [{ productId: "pote-mix-350", quantity: 1 }],
+      }),
+    /comer na loja, retirar ou receber em casa/i,
+  );
+});
+
+test("uses fulfillment-aware status labels and transitions", () => {
+  assert.equal(
+    getOrderStatusLabel("ready_for_pickup", "dine_in"),
+    "Pronto para servir",
+  );
+  assert.equal(getOrderStatusLabel("delivered", "pickup"), "Retirado");
+  assert.deepEqual(getOrderStatusTransitions("preparing", "delivery"), [
+    "out_for_delivery",
+    "cancelled",
+  ]);
+  assert.deepEqual(getOrderStatusTransitions("preparing", "dine_in"), [
+    "ready_for_pickup",
+    "cancelled",
+  ]);
+});
+
+test("checkout starts with no fulfillment selected and shows three choices", async () => {
+  const checkout = await readFile(
+    new URL(
+      "../modules/ordering/ui/ordering-drawer/OrderingDrawer.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  assert.match(checkout, /useState<FulfillmentType \| "">\(""\)/);
+  assert.match(checkout, />Comer na loja</);
+  assert.match(checkout, />Retirada</);
+  assert.match(checkout, />Receber em casa</);
+  assert.match(checkout, /!fulfillment/);
+});
+
+test("daily report separates dine-in orders", async () => {
+  const report = await readFile(
+    new URL(
+      "../modules/ordering/application/admin-order-report.ts",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  assert.match(report, /fulfillment_type = 'dine_in'/);
+  assert.match(report, /dineIns: totals\.dine_ins/);
 });
 
 test("assigns the first available operational slot to home delivery", () => {

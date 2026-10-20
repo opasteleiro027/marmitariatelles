@@ -1,3 +1,5 @@
+import type { FulfillmentType } from "../domain/fulfillment";
+
 export const ORDER_STATUSES = [
   "received",
   "awaiting_confirmation",
@@ -35,4 +37,29 @@ export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
 
 export function isOrderStatus(value: string): value is OrderStatus {
   return ORDER_STATUSES.includes(value as OrderStatus);
+}
+
+export function getOrderStatusLabel(
+  status: OrderStatus,
+  fulfillment: FulfillmentType,
+) {
+  if (status === "ready_for_pickup" && fulfillment === "dine_in") {
+    return "Pronto para servir";
+  }
+  if (status === "delivered") {
+    if (fulfillment === "delivery") return "Entregue";
+    if (fulfillment === "pickup") return "Retirado";
+    return "Finalizado";
+  }
+  return ORDER_STATUS_LABELS[status];
+}
+
+export function getOrderStatusTransitions(
+  status: OrderStatus,
+  fulfillment: FulfillmentType,
+) {
+  if (status !== "preparing") return ORDER_STATUS_TRANSITIONS[status];
+  return fulfillment === "delivery"
+    ? (["out_for_delivery", "cancelled"] as OrderStatus[])
+    : (["ready_for_pickup", "cancelled"] as OrderStatus[]);
 }

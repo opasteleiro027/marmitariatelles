@@ -21,6 +21,7 @@ export type AdminOrderReport = {
     items: number;
     deliveries: number;
     pickups: number;
+    dineIns: number;
     cancelled: number;
   };
   topCustomers: Array<{
@@ -62,6 +63,7 @@ type TotalsRow = {
   items: number;
   deliveries: number;
   pickups: number;
+  dine_ins: number;
   cancelled: number;
 };
 
@@ -115,6 +117,10 @@ export async function getAdminOrderReport(
              SELECT COUNT(*)::INT FROM valid_orders
              WHERE fulfillment_type = 'pickup'
            ) AS pickups,
+           (
+             SELECT COUNT(*)::INT FROM valid_orders
+             WHERE fulfillment_type = 'dine_in'
+           ) AS dine_ins,
            (
              SELECT COUNT(*)::INT FROM period_orders
              WHERE status = 'cancelled'
@@ -254,6 +260,7 @@ export async function getAdminOrderReport(
       items: totals.items,
       deliveries: totals.deliveries,
       pickups: totals.pickups,
+      dineIns: totals.dine_ins,
       cancelled: totals.cancelled,
     },
     topCustomers: customerRows.map((customer) => ({
@@ -311,6 +318,7 @@ function emptyTotals(): TotalsRow {
     items: 0,
     deliveries: 0,
     pickups: 0,
+    dine_ins: 0,
     cancelled: 0,
   };
 }

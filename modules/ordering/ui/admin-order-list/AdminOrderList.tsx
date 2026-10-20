@@ -1,9 +1,10 @@
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type { AdminOrderSnapshot } from "../../application/admin-orders";
 import {
-  ORDER_STATUS_LABELS,
-  ORDER_STATUS_TRANSITIONS,
+  getOrderStatusLabel,
+  getOrderStatusTransitions,
 } from "../../application/order-status";
+import { FULFILLMENT_LABELS } from "../../domain/fulfillment";
 import { updateOrderStatusAction } from "../../server/admin-order-actions";
 import { OrderPrintButton } from "../order-print-button/OrderPrintButton";
 import styles from "./admin-order-list.module.css";
@@ -31,7 +32,10 @@ export function AdminOrderList({
       ) : (
         <div className={styles.list}>
           {snapshot.orders.map((order) => {
-            const nextStatuses = ORDER_STATUS_TRANSITIONS[order.status];
+            const nextStatuses = getOrderStatusTransitions(
+              order.status,
+              order.fulfillment,
+            );
             return (
               <article key={order.id}>
                 <div className={styles.orderNumber}>
@@ -46,15 +50,13 @@ export function AdminOrderList({
                 </div>
                 <div>
                   <small>
-                    {order.fulfillment === "delivery"
-                      ? "Entrega"
-                      : "Retirada"}{" "}
+                    {FULFILLMENT_LABELS[order.fulfillment]}{" "}
                     · {order.itemCount} itens
                   </small>
                   <strong>{formatMoney(order.totalInCents)}</strong>
                 </div>
                 <span className={styles.status}>
-                  {ORDER_STATUS_LABELS[order.status]}
+                  {getOrderStatusLabel(order.status, order.fulfillment)}
                 </span>
                 <details className={styles.orderItems}>
                   <summary>Ver itens e escolhas</summary>
@@ -95,7 +97,7 @@ export function AdminOrderList({
                       >
                         {nextStatuses.map((status) => (
                           <option key={status} value={status}>
-                            {ORDER_STATUS_LABELS[status]}
+                            {getOrderStatusLabel(status, order.fulfillment)}
                           </option>
                         ))}
                       </select>

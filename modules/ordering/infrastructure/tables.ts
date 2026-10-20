@@ -49,8 +49,9 @@ export const orders = pgTable(
     ),
     deliverySlotId: text("delivery_slot_id").references(() => deliverySlots.id),
     couponId: text("coupon_id").references(() => coupons.id),
-    fulfillmentType: text("fulfillment_type", { enum: ["delivery", "pickup"] })
-      .notNull(),
+    fulfillmentType: text("fulfillment_type", {
+      enum: ["dine_in", "delivery", "pickup"],
+    }).notNull(),
     status: text("status", {
       enum: [
         "received",

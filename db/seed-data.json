@@ -7,7 +7,7 @@
     "whatsapp": "5527988446510", "phone": "+55 27 98844-6510",
     "address": "Av. Bartolomeu de Las Casa, nº 16, Quadra 17, Cidade Continental, Setor América, Serra - ES",
     "primaryColor": "#e99d32", "minimumOrderCents": 2000,
-    "orderDeadlineLabel": "Consulte o horário de atendimento", "deliveryWindowLabel": "Entrega ou retirada",
+    "orderDeadlineLabel": "Consulte o horário de atendimento", "deliveryWindowLabel": "Comer na loja, retirada ou entrega",
     "notice": "Seu sabor favorito, no pote perfeito.",
     "pickupInstructions": "Retirada no endereço do Pote Mix, no horário confirmado no pedido.",
     "deliveryInstructions": "A entrega depende da área e da faixa de horário disponíveis.", "ordersPaused": false
@@ -84,9 +84,9 @@
     { "productId": "salada-completa", "groupId": "salada-macarrao", "minimumSelections": 0, "maximumSelections": 1, "displayOrder": 2 }
   ],
   "paymentMethods": [
-    { "id": "payment-cash", "code": "cash", "label": "Dinheiro na entrega ou retirada", "displayOrder": 1 },
-    { "id": "payment-card", "code": "card_on_delivery", "label": "Cartão na entrega", "displayOrder": 2 },
+    { "id": "payment-cash", "code": "cash", "label": "Dinheiro", "displayOrder": 1 },
+    { "id": "payment-card", "code": "card_on_delivery", "label": "Cartão na entrega ou na loja", "displayOrder": 2 },
     { "id": "payment-pix", "code": "pix", "label": "Pix", "displayOrder": 3 },
-    { "id": "payment-pickup", "code": "pay_on_pickup", "label": "Pagamento na retirada", "displayOrder": 4 }
+    { "id": "payment-pickup", "code": "pay_on_pickup", "label": "Pagar no balcão", "displayOrder": 4 }
   ]
 }

@@ -4,9 +4,10 @@ import { BrandLogo } from "@/modules/brand/ui/brand-logo/BrandLogo";
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import { getTrackedOrder } from "@/modules/ordering/application/get-tracked-order";
 import {
-  ORDER_STATUS_LABELS,
+  getOrderStatusLabel,
   type OrderStatus,
 } from "@/modules/ordering/application/order-status";
+import { FULFILLMENT_LABELS } from "@/modules/ordering/domain/fulfillment";
 import { OrderTrackingRefresh } from "@/modules/ordering/ui/order-tracking-refresh/OrderTrackingRefresh";
 import styles from "./tracking.module.css";
 
@@ -29,8 +30,8 @@ export default async function TrackingPage({
   const order = await getTrackedOrder(token);
   if (!order) notFound();
 
-  const isPickup = order.fulfillment === "pickup";
-  const steps = isPickup
+  const isOnPremises = order.fulfillment !== "delivery";
+  const steps = isOnPremises
     ? activeSteps.map((status) =>
         status === "out_for_delivery" ? "ready_for_pickup" : status,
       )
@@ -48,7 +49,7 @@ export default async function TrackingPage({
       <section className={styles.card}>
         <header>
           <p>Pedido nº {order.orderNumber}</p>
-          <h1>{ORDER_STATUS_LABELS[order.status]}</h1>
+          <h1>{getOrderStatusLabel(order.status, order.fulfillment)}</h1>
           <span>
             Recebido em{" "}
             {new Intl.DateTimeFormat("pt-BR", {
@@ -72,7 +73,7 @@ export default async function TrackingPage({
                 key={status}
               >
                 <span>{index < currentIndex ? "✓" : index + 1}</span>
-                <small>{ORDER_STATUS_LABELS[status]}</small>
+                <small>{getOrderStatusLabel(status, order.fulfillment)}</small>
               </li>
             ))}
           </ol>
@@ -99,11 +100,13 @@ export default async function TrackingPage({
             </div>
           </section>
           <aside>
-            <h2>{isPickup ? "Retirada" : "Entrega"}</h2>
+            <h2>{FULFILLMENT_LABELS[order.fulfillment]}</h2>
             <p>
-              {isPickup
-                ? "Av. Bartolomeu de Las Casa, nº 16, Quadra 17, Cidade Continental, Setor América, Serra - ES"
-                : order.address}
+              {order.fulfillment === "dine_in"
+                ? "Seu pedido será servido na loja. Aguarde a chamada pelo número do pedido."
+                : order.fulfillment === "pickup"
+                  ? "Av. Bartolomeu de Las Casa, nº 16, Quadra 17, Cidade Continental, Setor América, Serra - ES"
+                  : order.address}
             </p>
             <h2>Pagamento</h2>
             <p>{order.paymentLabel}</p>

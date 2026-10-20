@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { getPostgresClient, withTransaction } from "@/db";
 import {
-  ORDER_STATUS_TRANSITIONS,
+  getOrderStatusTransitions,
   isOrderStatus,
   type OrderStatus,
 } from "./order-status";
 import type { OrderPulse } from "../domain/order-pulse";
+import type { FulfillmentType } from "../domain/fulfillment";
 
 export type AdminOrder = {
   id: string;
@@ -13,7 +14,7 @@ export type AdminOrder = {
   status: OrderStatus;
   customerName: string;
   customerPhone: string;
-  fulfillment: "pickup" | "delivery";
+  fulfillment: FulfillmentType;
   address: string | null;
   subtotalInCents: number;
   deliveryFeeInCents: number;
@@ -91,7 +92,7 @@ export async function getAdminOrders(): Promise<AdminOrderSnapshot> {
         status: OrderStatus;
         customer_name_snapshot: string;
         customer_phone_snapshot: string;
-        fulfillment_type: "pickup" | "delivery";
+        fulfillment_type: FulfillmentType;
         address_snapshot: string | null;
         subtotal_cents: number;
         delivery_fee_cents: number;
@@ -236,10 +237,11 @@ export async function updateOrderStatus(
       Array<{
         id: string;
         status: OrderStatus;
+        fulfillment_type: FulfillmentType;
         delivery_slot_id: string | null;
       }>
     >(
-      `SELECT id, status, delivery_slot_id
+      `SELECT id, status, fulfillment_type, delivery_slot_id
        FROM orders
        WHERE id = $1
        FOR UPDATE`,
@@ -247,7 +249,11 @@ export async function updateOrderStatus(
     );
     const order = orderRows[0];
     if (!order) throw new Error("Pedido não encontrado.");
-    if (!ORDER_STATUS_TRANSITIONS[order.status].includes(nextStatusValue)) {
+    if (
+      !getOrderStatusTransitions(order.status, order.fulfillment_type).includes(
+        nextStatusValue,
+      )
+    ) {
       throw new Error("Esta mudança de status não é permitida.");
     }
 

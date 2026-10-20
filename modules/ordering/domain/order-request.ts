@@ -1,3 +1,9 @@
+import {
+  fulfillmentNeedsDeliverySlot,
+  isFulfillmentType,
+  type FulfillmentType,
+} from "./fulfillment";
+
 export type ConfirmOrderRequest = {
   idempotencyKey: string;
   customer: {
@@ -5,9 +11,9 @@ export type ConfirmOrderRequest = {
     phone: string;
     email: string | null;
   };
-  fulfillment: "pickup" | "delivery";
+  fulfillment: FulfillmentType;
   deliveryAreaId: string | null;
-  deliverySlotId: string;
+  deliverySlotId: string | null;
   paymentMethodId: string;
   changeForInCents: number | null;
   notes: string | null;
@@ -58,12 +64,13 @@ export function parseOrderRequest(input: unknown): ConfirmOrderRequest {
     "Não foi possível identificar esta tentativa.",
     120,
   );
-  const fulfillment =
-    root.fulfillment === "pickup" || root.fulfillment === "delivery"
-      ? root.fulfillment
-      : null;
+  const fulfillment = isFulfillmentType(root.fulfillment)
+    ? root.fulfillment
+    : null;
   if (!fulfillment) {
-    throw new OrderRequestError("Escolha entrega ou retirada.");
+    throw new OrderRequestError(
+      "Escolha se vai comer na loja, retirar ou receber em casa.",
+    );
   }
 
   const rawItems = Array.isArray(root.items) ? root.items : [];
@@ -140,11 +147,13 @@ export function parseOrderRequest(input: unknown): ConfirmOrderRequest {
   });
 
   const deliveryAreaId = optionalText(root.deliveryAreaId, 120);
-  const deliverySlotId = requiredText(
-    root.deliverySlotId,
-    "Escolha um horário disponível.",
-    120,
-  );
+  const deliverySlotId = fulfillmentNeedsDeliverySlot(fulfillment)
+    ? requiredText(
+        root.deliverySlotId,
+        "Escolha um horário disponível.",
+        120,
+      )
+    : null;
   const paymentMethodId = requiredText(
     root.paymentMethodId,
     "Escolha uma forma de pagamento.",

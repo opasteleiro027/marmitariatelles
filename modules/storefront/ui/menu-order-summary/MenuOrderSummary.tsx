@@ -78,9 +78,11 @@ export function MenuOrderSummary({
           ? "Site desligado"
           : missingMinimum > 0
             ? "Complete o pedido mínimo"
-            : "Continuar para entrega"}
+            : "FINALIZAR PEDIDO"}
       </button>
-      <small>A taxa de entrega é calculada no próximo passo.</small>
+      <small>
+        No próximo passo, escolha comer na loja, retirada ou entrega.
+      </small>
     </aside>
   );
 }
