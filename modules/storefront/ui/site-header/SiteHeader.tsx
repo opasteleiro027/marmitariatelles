@@ -11,7 +11,6 @@ type SiteHeaderProps = {
 };
 
 const navigation = [
-  { id: "home", href: "/", label: "Início" },
   { id: "menu", href: "/cardapio", label: "Cardápio" },
 ] as const;
 
@@ -25,7 +24,11 @@ export function SiteHeader({
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
-        <Link className={styles.brand} href="/" aria-label={`${businessName}, início`}>
+        <Link
+          className={styles.brand}
+          href="/cardapio"
+          aria-label={`${businessName}, cardápio`}
+        >
           <BrandLogo priority size={44} />
           <strong>{businessName}</strong>
         </Link>

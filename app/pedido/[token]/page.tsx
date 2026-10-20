@@ -42,7 +42,7 @@ export default async function TrackingPage({
 
   return (
     <main className={styles.page}>
-      <Link className={styles.brand} href="/">
+      <Link className={styles.brand} href="/cardapio">
         <BrandLogo priority size={54} />
         Pote Mix
       </Link>

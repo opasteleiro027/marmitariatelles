@@ -12,7 +12,7 @@ export default async function AdminLoginPage({
   return (
     <main className={styles.page}>
       <section className={styles.card}>
-        <Link href="/" className={styles.brand}>
+        <Link href="/cardapio" className={styles.brand}>
           <BrandLogo priority size={72} />
           Pote Mix
         </Link>

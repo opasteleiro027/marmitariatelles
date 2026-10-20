@@ -1,9 +1,5 @@
-import { StorefrontPage } from "@/modules/storefront/ui/StorefrontPage";
-import { getStorefrontSnapshot } from "@/modules/storefront/infrastructure/storefront.repository";
+import { redirect } from "next/navigation";
 
-export const dynamic = "force-dynamic";
-
-export default async function Home() {
-  const snapshot = await getStorefrontSnapshot();
-  return <StorefrontPage snapshot={snapshot} />;
+export default function Home() {
+  redirect("/cardapio");
 }

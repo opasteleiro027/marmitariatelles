@@ -477,16 +477,20 @@ test("admin can edit the storefront operating-hours label", async () => {
 });
 
 test("public navigation keeps the ordering journey focused", async () => {
-  const navigation = await readFile(
-    new URL(
-      "../modules/storefront/ui/site-header/SiteHeader.tsx",
-      import.meta.url,
+  const [home, navigation] = await Promise.all([
+    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    readFile(
+      new URL(
+        "../modules/storefront/ui/site-header/SiteHeader.tsx",
+        import.meta.url,
+      ),
+      "utf8",
     ),
-    "utf8",
-  );
-  for (const route of ['href: "/"', 'href: "/cardapio"']) {
-    assert.match(navigation, new RegExp(route.replaceAll("/", "\\/")));
-  }
+  ]);
+  assert.match(home, /redirect\("\/cardapio"\)/);
+  assert.match(navigation, /href: "\/cardapio"/);
+  assert.doesNotMatch(navigation, /href: "\/"/);
+  assert.doesNotMatch(navigation, /label: "Início"/);
   assert.doesNotMatch(navigation, /href: "\/como-funciona"/);
   assert.doesNotMatch(navigation, /href: "\/contato"/);
   assert.doesNotMatch(navigation, /href:\s*["']#/);

@@ -45,7 +45,7 @@ export function AdminShell({
             <p>Painel administrativo</p>
             <strong>{userName}</strong>
           </div>
-          <Link href="/" target="_blank">
+          <Link href="/cardapio" target="_blank">
             Ver loja ↗
           </Link>
         </header>
