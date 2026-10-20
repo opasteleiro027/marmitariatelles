@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { formatMoney } from "@/modules/storefront/domain/format-money";
 import type { AdminOrder } from "../../application/admin-orders";
 import { getOrderStatusLabel } from "../../application/order-status";
@@ -110,7 +110,21 @@ const THERMAL_PRINT_CSS = `
   }
 `;
 
-export function OrderPrintButton({ order }: { order: AdminOrder }) {
+export type OrderPrintButtonHandle = {
+  preparePrint: () => Window | null;
+};
+
+export function printPreparedOrderWindow(printWindow: Window) {
+  window.setTimeout(() => {
+    printWindow.focus();
+    printWindow.print();
+  }, 150);
+}
+
+export const OrderPrintButton = forwardRef<
+  OrderPrintButtonHandle,
+  { order: AdminOrder }
+>(function OrderPrintButton({ order }, forwardedRef) {
   const receiptRef = useRef<HTMLElement>(null);
   const [error, setError] = useState("");
   const changeInCents =
@@ -118,7 +132,7 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
       ? null
       : order.changeForInCents - order.totalInCents;
 
-  function printOrder() {
+  function preparePrint() {
     const receipt = receiptRef.current;
     const printWindow = window.open(
       "",
@@ -127,7 +141,7 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
     );
     if (!receipt || !printWindow) {
       setError("Permita a abertura da janela para imprimir a comanda.");
-      return;
+      return null;
     }
 
     setError("");
@@ -148,10 +162,16 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
     printWindow.addEventListener("afterprint", () => printWindow.close(), {
       once: true,
     });
-    window.setTimeout(() => {
-      printWindow.focus();
-      printWindow.print();
-    }, 150);
+    return printWindow;
+  }
+
+  useImperativeHandle(forwardedRef, () => ({ preparePrint }));
+
+  function printOrder() {
+    const printWindow = preparePrint();
+    if (printWindow) {
+      printPreparedOrderWindow(printWindow);
+    }
   }
 
   return (
@@ -257,7 +277,7 @@ export function OrderPrintButton({ order }: { order: AdminOrder }) {
       </section>
     </>
   );
-}
+});
 
 function formatDateTime(value: string) {
   return new Intl.DateTimeFormat("pt-BR", {

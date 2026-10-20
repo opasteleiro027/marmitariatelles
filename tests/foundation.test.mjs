@@ -212,6 +212,51 @@ test("ships an 80 mm browser-printable administrative order slip", async () => {
   assert.match(adminOrders, /change_for_cents/);
 });
 
+test("manages orders in operational columns and can print when accepting", async () => {
+  const [orderList, printButton, orderActions] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/ordering/ui/admin-order-list/AdminOrderList.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/ui/order-print-button/OrderPrintButton.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/ordering/server/admin-order-actions.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+
+  for (const column of [
+    "Novos pedidos",
+    "Em preparo",
+    "Prontos",
+    "Em entrega",
+    "Finalizados",
+  ]) {
+    assert.match(orderList, new RegExp(column));
+  }
+  assert.match(orderList, /Aceitar pedido/);
+  assert.match(orderList, /Imprimir comanda ao aceitar/);
+  assert.match(orderList, /pote-mix:print-on-accept/);
+  assert.match(orderList, /updateOrderStatusInlineAction/);
+  assert.match(orderList, /printPreparedOrderWindow/);
+  assert.doesNotMatch(orderList, /<select/);
+  assert.match(printButton, /preparePrint/);
+  assert.match(orderActions, /UpdateOrderStatusResult/);
+  assert.match(orderActions, /adminActionErrorMessage/);
+});
+
 test("ships the selected MP3 used by the new-order alert", async () => {
   const audio = await readFile(
     new URL("../public/audio/new-order.mp3", import.meta.url),

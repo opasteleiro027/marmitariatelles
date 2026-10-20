@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/modules/admin-auth/server/admin-session";
+import { adminActionErrorMessage } from "@/modules/admin/domain/admin-feedback";
 import { runAdminMutation } from "@/modules/admin/server/admin-feedback";
 import { updateOrderStatus } from "../application/admin-orders";
 import { resetTestOrderHistory } from "../application/test-order-history-reset/reset-test-order-history";
@@ -21,6 +22,33 @@ export async function updateOrderStatusAction(formData: FormData) {
       revalidatePath("/admin/pedidos");
     },
   );
+}
+
+export type UpdateOrderStatusResult =
+  | { ok: true; message: string }
+  | { ok: false; message: string };
+
+export async function updateOrderStatusInlineAction(
+  orderId: string,
+  status: string,
+): Promise<UpdateOrderStatusResult> {
+  const admin = await requireAdmin();
+
+  try {
+    await updateOrderStatus(orderId, status, admin.email);
+    revalidatePath("/admin");
+    revalidatePath("/admin/pedidos");
+
+    return {
+      ok: true,
+      message: "Status do pedido atualizado com sucesso.",
+    };
+  } catch (reason) {
+    return {
+      ok: false,
+      message: adminActionErrorMessage(reason),
+    };
+  }
 }
 
 export async function resetTestOrderHistoryAction(formData: FormData) {
