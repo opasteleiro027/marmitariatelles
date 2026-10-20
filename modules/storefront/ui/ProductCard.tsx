@@ -23,6 +23,9 @@ export function ProductCard({
         {product.imageUrl ? (
           <Image
             alt={product.name}
+            className={
+              product.id === "salada-caesar" ? styles.caesarImage : undefined
+            }
             fill
             sizes="(max-width: 700px) 38vw, (max-width: 1100px) 40vw, 280px"
             src={product.imageUrl}

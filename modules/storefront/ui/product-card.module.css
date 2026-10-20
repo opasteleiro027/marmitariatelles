@@ -113,4 +113,14 @@
   }
 
   .productVisual { height: 210px; }
+
+  .productVisual img.caesarImage {
+    object-fit: contain;
+    object-position: center;
+    background: #f4eadc;
+  }
+
+  .productCard:hover .productVisual img.caesarImage {
+    transform: none;
+  }
 }

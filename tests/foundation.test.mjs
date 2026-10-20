@@ -567,6 +567,30 @@ test("ships the Pote Mix menu and its configurable products", async () => {
   assert.match(customizer, /customizationGroups/);
 });
 
+test("keeps the Caesar bowl centered and fully visible on mobile", async () => {
+  const [productCard, productCardStyles] = await Promise.all([
+    readFile(
+      new URL(
+        "../modules/storefront/ui/ProductCard.tsx",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(
+      new URL(
+        "../modules/storefront/ui/product-card.module.css",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+  ]);
+
+  assert.match(productCard, /product\.id === "salada-caesar"/);
+  assert.match(productCardStyles, /img\.caesarImage/);
+  assert.match(productCardStyles, /object-fit:\s*contain/);
+  assert.match(productCardStyles, /object-position:\s*center/);
+});
+
 test("uses only the site switch to release or block orders", () => {
   assert.equal(
     siteAcceptsOrders({
