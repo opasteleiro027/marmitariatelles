@@ -13,6 +13,12 @@ const nextConfig: NextConfig = {
       {
         pathname: "/api/catalog/products/**",
       },
+      {
+        pathname: "/brand/**",
+      },
+      {
+        pathname: "/images/**",
+      },
     ],
   },
   turbopack: { root: process.cwd() },
