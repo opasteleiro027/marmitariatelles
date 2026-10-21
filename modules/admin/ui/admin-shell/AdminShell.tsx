@@ -28,8 +28,7 @@ export function AdminShell({
       </Suspense>
       <aside className={styles.sidebar}>
         <Link className={styles.brand} href="/admin">
-          <BrandLogo priority size={48} />
-          <strong>Pote Mix</strong>
+          <BrandLogo priority size={44} />
         </Link>
         <AdminNavigation />
         <div className={styles.sidebarFooter}>

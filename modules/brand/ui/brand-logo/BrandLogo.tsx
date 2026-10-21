@@ -12,15 +12,14 @@ export function BrandLogo({
 }: BrandLogoProps) {
   return (
     <Image
-      aria-hidden="true"
-      alt=""
+      alt="Pote Mix"
       className={styles.logo}
       height={512}
       priority={priority}
-      sizes={`${size}px`}
-      src="/brand/pote-mix-mark.webp"
-      style={{ width: size, height: size }}
-      width={512}
+      sizes={`${Math.round(size * 2.734)}px`}
+      src="/brand/pote-mix-logo.webp"
+      style={{ width: `min(${size * 2.734}px, 100%)`, height: size }}
+      width={1400}
     />
   );
 }

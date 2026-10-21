@@ -29,8 +29,7 @@ export function SiteHeader({
           href="/cardapio"
           aria-label={`${businessName}, cardápio`}
         >
-          <BrandLogo priority size={44} />
-          <strong>{businessName}</strong>
+          <BrandLogo priority size={40} />
         </Link>
 
         <nav aria-label="Navegação principal">
